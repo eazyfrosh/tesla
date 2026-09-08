@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function active() { return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.disabled == false; }
+    function owner() { return active() && resource.data.uid == request.auth.uid; }
+    // Browser writes are denied, including for administrators. Every mutation
+    // must pass the verified Next.js server endpoints and their validation.
+    match /users/{uid} { allow read: if active() && request.auth.uid == uid; allow write: if false; }
+    match /portfolios/{uid} { allow read: if active() && request.auth.uid == uid; allow write: if false; }
+    match /transactions/{id} { allow read: if owner(); allow write: if false; }
+    match /deposits/{id} { allow read: if owner(); allow write: if false; }
+    match /withdrawals/{id} { allow read: if owner(); allow write: if false; }
+    match /investments/{id} { allow read: if owner(); allow write: if false; }
+    match /orders/{id} { allow read: if owner(); allow write: if false; }
+    match /notifications/{id} { allow read: if owner(); allow write: if false; }
+    match /vehicles/{id} { allow read: if true; allow write: if false; }
+    match /investmentPlans/{id} { allow read: if true; allow write: if false; }
+    match /marketData/{id} { allow read: if true; allow write: if false; }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
