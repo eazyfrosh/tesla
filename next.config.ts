@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next';
 const config: NextConfig = {
   turbopack: { root: process.cwd() },
+  // Firebase Admin's jwks-rsa dependency requires ESM-only jose from CommonJS.
+  // Bundle this chain so serverless runtimes need no require(ESM) support.
+  transpilePackages: ['firebase-admin', 'jwks-rsa', 'jose'],
   poweredByHeader: false,
   async headers() {
     return [
