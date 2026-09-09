@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -192,13 +193,15 @@ export function Landing({
               <div className="orbital orbital-one" />
               <div className="orbital orbital-two" />
               <span className="visual-label">THE ELECTRIC ADVANTAGE</span>
-              {vehicles[0]?.images[0] && (
-                <img
-                  className="hero-car"
-                  src={vehicles[0].images[0]}
-                  alt="Tesla Model S — illustrative EV showcase"
-                />
-              )}
+              <Image
+                className="hero-car"
+                src="/images/white-tesla-hero.png"
+                alt="White Tesla Model S — illustrative EV showcase"
+                width={1774}
+                height={887}
+                sizes="(max-width: 760px) 100vw, 60vw"
+                preload
+              />
               <div className="floating-quote">
                 <div className="row">
                   <span className="asset-icon tesla">T</span>
