@@ -224,18 +224,6 @@ export function Workspace({
   useEffect(() => {
     setData(initial);
   }, [initial]);
-  useEffect(() => {
-    const theme = data.user.theme;
-    document.documentElement.dataset.theme =
-      theme === 'system'
-        ? window.matchMedia('(prefers-color-scheme: light)').matches
-          ? 'light'
-          : 'dark'
-        : theme;
-    return () => {
-      delete document.documentElement.dataset.theme;
-    };
-  }, [data.user.theme]);
   const run: RunAction = async (payload) => {
     if (busy) return false;
     setBusy(true);
@@ -1156,7 +1144,6 @@ function AccountForm({
             await run({
               action: 'preferences',
               currency: f.get('currency'),
-              theme: f.get('theme'),
               notifications: f.get('notifications') === 'on',
             });
         }}
@@ -1199,14 +1186,6 @@ function AccountForm({
             <p className="small muted">
               Balances and trade settlement remain in USD. This preference does not convert amounts.
             </p>
-            <label>
-              Theme
-              <select name="theme" defaultValue={data.user.theme}>
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-                <option value="system">System</option>
-              </select>
-            </label>
             <label className="checkbox">
               <input
                 type="checkbox"

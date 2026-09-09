@@ -277,7 +277,6 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     u.set('users', user.uid, {
       ...latest,
       currency: a.currency,
-      theme: a.theme,
       notifications: a.notifications,
       updatedAt: now,
     });

@@ -62,7 +62,6 @@ export const actionSchema = z.discriminatedUnion('action', [
   z.object({
     action: z.literal('preferences'),
     currency: z.enum(['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD']),
-    theme: z.enum(['dark', 'light', 'system']),
     notifications: z.boolean(),
   }),
   z.object({ action: z.literal('readNotification'), id }),

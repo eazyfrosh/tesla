@@ -18,7 +18,6 @@ export interface UserProfile extends BaseRecord {
   disabled: boolean;
   accountStatus: string;
   image: string;
-  theme: string;
   notifications: boolean;
 }
 export interface Holding {

@@ -2274,60 +2274,7 @@ td b {
     background-position: -200% 0;
   }
 }
-/* Preferences and responsive layout */
-html[data-theme='light'] {
-  --bg: #f5f6f8;
-  --surface: #fff;
-  --surface2: #f7f8fa;
-  --surface3: #e9ebf0;
-  --border: #dfe2e8;
-  --text: #1e222c;
-  --muted: #646c7b;
-  color-scheme: light;
-}
-html[data-theme='light'] .workspace {
-  background: #f3f4f7;
-}
-html[data-theme='light'] .sidebar,
-html[data-theme='light'] .topbar {
-  background: #fff;
-}
-html[data-theme='light'] .workspace .card {
-  background: #fff;
-}
-html[data-theme='light'] .sidebar nav > a {
-  color: #606877;
-}
-html[data-theme='light'] .sidebar nav > a.active {
-  color: #b3263c;
-}
-html[data-theme='light'] .form label,
-html[data-theme='light'] td {
-  color: #3e4654;
-}
-html[data-theme='light'] .wallet-main h2 {
-  color: #fff;
-}
-html[data-theme='light'] .stat > .small .positive {
-  color: #24765e;
-}
-html[data-theme='light'] .positive {
-  color: #20785c;
-}
-html[data-theme='light'] .order-estimate b,
-html[data-theme='light'] .allocation-legend .small,
-html[data-theme='light'] .chart-summary b {
-  color: #4f5765;
-}
-html[data-theme='light'] .demo-banner {
-  color: #805560;
-}
-html[data-theme='light'] .sandbox-note {
-  background: #f7f0f2;
-}
-html[data-theme='light'] .topbar-breadcrumb b {
-  color: #3e4654;
-}
+/* Responsive layout */
 @media (min-width: 1600px) {
   .hero-grid {
     min-height: 740px;

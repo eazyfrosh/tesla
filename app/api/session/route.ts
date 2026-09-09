@@ -43,7 +43,6 @@ export async function POST(req: NextRequest) {
           role: 'user',
           disabled: false,
           accountStatus: 'Active',
-          theme: 'dark',
           notifications: true,
           createdAt: now,
           updatedAt: now,

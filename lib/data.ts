@@ -100,7 +100,6 @@ export function demoUser(id = 'demo-user', role: 'user' | 'admin' = 'user'): Use
     disabled: false,
     accountStatus: 'Active',
     image: '',
-    theme: 'dark',
     notifications: true,
   };
 }
