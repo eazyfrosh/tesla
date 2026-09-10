@@ -3489,3 +3489,17 @@ th,
     top: 14%;
   }
 }
+
+.logo .brand-logo {
+  width: 46px;
+  height: 60px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
+}
+@media (max-width: 760px) {
+  .logo .brand-logo {
+    width: 36px;
+    height: 47px;
+  }
+}

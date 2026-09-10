@@ -33,11 +33,9 @@ export const date = (value: string) =>
   new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 export function Logo() {
   return (
-    <Link href="/" className="logo">
-      <span className="logo-mark">
-        <Zap size={22} fill="currentColor" />
-      </span>{' '}
-      VOLTERRA<span className="logo-dot">®</span>
+    <Link href="/" className="logo" aria-label="Volterra demo home">
+      <img className="brand-logo" src="/images/tesla-logo.png" alt="Tesla" width={46} height={60} />
+      <span className="demo-pill">DEMO</span>
     </Link>
   );
 }
