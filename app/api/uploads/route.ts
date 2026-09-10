@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
     const contentType = imageType(bytes);
     const id = randomUUID(),
       now = new Date().toISOString();
-    const objectPath = 'uploads/' + user.uid + '/' + id;
+    const objectPath =
+      'uploads/' + user.uid + '/' + id + '.' + contentType.split('/')[1].replace('jpeg', 'jpg');
     await writeUpload(objectPath, bytes, contentType);
     await atomic(async (u) => {
       const current = await u.get<{ role: string; disabled: boolean }>('users', user.uid);
