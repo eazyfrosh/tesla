@@ -60,7 +60,7 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
     <>
       <PublicNav />
       <main className="container prose-page narrow">
-        <span className="eyebrow red">VOLTERRA · A FICTIONAL PLATFORM</span>
+        <span className="eyebrow red">VOLTERRA · A PLATFORM</span>
         <h1>{stored?.title ?? page.title}</h1>
         <p className="lead muted preserve-lines">{stored?.body ?? page.intro}</p>
         {page.sections.map(([title, body]) => (

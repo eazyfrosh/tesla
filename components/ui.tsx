@@ -35,7 +35,7 @@ export function Logo() {
   return (
     <Link href="/" className="logo" aria-label="Volterra home">
       <img className="brand-logo" src="/images/tesla-logo.png" alt="Tesla" width={46} height={60} />
-      <span className="demo-pill">PRACTICE</span>
+      <span className="demo-pill"></span>
     </Link>
   );
 }
@@ -75,7 +75,7 @@ export function StatCard({
       <strong>{value}</strong>
       <div className="small">
         <span className="positive">{change ?? 'Simulated USD'}</span>
-        <span className="muted"> · practice account</span>
+        <span className="muted"> · account</span>
       </div>
     </article>
   );

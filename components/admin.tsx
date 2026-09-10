@@ -151,7 +151,7 @@ export function AdminContent({
             ?.filter((u) =>
               (u.fullName + u.email + u.username).toLowerCase().includes(q.toLowerCase()),
             )
-            .map((u) => (
+.map((u) => (
               <tr key={u.id}>
                 <td>
                   <b>{u.fullName}</b>
@@ -236,10 +236,10 @@ export function AdminContent({
             ]}
           >
             {records
-              .filter((r) =>
+.filter((r) =>
                 (r.reference + r.uid + r.details).toLowerCase().includes(q.toLowerCase()),
               )
-              .map((r) => (
+.map((r) => (
                 <tr key={r.id}>
                   <td>
                     <b>{r.reference}</b>
@@ -295,7 +295,7 @@ export function AdminContent({
     return (
       <>
         <div className="row section-heading compact">
-          <h2>{isPlan ? 'Configurable practice plans' : 'Vehicle inventory'}</h2>
+          <h2>{isPlan ? 'Configurable plans' : 'Vehicle inventory'}</h2>
           <button className="button" onClick={() => setEdit('new')}>
             <Plus size={17} />
             Add {isPlan ? 'plan' : 'vehicle'}
@@ -472,7 +472,7 @@ export function AdminContent({
             e.preventDefault();
             const form = e.currentTarget;
             const f = new FormData(form);
-            if (await run({ action: 'notify', ...Object.fromEntries(f) })) form.reset();
+            if (await run({ action: 'notify',...Object.fromEntries(f) })) form.reset();
           }}
         >
           <h2>Create a notification</h2>
@@ -529,7 +529,7 @@ export function AdminContent({
             await run({
               action: 'saveContent',
               id: contentId,
-              ...Object.fromEntries(new FormData(e.currentTarget)),
+...Object.fromEntries(new FormData(e.currentTarget)),
             });
           }}
         >
@@ -576,7 +576,7 @@ export function AdminContent({
           <h3>Contact inbox</h3>
           {data.content
             ?.filter((c) => c.id.startsWith('contact_'))
-            .map((c) => (
+.map((c) => (
               <div className="notification" key={c.id}>
                 <div>
                   <h3>{c.title}</h3>
@@ -763,25 +763,25 @@ function CatalogEditor({
         e.preventDefault();
         const f = new FormData(e.currentTarget);
         const payload: Record<string, unknown> = {
-          ...Object.fromEntries(f),
+...Object.fromEntries(f),
           action: type === 'plan' ? 'savePlan' : 'saveVehicle',
-          ...(value !== 'new' ? { id: value.id } : {}),
+...(value !== 'new' ? { id: value.id } : {}),
         };
         if (type === 'plan') {
           payload.active = f.get('active') === 'on';
           payload.benefits = String(f.get('benefits'))
-            .split('\n')
-            .map((s) => s.trim())
-            .filter(Boolean);
+.split('\n')
+.map((s) => s.trim())
+.filter(Boolean);
         } else {
           payload.images = String(f.get('images'))
-            .split('\n')
-            .map((s) => s.trim())
-            .filter(Boolean);
+.split('\n')
+.map((s) => s.trim())
+.filter(Boolean);
           payload.features = String(f.get('features'))
-            .split('\n')
-            .map((s) => s.trim())
-            .filter(Boolean);
+.split('\n')
+.map((s) => s.trim())
+.filter(Boolean);
         }
         if (await run(payload)) onDone();
       }}
@@ -851,7 +851,7 @@ function CatalogEditor({
           minLength={10}
           maxLength={type === 'plan' ? 200 : 2000}
           defaultValue={String(
-            v.description ?? 'Fictional fictional offering. No real funds or guaranteed returns.',
+            v.description ?? ' offering. No real funds or guaranteed returns.',
           )}
         />
       </label>
