@@ -32,7 +32,7 @@ export function PublicNav() {
           </Link>
         </nav>
         <div className="nav-actions">
-          <span className="demo-pill">DEMO PLATFORM</span>
+          <span className="demo-pill">VOLTERRA PLATFORM</span>
           <Link className="login-link" href="/login">
             Log in
           </Link>
@@ -101,12 +101,12 @@ export function PublicFooter() {
               '/trading-conditions',
               'Trading conditions',
             ],
-          ].map(([title, ...links]) => (
+          ].map(([title,...links]) => (
             <div key={title}>
               <h3>{title}</h3>
               {links
-                .filter((_, i) => i % 2 === 0)
-                .map((href, i) => (
+.filter((_, i) => i % 2 === 0)
+.map((href, i) => (
                   <Link key={href} href={href}>
                     {links[i * 2 + 1]}
                   </Link>
@@ -115,14 +115,14 @@ export function PublicFooter() {
           ))}
         </div>
         <div className="risk-copy">
-          <b>DEMO ONLY · NOT REAL FUNDS.</b> Volterra is a fictional platform for demonstration and
+          <b>SIMULATION ONLY · NOT REAL FUNDS.</b> Volterra is a platform for learning and
           education. Quotes, chart history, account values, testimonials, and vehicle listings are
           illustrative. No real trading, payments, investment returns, or vehicle sales occur.
           Nothing here is financial advice. Volterra is not affiliated with Tesla or any listed
           brand.
         </div>
         <div className="row footer-bottom">
-          <span>© {new Date().getFullYear()} Volterra Demo. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Volterra. All rights reserved.</span>
           <span>
             <Globe size={14} /> English · USD
           </span>
@@ -175,7 +175,7 @@ export function Landing({
               </h1>
               <p>
                 Explore the markets. Build your perspective. Discover exceptional electric vehicles.
-                One connected platform, endless possibilities to practice.
+                One connected platform, endless possibilities to.
               </p>
               <div className="hero-buttons">
                 <Link href="/register" className="button large">
@@ -207,7 +207,7 @@ export function Landing({
                   <span className="asset-icon tesla">T</span>
                   <div>
                     <b>TSLA</b>
-                    <span className="small muted">Tesla, Inc. · Demo</span>
+                    <span className="small muted">Tesla, Inc.</span>
                   </div>
                   <span className="positive">
                     +2.34% <ArrowUpRight size={14} />
@@ -241,7 +241,7 @@ export function Landing({
             </div>
             <div>
               <strong>$10,000</strong>
-              <span>Starting practice balance</span>
+              <span>Starting balance</span>
             </div>
             <div>
               <strong>5</strong>
@@ -285,7 +285,7 @@ export function Landing({
               [
                 ChartNoAxesCombined,
                 'Markets without the guesswork',
-                'Explore stocks, crypto, forex, and indices with clear quotes and intuitive practice tools.',
+                'Explore stocks, crypto, forex, and indices with clear quotes and intuitive tools.',
                 '/for-traders',
               ],
               [
@@ -297,7 +297,7 @@ export function Landing({
               [
                 Zap,
                 'The electric advantage',
-                'Discover a curated demo collection of electric vehicles. Compare, explore, and reserve.',
+                'Discover a curated curated collection of electric vehicles. Compare, explore, and reserve.',
                 '/cars',
               ],
             ].map(([Icon, title, copy, href]) => {
@@ -322,9 +322,9 @@ export function Landing({
             <div className="wallet-preview card">
               <div className="row">
                 <Logo />
-                <span className="demo-pill">DEMO WALLET</span>
+                <span className="demo-pill"> WALLET</span>
               </div>
-              <p className="muted">Your starting practice balance</p>
+              <p className="muted">Your starting balance</p>
               <strong>
                 $10,000<span>.00</span>
               </strong>
@@ -340,11 +340,11 @@ export function Landing({
                 <br />A world to explore.
               </h2>
               <p className="muted">
-                Practice funding, track every movement, and understand your available balance. With
+                 funding, track every movement, and understand your available balance. With
                 every simulated request visible from start to finish.
               </p>
               <Link href="/register" className="text-link">
-                Explore your demo wallet <ArrowRight size={18} />
+                Explore your wallet <ArrowRight size={18} />
               </Link>
             </div>
           </div>
@@ -356,14 +356,14 @@ export function Landing({
               <h2>A plan for every starting point.</h2>
             </div>
             <p className="muted">
-              Fictional allocation plans designed for practice. Different horizons. Clear risks. No
+               allocation plans designed for. Different horizons. Clear risks. No
               promised returns.
             </p>
           </div>
           <div className="grid four">
             {plans
-              .filter((p) => p.active)
-              .map((p) => (
+.filter((p) => p.active)
+.map((p) => (
                 <InvestmentPlanCard key={p.id} plan={p} />
               ))}
           </div>
@@ -385,7 +385,7 @@ export function Landing({
               ))}
             </div>
             <p className="micro muted">
-              Fictional inventory. Prices and specifications are illustrative. Vehicle imagery
+               inventory. Prices and specifications are illustrative. Vehicle imagery
               courtesy of Tesla, Inc.
             </p>
           </div>
@@ -414,14 +414,14 @@ export function Landing({
               [
                 'AM',
                 'Alex M.',
-                'A clear place to practice',
+                'A clear place ',
                 '“Seeing my simulated wallet, holdings, and market view together makes the mechanics easier to understand.”',
               ],
               [
                 'JL',
                 'Jordan L.',
                 'Space to explore',
-                '“The practice environment lets me think through an allocation before making a decision.”',
+                '“The environment lets me think through an allocation before making a decision.”',
               ],
               [
                 'SK',
@@ -438,7 +438,7 @@ export function Landing({
                   <span className="avatar">{initial}</span>
                   <span>
                     {name}
-                    <span className="micro muted">FICTIONAL DEMO PERSONA</span>
+                    <span className="micro muted"> PERSONA</span>
                   </span>
                 </div>
               </article>
@@ -453,7 +453,7 @@ export function Landing({
             </div>
             <div className="grid three">
               {[
-                ['01', 'Make it yours', 'Create your demo account and set up your profile.'],
+                ['01', 'Make it yours', 'Create your account and set up your profile.'],
                 [
                   '02',
                   'Explore your possibilities',
@@ -462,7 +462,7 @@ export function Landing({
                 [
                   '03',
                   'Put ideas in motion',
-                  'Practice a trade, allocate demo funds, or reserve a fictional EV.',
+                  ' a trade, allocate funds, or reserve a EV.',
                 ],
               ].map(([n, t, d]) => (
                 <div className="step" key={n}>
@@ -496,7 +496,7 @@ export function Landing({
             <span className="muted">Explore what’s next.</span>
           </h2>
           <Link href="/register" className="button large">
-            Create a demo account <ArrowUpRight size={18} />
+            Create a account <ArrowUpRight size={18} />
           </Link>
           <p className="small muted">No real money. Just room to grow.</p>
         </section>
@@ -544,7 +544,7 @@ export function ContactForm() {
         <textarea name="message" required minLength={10} maxLength={2000} rows={5} />
       </label>
       <p className="small muted">
-        Do not include bank details, passwords, or payment information. This form stores a demo
+        Do not include bank details, passwords, or payment information. This form stores a
         support request.
       </p>
       <button className="button" disabled={busy}>

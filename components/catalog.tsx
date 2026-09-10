@@ -20,7 +20,7 @@ export function VehicleCatalog({
     [condition, setCondition] = useState('Any condition'),
     [sort, setSort] = useState('Featured');
   const result = vehicles
-    .filter(
+.filter(
       (v) =>
         (v.make + ' ' + v.model).toLowerCase().includes(q.toLowerCase()) &&
         (make === 'All makes' || v.make === make) &&
@@ -30,7 +30,7 @@ export function VehicleCatalog({
         (year === 'All years' || v.year === Number(year)) &&
         (condition === 'Any condition' || v.condition === condition),
     )
-    .sort((a, b) =>
+.sort((a, b) =>
       sort === 'Price: low to high'
         ? a.price - b.price
         : sort === 'Price: high to low'
@@ -49,12 +49,12 @@ export function VehicleCatalog({
           onChange={(e) => setQ(e.target.value)}
         />
         <select aria-label="Make" value={make} onChange={(e) => setMake(e.target.value)}>
-          {['All makes', ...new Set(vehicles.map((v) => v.make))].map((x) => (
+          {['All makes',...new Set(vehicles.map((v) => v.make))].map((x) => (
             <option key={x}>{x}</option>
           ))}
         </select>
         <select aria-label="Model" value={model} onChange={(e) => setModel(e.target.value)}>
-          {['All models', ...new Set(vehicles.map((v) => v.model))].map((x) => (
+          {['All models',...new Set(vehicles.map((v) => v.model))].map((x) => (
             <option key={x}>{x}</option>
           ))}
         </select>
@@ -75,7 +75,7 @@ export function VehicleCatalog({
           onChange={(e) => setMax(e.target.value)}
         />
         <select aria-label="Year" value={year} onChange={(e) => setYear(e.target.value)}>
-          {['All years', ...new Set(vehicles.map((v) => String(v.year)))].map((x) => (
+          {['All years',...new Set(vehicles.map((v) => String(v.year)))].map((x) => (
             <option key={x}>{x}</option>
           ))}
         </select>
@@ -95,7 +95,7 @@ export function VehicleCatalog({
         </select>
       </div>
       <div className="row catalog-count">
-        <span className="muted small">{result.length} vehicles · fictional inventory</span>
+        <span className="muted small">{result.length} vehicles · inventory</span>
         <button
           className="text-button"
           onClick={() => {
@@ -206,12 +206,12 @@ export function VehicleDetail({
               disabled={busy || v.availability !== 'Available'}
               onClick={onOrder}
             >
-              {busy ? 'Submitting…' : 'Request demo reservation'}
+              {busy ? 'Submitting…' : 'Request reservation'}
               <ArrowRight size={17} />
             </button>
           ) : (
             <Link className="button full" href={'/dashboard/vehicles/' + v.id}>
-              Reserve in your demo account
+              Reserve in your account
               <ArrowRight size={17} />
             </Link>
           )}

@@ -77,7 +77,7 @@ export function AdminContent({
                 <b>{user.phone || 'Not provided'}</b>
               </div>
               <div>
-                <span>Demo cash</span>
+                <span>Account cash</span>
                 <b>{money((p?.cashCents ?? 0) / 100)}</b>
               </div>
             </div>
@@ -116,7 +116,7 @@ export function AdminContent({
                 ))}
               </select>
             </div>
-            <h3>Demo holdings</h3>
+            <h3>Account holdings</h3>
             <AdminTable headings={['Symbol', 'Quantity', 'Cost basis']}>
               {p?.holdings.map((h) => (
                 <tr key={h.symbol}>
@@ -156,7 +156,7 @@ export function AdminContent({
             ?.filter((u) =>
               (u.fullName + u.email + u.username).toLowerCase().includes(q.toLowerCase()),
             )
-            .map((u) => (
+.map((u) => (
               <tr key={u.id}>
                 <td>
                   <b>{u.fullName}</b>
@@ -261,17 +261,17 @@ export function AdminContent({
             headings={[
               'Reference / member',
               'Details',
-              'Amount · demo',
+              'Amount',
               'Status',
               'Created',
               'Review',
             ]}
           >
             {records
-              .filter((r) =>
+.filter((r) =>
                 (r.reference + r.uid + r.details).toLowerCase().includes(q.toLowerCase()),
               )
-              .map((r) => (
+.map((r) => (
                 <tr key={r.id}>
                   <td>
                     <b>{r.reference}</b>
@@ -291,7 +291,7 @@ export function AdminContent({
                       </a>
                     )}
                     {r.destination && (
-                      <span className="small muted block">Demo destination: {r.destination}</span>
+                      <span className="small muted block">Destination: {r.destination}</span>
                     )}
                   </td>
                   <td>{money(r.amountCents / 100)}</td>
@@ -344,7 +344,7 @@ export function AdminContent({
     return (
       <>
         <div className="row section-heading compact">
-          <h2>{isPlan ? 'Configurable practice plans' : 'Vehicle inventory'}</h2>
+          <h2>{isPlan ? 'Configurable plans' : 'Vehicle inventory'}</h2>
           <button className="button" onClick={() => setEdit('new')}>
             <Plus size={17} />
             Add {isPlan ? 'plan' : 'vehicle'}
@@ -444,10 +444,10 @@ export function AdminContent({
         <section className="card">
           <h3>Illustrative market quotes</h3>
           <p className="muted">
-            These values are demo quotes. Updating a quote does not automatically fill pending limit
+            These values are current quotes. Updating a quote does not automatically fill pending limit
             orders.
           </p>
-          <AdminTable headings={['Symbol', 'Asset', 'Demo price', 'Movement', 'Action']}>
+          <AdminTable headings={['Symbol', 'Asset', 'Current price', 'Movement', 'Action']}>
             {data.markets.map((m) => (
               <tr key={m.id}>
                 <td>{m.symbol}</td>
@@ -464,7 +464,7 @@ export function AdminContent({
           </AdminTable>
         </section>
         {selectedMarket && (
-          <Modal title="Edit demo quote" onClose={() => setSelectedMarket(null)}>
+          <Modal title="Edit current quote" onClose={() => setSelectedMarket(null)}>
             <form
               className="form"
               onSubmit={async (e) => {
@@ -482,7 +482,7 @@ export function AdminContent({
               }}
             >
               <label>
-                Demo price
+                Current price
                 <input
                   name="price"
                   type="number"
@@ -521,10 +521,10 @@ export function AdminContent({
             e.preventDefault();
             const form = e.currentTarget;
             const f = new FormData(form);
-            if (await run({ action: 'notify', ...Object.fromEntries(f) })) form.reset();
+            if (await run({ action: 'notify',...Object.fromEntries(f) })) form.reset();
           }}
         >
-          <h2>Create a demo notification</h2>
+          <h2>Create a notification</h2>
           <label>
             Recipient
             <select name="uid">
@@ -578,7 +578,7 @@ export function AdminContent({
             await run({
               action: 'saveContent',
               id: contentId,
-              ...Object.fromEntries(new FormData(e.currentTarget)),
+...Object.fromEntries(new FormData(e.currentTarget)),
             });
           }}
         >
@@ -625,7 +625,7 @@ export function AdminContent({
           <h3>Contact inbox</h3>
           {data.content
             ?.filter((c) => c.id.startsWith('contact_'))
-            .map((c) => (
+.map((c) => (
               <div className="notification" key={c.id}>
                 <div>
                   <h3>{c.title}</h3>
@@ -636,7 +636,7 @@ export function AdminContent({
           {!data.content?.some((c) => c.id.startsWith('contact_')) && (
             <EmptyState
               title="No messages yet"
-              description="Demo contact submissions will appear here."
+              description="Contact submissions will appear here."
             />
           )}
         </section>
@@ -689,7 +689,7 @@ export function AdminContent({
             rows={3}
           />
         </label>
-        <h3>Enabled demo payment methods</h3>
+        <h3>Enabled payment methods</h3>
         {['Bank Transfer', 'Crypto', 'Card Placeholder'].map((m) => (
           <label className="checkbox" key={m}>
             <input
@@ -725,8 +725,8 @@ export function AdminContent({
               .length ?? 0,
           )}
         />
-        <StatCard label="Approved demo deposits" value={money(total(data.deposits))} />
-        <StatCard label="Approved demo withdrawals" value={money(total(data.withdrawals))} />
+        <StatCard label="Approved account deposits" value={money(total(data.deposits))} />
+        <StatCard label="Approved withdrawal requests" value={money(total(data.withdrawals))} />
       </div>
       <div className="grid dashboard-charts">
         <section className="card">
@@ -760,7 +760,7 @@ export function AdminContent({
           ))}
           <div className="alert">
             <ShieldCheck size={18} />
-            <p>All administrative changes affect demo records only.</p>
+            <p>All administrative changes affect account records only.</p>
           </div>
         </section>
       </div>
@@ -815,25 +815,25 @@ function CatalogEditor({
         e.preventDefault();
         const f = new FormData(e.currentTarget);
         const payload: Record<string, unknown> = {
-          ...Object.fromEntries(f),
+...Object.fromEntries(f),
           action: type === 'plan' ? 'savePlan' : 'saveVehicle',
-          ...(value !== 'new' ? { id: value.id } : {}),
+...(value !== 'new' ? { id: value.id } : {}),
         };
         if (type === 'plan') {
           payload.active = f.get('active') === 'on';
           payload.benefits = String(f.get('benefits'))
-            .split('\n')
-            .map((s) => s.trim())
-            .filter(Boolean);
+.split('\n')
+.map((s) => s.trim())
+.filter(Boolean);
         } else {
           payload.images = String(f.get('images'))
-            .split('\n')
-            .map((s) => s.trim())
-            .filter(Boolean);
+.split('\n')
+.map((s) => s.trim())
+.filter(Boolean);
           payload.features = String(f.get('features'))
-            .split('\n')
-            .map((s) => s.trim())
-            .filter(Boolean);
+.split('\n')
+.map((s) => s.trim())
+.filter(Boolean);
         }
         if (await run(payload)) onDone();
       }}
@@ -845,7 +845,7 @@ function CatalogEditor({
             {input('min', 'Minimum USD', 'number', 100)}
             {input('max', 'Maximum USD', 'number', 1000)}
           </div>
-          {input('duration', 'Demo duration in days', 'number', 30)}
+          {input('duration', 'Activity duration in days', 'number', 30)}
           {select('risk', 'Risk level', ['Moderate', 'Low', 'High'])}
           <label className="checkbox">
             <input name="active" type="checkbox" defaultChecked={Boolean(v.active ?? true)} />
@@ -903,7 +903,7 @@ function CatalogEditor({
           minLength={10}
           maxLength={type === 'plan' ? 200 : 2000}
           defaultValue={String(
-            v.description ?? 'Fictional demo offering. No real funds or guaranteed returns.',
+            v.description ?? ' offering. No real funds or guaranteed returns.',
           )}
         />
       </label>

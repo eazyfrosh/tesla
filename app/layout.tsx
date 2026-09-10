@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 export const metadata: Metadata = {
-  title: { default: 'Volterra — Think ahead. Move electric.', template: '%s | Volterra Demo' },
+  title: { default: 'Volterra — Think ahead. Move electric.', template: '%s | Volterra' },
   description:
-    'Explore simulated markets, practice portfolio strategies, and discover electric vehicles. A fictional platform. No real funds.',
+    'Explore simulated markets, portfolio strategies, and discover electric vehicles. A platform. No real funds.',
   robots: { index: false, follow: false },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {

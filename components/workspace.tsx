@@ -125,14 +125,14 @@ export function Sidebar({
             >
               <Icon size={18} />
               {name}
-              {path === 'trade' && <span className="nav-new">DEMO</span>}
+              {path === 'trade' && <span className="nav-new"></span>}
             </Link>
           ))}
         </nav>
         <div className="sidebar-bottom">
           <div className="sandbox-note">
             <span className="red-dot" />
-            <b>Practice mode</b>
+            <b> mode</b>
             <p>
               All activity is simulated.
               <br />
@@ -183,7 +183,7 @@ export function Topbar({
           <span>Explore markets</span>
           <kbd>↗</kbd>
         </Link>
-        <span className="demo-pill">DEMO ACCOUNT</span>
+        <span className="demo-pill"> ACCOUNT</span>
         <Link
           className="icon-button notification-bell"
           href="/dashboard/notifications"
@@ -197,10 +197,10 @@ export function Topbar({
             <img src={data.user.image} alt="Profile" />
           ) : (
             data.user.fullName
-              .split(' ')
-              .map((n) => n[0])
-              .slice(0, 2)
-              .join('')
+.split(' ')
+.map((n) => n[0])
+.slice(0, 2)
+.join('')
           )}
         </Link>
       </div>
@@ -285,7 +285,7 @@ export function Workspace({
                 {section
                   ? 'Every value and action in this workspace is simulated.'
                   : admin
-                    ? 'A clear view of your demo platform and pending activity.'
+                    ? 'A clear view of your platform and pending activity.'
                     : 'Here’s where you stand. Let’s make your next move count.'}
               </p>
             </div>
@@ -293,7 +293,7 @@ export function Workspace({
               <div className="heading-actions">
                 <Link href={admin ? '/admin/deposits' : '/dashboard/deposit'} className="button">
                   <Plus size={17} />
-                  {admin ? 'Review requests' : 'Add demo funds'}
+                  {admin ? 'Review requests' : 'Add funds'}
                 </Link>
                 {!admin && (
                   <Link href="/dashboard/trade" className="button secondary">
@@ -312,7 +312,7 @@ export function Workspace({
             )}
           </div>
           <div className="workspace-footer">
-            <span>VOLTERRA · Fictional financial platform</span>
+            <span>VOLTERRA · financial platform</span>
             <span>
               <span className="red-dot" /> All systems simulated
             </span>
@@ -339,18 +339,18 @@ export function Workspace({
 }
 function amounts(data: Snapshot) {
   const holdings = data.portfolio.holdings.map((h) => ({
-    ...h,
+...h,
     market: data.markets.find((m) => m.symbol === h.symbol),
     value: h.quantity * (data.markets.find((m) => m.symbol === h.symbol)?.price ?? 0),
   }));
   const invested = data.investments
-    .filter((i) => i.status === 'Active')
-    .reduce((s, i) => s + i.amountCents / 100, 0);
+.filter((i) => i.status === 'Active')
+.reduce((s, i) => s + i.amountCents / 100, 0);
   const held = holdings.reduce((s, h) => s + h.value, 0),
     cost = holdings.reduce((s, h) => s + h.costCents / 100, 0);
   const pendingSell = data.transactions
-    .filter((t) => t.type === 'Trade' && t.side === 'Sell' && t.status === 'Pending')
-    .reduce(
+.filter((t) => t.type === 'Trade' && t.side === 'Sell' && t.status === 'Pending')
+.reduce(
       (s, t) =>
         s + (t.quantity ?? 0) * (data.markets.find((m) => m.symbol === t.symbol)?.price ?? 0),
       0,
@@ -384,14 +384,14 @@ function UserContent({
     {
       name: 'Stocks',
       value: a.holdings
-        .filter((h) => h.market?.category === 'Stocks')
-        .reduce((s, h) => s + h.value, 0),
+.filter((h) => h.market?.category === 'Stocks')
+.reduce((s, h) => s + h.value, 0),
     },
     {
       name: 'Crypto',
       value: a.holdings
-        .filter((h) => h.market?.category === 'Crypto')
-        .reduce((s, h) => s + h.value, 0),
+.filter((h) => h.market?.category === 'Crypto')
+.reduce((s, h) => s + h.value, 0),
     },
     { name: 'Cash', value: data.portfolio.cashCents / 100 },
     { name: 'Plans', value: a.invested },
@@ -404,7 +404,7 @@ function UserContent({
         <section className="card">
           <div className="row">
             <div>
-              <span className="eyebrow muted">DEMO MARKET</span>
+              <span className="eyebrow muted">MARKET</span>
               <h2>{market ? market.name : 'Your trading workspace'}</h2>
               {market && (
                 <strong className="detail-price">
@@ -426,7 +426,7 @@ function UserContent({
             </div>
             <div>
               <span>Trading fees</span>
-              <b>$0 demo</b>
+              <b>$0 </b>
             </div>
           </div>
           <h3>Open & recent orders</h3>
@@ -501,8 +501,8 @@ function UserContent({
               </thead>
               <tbody>
                 {a.holdings
-                  .filter((h) => h.quantity > 0)
-                  .map((h) => (
+.filter((h) => h.quantity > 0)
+.map((h) => (
                     <tr key={h.symbol}>
                       <td>{h.market?.name}</td>
                       <td>{h.symbol}</td>
@@ -534,21 +534,21 @@ function UserContent({
     return (
       <>
         <div className="grid three">
-          <StatCard label="Allocated demo principal" value={money(a.invested)} />
+          <StatCard label="Allocated principal" value={money(a.invested)} />
           <StatCard
             label="Active allocations"
             value={String(data.investments.filter((i) => i.status === 'Active').length)}
           />
-          <StatCard label="Available demo cash" value={money(available)} />
+          <StatCard label="Available cash" value={money(available)} />
         </div>
         <div className="section-heading compact">
-          <h2>Choose your practice horizon.</h2>
+          <h2>Choose your horizon.</h2>
           <span className="muted small">No guaranteed or accrued returns</span>
         </div>
         <div className="grid four">
           {data.plans
-            .filter((p) => p.active)
-            .map((p) => (
+.filter((p) => p.active)
+.map((p) => (
               <InvestmentPlanCard key={p.id} plan={p} onSelect={setChosen} />
             ))}
         </div>
@@ -564,7 +564,7 @@ function UserContent({
           )}
         </section>
         {chosen && (
-          <Modal title={chosen.name + ' demo allocation'} onClose={() => setChosen(null)}>
+          <Modal title={chosen.name + ' allocation'} onClose={() => setChosen(null)}>
             <form
               className="form"
               onSubmit={async (e) => {
@@ -574,7 +574,7 @@ function UserContent({
               }}
             >
               <p className="muted">
-                {chosen.duration}-day demo duration · {chosen.risk} risk. Principal is locked until
+                {chosen.duration}-day activity duration · {chosen.risk} risk. Principal is locked until
                 an administrator completes or cancels the allocation. No returns accrue.
               </p>
               <label>
@@ -593,7 +593,7 @@ function UserContent({
                 Range {money(chosen.min)} – {money(chosen.max)}
               </p>
               <button className="button" disabled={busy}>
-                Confirm demo allocation
+                Confirm allocation
               </button>
             </form>
           </Modal>
@@ -606,7 +606,7 @@ function UserContent({
         <div className="wallet-overview">
           <section className="card wallet-main">
             <div className="row">
-              <span className="eyebrow">YOUR DEMO WALLET</span>
+              <span className="eyebrow">YOUR WALLET</span>
               <Wallet size={26} />
             </div>
             <h2>{money(data.portfolio.cashCents / 100)}</h2>
@@ -685,7 +685,7 @@ function UserContent({
     if (order)
       return (
         <section className="card order-detail">
-          <span className="demo-pill">DEMO RESERVATION</span>
+          <span className="demo-pill">RESERVATION</span>
           <h2>{order.details}</h2>
           <p className="muted">
             {order.reference} · Submitted {date(order.createdAt)}
@@ -699,7 +699,7 @@ function UserContent({
               'Preparing',
               'Shipped',
               'Delivered',
-              ...(order.status === 'Cancelled' ? ['Cancelled'] : []),
+...(order.status === 'Cancelled' ? ['Cancelled'] : []),
             ].map((s) => {
               const entry = order.timeline?.find((t) => t.status === s);
               return (
@@ -707,7 +707,7 @@ function UserContent({
                   <i />
                   <b>{s}</b>
                   <span className="muted small">
-                    {entry ? date(entry.at) : 'Awaiting demo update'}
+                    {entry ? date(entry.at) : 'Awaiting update'}
                   </span>
                 </div>
               );
@@ -723,7 +723,7 @@ function UserContent({
       );
     return (
       <section className="card">
-        <h3>Your demo reservations</h3>
+        <h3>Your reservations</h3>
         {data.orders.length ? (
           data.orders.map((o) => (
             <Link key={o.id} href={'/dashboard/orders/' + o.id} className="order-row">
@@ -741,7 +741,7 @@ function UserContent({
         ) : (
           <EmptyState
             title="Your next electric chapter awaits"
-            description="Explore the vehicle collection to create a demo reservation."
+            description="Explore the vehicle collection to create a reservation."
           />
         )}
         <Link className="button secondary" href="/dashboard/vehicles">
@@ -816,7 +816,7 @@ function UserContent({
               Active plans <b>{data.investments.filter((i) => i.status === 'Active').length}</b>
             </span>
             <span>
-              Currency <b>USD · Demo</b>
+              Currency <b>USD</b>
             </span>
           </div>
         </section>
@@ -830,7 +830,7 @@ function UserContent({
       </div>
       <div className="section-heading compact">
         <h2>
-          Market overview <span className="badge neutral">DEMO</span>
+          Market overview <span className="badge neutral"></span>
         </h2>
         <Link href="/dashboard/markets" className="text-link small">
           All markets
@@ -876,9 +876,9 @@ function UserContent({
       </div>
       <div className="grid two">
         {data.plans
-          .filter((p) => p.active)
-          .slice(0, 2)
-          .map((p) => (
+.filter((p) => p.active)
+.slice(0, 2)
+.map((p) => (
             <InvestmentPlanCard key={p.id} plan={p} href="/dashboard/investments" />
           ))}
       </div>
@@ -954,12 +954,12 @@ function TradeForm({
           side,
           orderType: type,
           quantity: Number(quantity),
-          ...(type === 'Limit' ? { limitPrice: Number(limit) } : {}),
+...(type === 'Limit' ? { limitPrice: Number(limit) } : {}),
         });
       }}
     >
       <div className="row">
-        <h3>Place a demo order</h3>
+        <h3>Place an order</h3>
         <ArrowLeftRight size={18} />
       </div>
       <div className="segmented full">
@@ -1031,11 +1031,11 @@ function TradeForm({
       </label>
       <div className="order-estimate">
         <div className="row">
-          <span>Current demo price</span>
+          <span>Current price</span>
           <b>{money(market.price)}</b>
         </div>
         <div className="row">
-          <span>Available demo balance</span>
+          <span>Available balance</span>
           <b>{money((data.portfolio.cashCents - data.portfolio.reservedCents) / 100)}</b>
         </div>
         <div className="row">
@@ -1044,13 +1044,13 @@ function TradeForm({
         </div>
       </div>
       <button className="button full" disabled={busy}>
-        {busy ? 'Submitting…' : side + ' ' + asset.replace('-', '/') + ' · Demo'}
+        {busy ? 'Submitting…' : side + ' ' + asset.replace('-', '/')}
         <ArrowRight size={17} />
       </button>
       <p className="micro muted">
         {type === 'Limit'
           ? 'Limit orders reserve funds or holdings and await eligible administrator execution.'
-          : 'Executed against the server demo quote. No real exchange or funds.'}
+          : 'Executed against the latest server quote. No real exchange or funds.'}
       </p>
     </form>
   );
@@ -1079,14 +1079,14 @@ function FundingForm({
             action: kind,
             method,
             amount: Number(f.get('amount')),
-            ...(kind === 'withdraw' ? { destination: f.get('destination') } : {}),
+...(kind === 'withdraw' ? { destination: f.get('destination') } : {}),
           })
         )
           form.reset();
       }}
     >
       <span className="demo-pill">NOT REAL FUNDS</span>
-      <h2>{kind === 'deposit' ? 'Fund your next idea.' : 'Request a demo withdrawal.'}</h2>
+      <h2>{kind === 'deposit' ? 'Fund your next idea.' : 'Request a withdrawal.'}</h2>
       <p className="muted">
         {kind === 'deposit'
           ? 'Submit a simulated funding request for administrator review. Never send a real payment.'
@@ -1105,7 +1105,7 @@ function FundingForm({
         />
       </label>
       <label>
-        Demo method
+        Payment method
         <select value={method} onChange={(e) => setMethod(e.target.value)}>
           {data.settings.methods.map((m) => (
             <option key={m}>{m}</option>
@@ -1114,10 +1114,10 @@ function FundingForm({
       </label>
       {kind === 'withdraw' && (
         <label>
-          Fictional destination details
+           destination details
           <input
             name="destination"
-            placeholder="e.g. Demo wallet ALPHA-01"
+            placeholder="e.g. wallet ALPHA-01"
             minLength={4}
             maxLength={200}
             required
@@ -1127,16 +1127,16 @@ function FundingForm({
       <div className="alert">
         <ShieldCheck size={19} />
         <p>
-          Demo workflow only. Do not enter card numbers, bank account numbers, crypto addresses, or
+          This workflow is for only. Do not enter card numbers, bank account numbers, crypto addresses, or
           private keys. No payment will be processed.
         </p>
       </div>
       <button className="button" disabled={busy || !data.settings.methods.length}>
-        {busy ? 'Submitting…' : 'Submit demo ' + kind}
+        {busy ? 'Submitting…' : 'Submit ' + kind}
         <ArrowRight size={17} />
       </button>
       {!data.settings.methods.length && (
-        <p className="negative">All demo payment methods are disabled.</p>
+        <p className="negative">All payment methods are disabled.</p>
       )}
     </form>
   );
@@ -1165,7 +1165,7 @@ function AccountForm({
             await run({
               action: 'profile',
               profile: {
-                ...Object.fromEntries(f),
+...Object.fromEntries(f),
                 currency: data.user.currency,
                 region: data.user.region,
               },

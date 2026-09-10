@@ -14,7 +14,7 @@ export default async function Cars() {
           <p className="muted">
             Exceptional electric vehicles. A different kind of discovery.
             <br />
-            Explore fictional listings and practice a reservation.
+            Explore listings and a reservation.
           </p>
         </div>
         <VehicleCatalog vehicles={vehicles} />

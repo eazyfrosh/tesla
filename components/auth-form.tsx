@@ -48,7 +48,7 @@ export function AuthForm({
         }
         minLength={name === 'password' ? 12 : undefined}
         maxLength={name === 'password' ? 128 : 200}
-        onChange={(e) => setForm({ ...form, [name]: e.target.value })}
+        onChange={(e) => setForm({...form, [name]: e.target.value })}
       />
     </label>
   );
@@ -84,7 +84,7 @@ export function AuthForm({
           : await signInWithEmailAndPassword(auth, form.email, form.password);
       await session({
         idToken: await result.user.getIdToken(),
-        ...(mode === 'register'
+...(mode === 'register'
           ? {
               profile: {
                 fullName: form.fullName,
@@ -126,14 +126,14 @@ export function AuthForm({
           <div className="auth-quote">
             <span className="red">✦</span>
             <p>
-              Practice with intention.
+               with intention.
               <br />
               Move with confidence.
             </p>
           </div>
         </div>
         <span className="small muted">
-          <ShieldCheck size={15} /> Fictional platform. No real funds.
+          <ShieldCheck size={15} /> platform. No real funds.
         </span>
       </aside>
       <main className="auth-main">
@@ -141,7 +141,7 @@ export function AuthForm({
           <ArrowLeft size={16} /> Back to home
         </Link>
         <div className="auth-content">
-          <span className="demo-pill">VOLTERRA DEMO</span>
+          <span className="demo-pill">VOLTERRA</span>
           <h2>
             {mode === 'login'
               ? 'Welcome back.'
@@ -153,7 +153,7 @@ export function AuthForm({
             {mode === 'login'
               ? 'Sign in to your simulated workspace.'
               : mode === 'register'
-                ? 'Create your account. Start with $10,000 in practice funds.'
+                ? 'Create your account. Start with $10,000 in funds.'
                 : 'We’ll help you reset your password.'}
           </p>
           {mode === 'register' && (
@@ -183,7 +183,7 @@ export function AuthForm({
                     Preferred currency
                     <select
                       value={form.currency}
-                      onChange={(e) => setForm({ ...form, currency: e.target.value })}
+                      onChange={(e) => setForm({...form, currency: e.target.value })}
                     >
                       {['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD'].map((c) => (
                         <option key={c}>{c}</option>
@@ -234,7 +234,7 @@ export function AuthForm({
                     ? 'Send reset link'
                     : step < 2
                       ? 'Continue'
-                      : 'Create demo account'}
+                      : 'Create account'}
               <ArrowRight size={17} />
             </button>
             {mode === 'register' && step > 0 && (
@@ -247,7 +247,7 @@ export function AuthForm({
             <div className="local-access">
               <span className="small muted">LOCAL DEVELOPMENT SANDBOX</span>
               <p className="small muted">
-                Firebase is not configured. Explore isolated server-stored demo accounts.
+                Firebase is not configured. Explore isolated server-stored accounts.
               </p>
               <div className="row">
                 {['user', 'admin'].map((role) => (
@@ -266,7 +266,7 @@ export function AuthForm({
                       }
                     }}
                   >
-                    Demo {role}
+                    {role} account
                     <ArrowUpRightFallback />
                   </button>
                 ))}
