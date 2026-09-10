@@ -35,7 +35,6 @@ export function Logo() {
   return (
     <Link href="/" className="logo" aria-label="Volterra home">
       <img className="brand-logo" src="/images/tesla-logo.png" alt="Tesla" width={46} height={60} />
-      <span className="demo-pill">SIMULATED</span>
     </Link>
   );
 }
