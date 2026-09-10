@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({
       ok: true,
-      message: 'Your demo message has been saved for administrator review.',
+      message: 'Your message has been saved for administrator review.',
     });
   } catch (e) {
     return apiError(e);

@@ -39,10 +39,10 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
                 starts here.
               </h1>
               <p className="muted">
-                Have a question about your demo experience? Leave a message for the platform
+                Have a question about your platform experience? Leave a message for the platform
                 administrator.
               </p>
-              <p className="small muted">Demo support inbox · no external email is sent.</p>
+              <p className="small muted">Support inbox · no external email is sent.</p>
             </div>
             <ContactForm />
           </div>

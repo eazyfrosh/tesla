@@ -33,9 +33,9 @@ export const date = (value: string) =>
   new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 export function Logo() {
   return (
-    <Link href="/" className="logo" aria-label="Volterra demo home">
+    <Link href="/" className="logo" aria-label="Volterra home">
       <img className="brand-logo" src="/images/tesla-logo.png" alt="Tesla" width={46} height={60} />
-      <span className="demo-pill">DEMO</span>
+      <span className="demo-pill">PRACTICE</span>
     </Link>
   );
 }
@@ -75,7 +75,7 @@ export function StatCard({
       <strong>{value}</strong>
       <div className="small">
         <span className="positive">{change ?? 'Simulated USD'}</span>
-        <span className="muted"> · demo account</span>
+        <span className="muted"> · practice account</span>
       </div>
     </article>
   );
@@ -233,7 +233,7 @@ export function MarketCard({ market: m }: { market: Market }) {
           strokeWidth="2"
         />
       </svg>
-      <span className="micro muted">DEMO QUOTE</span>
+      <span className="micro muted">CURRENT QUOTE</span>
     </Link>
   );
 }
@@ -300,7 +300,7 @@ export function InvestmentPlanCard({
         <span className="plan-symbol">
           <Zap size={22} />
         </span>
-        {p.name === 'Growth' && <span className="badge negative">POPULAR DEMO</span>}
+        {p.name === 'Growth' && <span className="badge negative">POPULAR</span>}
       </div>
       <h3>{p.name}</h3>
       <p className="muted">{p.description}</p>
@@ -309,7 +309,7 @@ export function InvestmentPlanCard({
         <span className="small muted"> minimum</span>
       </strong>
       <div className="row small">
-        <span className="muted">Demo duration</span>
+        <span className="muted">Activity duration</span>
         <span>{p.duration} days</span>
       </div>
       <div className="row small">
@@ -413,7 +413,7 @@ export function TransactionTable({
             <tr>
               <th>Activity</th>
               <th>Date</th>
-              <th>Amount · demo</th>
+              <th>Amount</th>
               <th>Status</th>
               {!compact && <th>Reference</th>}
               {onCancel && <th>Action</th>}
@@ -584,7 +584,7 @@ export function ConfirmDialog({
           Go back
         </button>
         <button className="button" onClick={onConfirm}>
-          Confirm demo action
+          Confirm action
         </button>
       </div>
     </Modal>

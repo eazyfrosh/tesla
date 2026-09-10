@@ -74,7 +74,7 @@ export function AdminContent({
                 <b>{user.phone || 'Not provided'}</b>
               </div>
               <div>
-                <span>Demo cash</span>
+                <span>Account cash</span>
                 <b>{money((p?.cashCents ?? 0) / 100)}</b>
               </div>
             </div>
@@ -111,7 +111,7 @@ export function AdminContent({
                 ))}
               </select>
             </div>
-            <h3>Demo holdings</h3>
+            <h3>Account holdings</h3>
             <AdminTable headings={['Symbol', 'Quantity', 'Cost basis']}>
               {p?.holdings.map((h) => (
                 <tr key={h.symbol}>
@@ -229,7 +229,7 @@ export function AdminContent({
             headings={[
               'Reference / member',
               'Details',
-              'Amount · demo',
+              'Amount',
               'Status',
               'Created',
               'Review',
@@ -250,7 +250,7 @@ export function AdminContent({
                   <td>
                     {r.details}
                     {r.destination && (
-                      <span className="small muted block">Demo destination: {r.destination}</span>
+                      <span className="small muted block">Destination: {r.destination}</span>
                     )}
                   </td>
                   <td>{money(r.amountCents / 100)}</td>
@@ -395,10 +395,10 @@ export function AdminContent({
         <section className="card">
           <h3>Illustrative market quotes</h3>
           <p className="muted">
-            These values are demo quotes. Updating a quote does not automatically fill pending limit
+            These values are current quotes. Updating a quote does not automatically fill pending limit
             orders.
           </p>
-          <AdminTable headings={['Symbol', 'Asset', 'Demo price', 'Movement', 'Action']}>
+          <AdminTable headings={['Symbol', 'Asset', 'Current price', 'Movement', 'Action']}>
             {data.markets.map((m) => (
               <tr key={m.id}>
                 <td>{m.symbol}</td>
@@ -415,7 +415,7 @@ export function AdminContent({
           </AdminTable>
         </section>
         {selectedMarket && (
-          <Modal title="Edit demo quote" onClose={() => setSelectedMarket(null)}>
+          <Modal title="Edit current quote" onClose={() => setSelectedMarket(null)}>
             <form
               className="form"
               onSubmit={async (e) => {
@@ -433,7 +433,7 @@ export function AdminContent({
               }}
             >
               <label>
-                Demo price
+                Current price
                 <input
                   name="price"
                   type="number"
@@ -475,7 +475,7 @@ export function AdminContent({
             if (await run({ action: 'notify', ...Object.fromEntries(f) })) form.reset();
           }}
         >
-          <h2>Create a demo notification</h2>
+          <h2>Create a notification</h2>
           <label>
             Recipient
             <select name="uid">
@@ -587,7 +587,7 @@ export function AdminContent({
           {!data.content?.some((c) => c.id.startsWith('contact_')) && (
             <EmptyState
               title="No messages yet"
-              description="Demo contact submissions will appear here."
+              description="Contact submissions will appear here."
             />
           )}
         </section>
@@ -640,7 +640,7 @@ export function AdminContent({
             rows={3}
           />
         </label>
-        <h3>Enabled demo payment methods</h3>
+        <h3>Enabled payment methods</h3>
         {['Bank Transfer', 'Crypto', 'Card Placeholder'].map((m) => (
           <label className="checkbox" key={m}>
             <input
@@ -673,8 +673,8 @@ export function AdminContent({
             data.users?.filter((u) => !u.disabled && u.accountStatus === 'Active').length ?? 0,
           )}
         />
-        <StatCard label="Approved demo deposits" value={money(total(data.deposits))} />
-        <StatCard label="Approved demo withdrawals" value={money(total(data.withdrawals))} />
+        <StatCard label="Approved account deposits" value={money(total(data.deposits))} />
+        <StatCard label="Approved withdrawal requests" value={money(total(data.withdrawals))} />
       </div>
       <div className="grid dashboard-charts">
         <section className="card">
@@ -708,7 +708,7 @@ export function AdminContent({
           ))}
           <div className="alert">
             <ShieldCheck size={18} />
-            <p>All administrative changes affect demo records only.</p>
+            <p>All administrative changes affect account records only.</p>
           </div>
         </section>
       </div>
@@ -793,7 +793,7 @@ function CatalogEditor({
             {input('min', 'Minimum USD', 'number', 100)}
             {input('max', 'Maximum USD', 'number', 1000)}
           </div>
-          {input('duration', 'Demo duration in days', 'number', 30)}
+          {input('duration', 'Activity duration in days', 'number', 30)}
           {select('risk', 'Risk level', ['Moderate', 'Low', 'High'])}
           <label className="checkbox">
             <input name="active" type="checkbox" defaultChecked={Boolean(v.active ?? true)} />
@@ -851,7 +851,7 @@ function CatalogEditor({
           minLength={10}
           maxLength={type === 'plan' ? 200 : 2000}
           defaultValue={String(
-            v.description ?? 'Fictional demo offering. No real funds or guaranteed returns.',
+            v.description ?? 'Fictional fictional offering. No real funds or guaranteed returns.',
           )}
         />
       </label>

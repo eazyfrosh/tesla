@@ -32,7 +32,7 @@ export function PublicNav() {
           </Link>
         </nav>
         <div className="nav-actions">
-          <span className="demo-pill">DEMO PLATFORM</span>
+          <span className="demo-pill">VOLTERRA PLATFORM</span>
           <Link className="login-link" href="/login">
             Log in
           </Link>
@@ -115,14 +115,14 @@ export function PublicFooter() {
           ))}
         </div>
         <div className="risk-copy">
-          <b>DEMO ONLY · NOT REAL FUNDS.</b> Volterra is a fictional platform for demonstration and
+          <b>SIMULATION ONLY · NOT REAL FUNDS.</b> Volterra is a fictional platform for learning and
           education. Quotes, chart history, account values, testimonials, and vehicle listings are
           illustrative. No real trading, payments, investment returns, or vehicle sales occur.
           Nothing here is financial advice. Volterra is not affiliated with Tesla or any listed
           brand.
         </div>
         <div className="row footer-bottom">
-          <span>© {new Date().getFullYear()} Volterra Demo. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Volterra. All rights reserved.</span>
           <span>
             <Globe size={14} /> English · USD
           </span>
@@ -207,7 +207,7 @@ export function Landing({
                   <span className="asset-icon tesla">T</span>
                   <div>
                     <b>TSLA</b>
-                    <span className="small muted">Tesla, Inc. · Demo</span>
+                    <span className="small muted">Tesla, Inc.</span>
                   </div>
                   <span className="positive">
                     +2.34% <ArrowUpRight size={14} />
@@ -297,7 +297,7 @@ export function Landing({
               [
                 Zap,
                 'The electric advantage',
-                'Discover a curated demo collection of electric vehicles. Compare, explore, and reserve.',
+                'Discover a curated curated collection of electric vehicles. Compare, explore, and reserve.',
                 '/cars',
               ],
             ].map(([Icon, title, copy, href]) => {
@@ -322,7 +322,7 @@ export function Landing({
             <div className="wallet-preview card">
               <div className="row">
                 <Logo />
-                <span className="demo-pill">DEMO WALLET</span>
+                <span className="demo-pill">PRACTICE WALLET</span>
               </div>
               <p className="muted">Your starting practice balance</p>
               <strong>
@@ -344,7 +344,7 @@ export function Landing({
                 every simulated request visible from start to finish.
               </p>
               <Link href="/register" className="text-link">
-                Explore your demo wallet <ArrowRight size={18} />
+                Explore your practice wallet <ArrowRight size={18} />
               </Link>
             </div>
           </div>
@@ -438,7 +438,7 @@ export function Landing({
                   <span className="avatar">{initial}</span>
                   <span>
                     {name}
-                    <span className="micro muted">FICTIONAL DEMO PERSONA</span>
+                    <span className="micro muted">FICTIONAL FICTIONAL PERSONA</span>
                   </span>
                 </div>
               </article>
@@ -453,7 +453,7 @@ export function Landing({
             </div>
             <div className="grid three">
               {[
-                ['01', 'Make it yours', 'Create your demo account and set up your profile.'],
+                ['01', 'Make it yours', 'Create your practice account and set up your profile.'],
                 [
                   '02',
                   'Explore your possibilities',
@@ -462,7 +462,7 @@ export function Landing({
                 [
                   '03',
                   'Put ideas in motion',
-                  'Practice a trade, allocate demo funds, or reserve a fictional EV.',
+                  'Practice a trade, allocate practice funds, or reserve a fictional EV.',
                 ],
               ].map(([n, t, d]) => (
                 <div className="step" key={n}>
@@ -496,7 +496,7 @@ export function Landing({
             <span className="muted">Explore what’s next.</span>
           </h2>
           <Link href="/register" className="button large">
-            Create a demo account <ArrowUpRight size={18} />
+            Create a practice account <ArrowUpRight size={18} />
           </Link>
           <p className="small muted">No real money. Just room to grow.</p>
         </section>
@@ -544,7 +544,7 @@ export function ContactForm() {
         <textarea name="message" required minLength={10} maxLength={2000} rows={5} />
       </label>
       <p className="small muted">
-        Do not include bank details, passwords, or payment information. This form stores a demo
+        Do not include bank details, passwords, or payment information. This form stores a practice
         support request.
       </p>
       <button className="button" disabled={busy}>

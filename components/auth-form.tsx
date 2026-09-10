@@ -141,7 +141,7 @@ export function AuthForm({
           <ArrowLeft size={16} /> Back to home
         </Link>
         <div className="auth-content">
-          <span className="demo-pill">VOLTERRA DEMO</span>
+          <span className="demo-pill">VOLTERRA</span>
           <h2>
             {mode === 'login'
               ? 'Welcome back.'
@@ -234,7 +234,7 @@ export function AuthForm({
                     ? 'Send reset link'
                     : step < 2
                       ? 'Continue'
-                      : 'Create demo account'}
+                      : 'Create practice account'}
               <ArrowRight size={17} />
             </button>
             {mode === 'register' && step > 0 && (
@@ -247,7 +247,7 @@ export function AuthForm({
             <div className="local-access">
               <span className="small muted">LOCAL DEVELOPMENT SANDBOX</span>
               <p className="small muted">
-                Firebase is not configured. Explore isolated server-stored demo accounts.
+                Firebase is not configured. Explore isolated server-stored practice accounts.
               </p>
               <div className="row">
                 {['user', 'admin'].map((role) => (
@@ -266,7 +266,7 @@ export function AuthForm({
                       }
                     }}
                   >
-                    Demo {role}
+                    {role} account
                     <ArrowUpRightFallback />
                   </button>
                 ))}

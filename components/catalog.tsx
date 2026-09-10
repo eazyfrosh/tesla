@@ -206,12 +206,12 @@ export function VehicleDetail({
               disabled={busy || v.availability !== 'Available'}
               onClick={onOrder}
             >
-              {busy ? 'Submitting…' : 'Request demo reservation'}
+              {busy ? 'Submitting…' : 'Request reservation'}
               <ArrowRight size={17} />
             </button>
           ) : (
             <Link className="button full" href={'/dashboard/vehicles/' + v.id}>
-              Reserve in your demo account
+              Reserve in your practice account
               <ArrowRight size={17} />
             </Link>
           )}
