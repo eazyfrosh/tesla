@@ -48,7 +48,7 @@ export function AuthForm({
         }
         minLength={name === 'password' ? 12 : undefined}
         maxLength={name === 'password' ? 128 : 200}
-        onChange={(e) => setForm({...form, [name]: e.target.value })}
+        onChange={(e) => setForm({ ...form, [name]: e.target.value })}
       />
     </label>
   );
@@ -84,7 +84,7 @@ export function AuthForm({
           : await signInWithEmailAndPassword(auth, form.email, form.password);
       await session({
         idToken: await result.user.getIdToken(),
-...(mode === 'register'
+        ...(mode === 'register'
           ? {
               profile: {
                 fullName: form.fullName,
@@ -126,7 +126,7 @@ export function AuthForm({
           <div className="auth-quote">
             <span className="red">✦</span>
             <p>
-               with intention.
+              with intention.
               <br />
               Move with confidence.
             </p>
@@ -153,7 +153,7 @@ export function AuthForm({
             {mode === 'login'
               ? 'Sign in to your simulated workspace.'
               : mode === 'register'
-                ? 'Create your account. Start with $10,000 in funds.'
+                ? 'Create your account. Start with $0 in simulated funds.'
                 : 'We’ll help you reset your password.'}
           </p>
           {mode === 'register' && (
@@ -183,7 +183,7 @@ export function AuthForm({
                     Preferred currency
                     <select
                       value={form.currency}
-                      onChange={(e) => setForm({...form, currency: e.target.value })}
+                      onChange={(e) => setForm({ ...form, currency: e.target.value })}
                     >
                       {['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD'].map((c) => (
                         <option key={c}>{c}</option>

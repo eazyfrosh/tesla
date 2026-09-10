@@ -197,10 +197,10 @@ export function Topbar({
             <img src={data.user.image} alt="Profile" />
           ) : (
             data.user.fullName
-.split(' ')
-.map((n) => n[0])
-.slice(0, 2)
-.join('')
+              .split(' ')
+              .map((n) => n[0])
+              .slice(0, 2)
+              .join('')
           )}
         </Link>
       </div>
@@ -339,18 +339,18 @@ export function Workspace({
 }
 function amounts(data: Snapshot) {
   const holdings = data.portfolio.holdings.map((h) => ({
-...h,
+    ...h,
     market: data.markets.find((m) => m.symbol === h.symbol),
     value: h.quantity * (data.markets.find((m) => m.symbol === h.symbol)?.price ?? 0),
   }));
   const invested = data.investments
-.filter((i) => i.status === 'Active')
-.reduce((s, i) => s + i.amountCents / 100, 0);
+    .filter((i) => i.status === 'Active')
+    .reduce((s, i) => s + i.amountCents / 100, 0);
   const held = holdings.reduce((s, h) => s + h.value, 0),
     cost = holdings.reduce((s, h) => s + h.costCents / 100, 0);
   const pendingSell = data.transactions
-.filter((t) => t.type === 'Trade' && t.side === 'Sell' && t.status === 'Pending')
-.reduce(
+    .filter((t) => t.type === 'Trade' && t.side === 'Sell' && t.status === 'Pending')
+    .reduce(
       (s, t) =>
         s + (t.quantity ?? 0) * (data.markets.find((m) => m.symbol === t.symbol)?.price ?? 0),
       0,
@@ -384,14 +384,14 @@ function UserContent({
     {
       name: 'Stocks',
       value: a.holdings
-.filter((h) => h.market?.category === 'Stocks')
-.reduce((s, h) => s + h.value, 0),
+        .filter((h) => h.market?.category === 'Stocks')
+        .reduce((s, h) => s + h.value, 0),
     },
     {
       name: 'Crypto',
       value: a.holdings
-.filter((h) => h.market?.category === 'Crypto')
-.reduce((s, h) => s + h.value, 0),
+        .filter((h) => h.market?.category === 'Crypto')
+        .reduce((s, h) => s + h.value, 0),
     },
     { name: 'Cash', value: data.portfolio.cashCents / 100 },
     { name: 'Plans', value: a.invested },
@@ -501,8 +501,8 @@ function UserContent({
               </thead>
               <tbody>
                 {a.holdings
-.filter((h) => h.quantity > 0)
-.map((h) => (
+                  .filter((h) => h.quantity > 0)
+                  .map((h) => (
                     <tr key={h.symbol}>
                       <td>{h.market?.name}</td>
                       <td>{h.symbol}</td>
@@ -547,8 +547,8 @@ function UserContent({
         </div>
         <div className="grid four">
           {data.plans
-.filter((p) => p.active)
-.map((p) => (
+            .filter((p) => p.active)
+            .map((p) => (
               <InvestmentPlanCard key={p.id} plan={p} onSelect={setChosen} />
             ))}
         </div>
@@ -574,8 +574,8 @@ function UserContent({
               }}
             >
               <p className="muted">
-                {chosen.duration}-day activity duration · {chosen.risk} risk. Principal is locked until
-                an administrator completes or cancels the allocation. No returns accrue.
+                {chosen.duration}-day activity duration · {chosen.risk} risk. Principal is locked
+                until an administrator completes or cancels the allocation. No returns accrue.
               </p>
               <label>
                 Amount in simulated USD
@@ -699,16 +699,14 @@ function UserContent({
               'Preparing',
               'Shipped',
               'Delivered',
-...(order.status === 'Cancelled' ? ['Cancelled'] : []),
+              ...(order.status === 'Cancelled' ? ['Cancelled'] : []),
             ].map((s) => {
               const entry = order.timeline?.find((t) => t.status === s);
               return (
                 <div className={entry ? 'done' : ''} key={s}>
                   <i />
                   <b>{s}</b>
-                  <span className="muted small">
-                    {entry ? date(entry.at) : 'Awaiting update'}
-                  </span>
+                  <span className="muted small">{entry ? date(entry.at) : 'Awaiting update'}</span>
                 </div>
               );
             })}
@@ -876,9 +874,9 @@ function UserContent({
       </div>
       <div className="grid two">
         {data.plans
-.filter((p) => p.active)
-.slice(0, 2)
-.map((p) => (
+          .filter((p) => p.active)
+          .slice(0, 2)
+          .map((p) => (
             <InvestmentPlanCard key={p.id} plan={p} href="/dashboard/investments" />
           ))}
       </div>
@@ -954,7 +952,7 @@ function TradeForm({
           side,
           orderType: type,
           quantity: Number(quantity),
-...(type === 'Limit' ? { limitPrice: Number(limit) } : {}),
+          ...(type === 'Limit' ? { limitPrice: Number(limit) } : {}),
         });
       }}
     >
@@ -1079,7 +1077,7 @@ function FundingForm({
             action: kind,
             method,
             amount: Number(f.get('amount')),
-...(kind === 'withdraw' ? { destination: f.get('destination') } : {}),
+            ...(kind === 'withdraw' ? { destination: f.get('destination') } : {}),
           })
         )
           form.reset();
@@ -1114,7 +1112,7 @@ function FundingForm({
       </label>
       {kind === 'withdraw' && (
         <label>
-           destination details
+          destination details
           <input
             name="destination"
             placeholder="e.g. wallet ALPHA-01"
@@ -1127,8 +1125,8 @@ function FundingForm({
       <div className="alert">
         <ShieldCheck size={19} />
         <p>
-          This workflow is for only. Do not enter card numbers, bank account numbers, crypto addresses, or
-          private keys. No payment will be processed.
+          This workflow is for only. Do not enter card numbers, bank account numbers, crypto
+          addresses, or private keys. No payment will be processed.
         </p>
       </div>
       <button className="button" disabled={busy || !data.settings.methods.length}>
@@ -1165,7 +1163,7 @@ function AccountForm({
             await run({
               action: 'profile',
               profile: {
-...Object.fromEntries(f),
+                ...Object.fromEntries(f),
                 currency: data.user.currency,
                 region: data.user.region,
               },

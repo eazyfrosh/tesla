@@ -156,7 +156,7 @@ export function AdminContent({
             ?.filter((u) =>
               (u.fullName + u.email + u.username).toLowerCase().includes(q.toLowerCase()),
             )
-.map((u) => (
+            .map((u) => (
               <tr key={u.id}>
                 <td>
                   <b>{u.fullName}</b>
@@ -258,20 +258,13 @@ export function AdminContent({
             />
           </div>
           <AdminTable
-            headings={[
-              'Reference / member',
-              'Details',
-              'Amount',
-              'Status',
-              'Created',
-              'Review',
-            ]}
+            headings={['Reference / member', 'Details', 'Amount', 'Status', 'Created', 'Review']}
           >
             {records
-.filter((r) =>
+              .filter((r) =>
                 (r.reference + r.uid + r.details).toLowerCase().includes(q.toLowerCase()),
               )
-.map((r) => (
+              .map((r) => (
                 <tr key={r.id}>
                   <td>
                     <b>{r.reference}</b>
@@ -444,8 +437,8 @@ export function AdminContent({
         <section className="card">
           <h3>Illustrative market quotes</h3>
           <p className="muted">
-            These values are current quotes. Updating a quote does not automatically fill pending limit
-            orders.
+            These values are current quotes. Updating a quote does not automatically fill pending
+            limit orders.
           </p>
           <AdminTable headings={['Symbol', 'Asset', 'Current price', 'Movement', 'Action']}>
             {data.markets.map((m) => (
@@ -521,7 +514,7 @@ export function AdminContent({
             e.preventDefault();
             const form = e.currentTarget;
             const f = new FormData(form);
-            if (await run({ action: 'notify',...Object.fromEntries(f) })) form.reset();
+            if (await run({ action: 'notify', ...Object.fromEntries(f) })) form.reset();
           }}
         >
           <h2>Create a notification</h2>
@@ -578,7 +571,7 @@ export function AdminContent({
             await run({
               action: 'saveContent',
               id: contentId,
-...Object.fromEntries(new FormData(e.currentTarget)),
+              ...Object.fromEntries(new FormData(e.currentTarget)),
             });
           }}
         >
@@ -625,7 +618,7 @@ export function AdminContent({
           <h3>Contact inbox</h3>
           {data.content
             ?.filter((c) => c.id.startsWith('contact_'))
-.map((c) => (
+            .map((c) => (
               <div className="notification" key={c.id}>
                 <div>
                   <h3>{c.title}</h3>
@@ -815,25 +808,25 @@ function CatalogEditor({
         e.preventDefault();
         const f = new FormData(e.currentTarget);
         const payload: Record<string, unknown> = {
-...Object.fromEntries(f),
+          ...Object.fromEntries(f),
           action: type === 'plan' ? 'savePlan' : 'saveVehicle',
-...(value !== 'new' ? { id: value.id } : {}),
+          ...(value !== 'new' ? { id: value.id } : {}),
         };
         if (type === 'plan') {
           payload.active = f.get('active') === 'on';
           payload.benefits = String(f.get('benefits'))
-.split('\n')
-.map((s) => s.trim())
-.filter(Boolean);
+            .split('\n')
+            .map((s) => s.trim())
+            .filter(Boolean);
         } else {
           payload.images = String(f.get('images'))
-.split('\n')
-.map((s) => s.trim())
-.filter(Boolean);
+            .split('\n')
+            .map((s) => s.trim())
+            .filter(Boolean);
           payload.features = String(f.get('features'))
-.split('\n')
-.map((s) => s.trim())
-.filter(Boolean);
+            .split('\n')
+            .map((s) => s.trim())
+            .filter(Boolean);
         }
         if (await run(payload)) onDone();
       }}
@@ -902,9 +895,7 @@ function CatalogEditor({
           required
           minLength={10}
           maxLength={type === 'plan' ? 200 : 2000}
-          defaultValue={String(
-            v.description ?? ' offering. No real funds or guaranteed returns.',
-          )}
+          defaultValue={String(v.description ?? ' offering. No real funds or guaranteed returns.')}
         />
       </label>
       <button className="button" disabled={busy}>
