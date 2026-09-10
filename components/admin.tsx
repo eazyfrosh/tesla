@@ -1,4 +1,5 @@
 'use client';
+import { WalletMethodsAdmin } from './wallet-methods';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Plus, ArrowRight, Edit, Trash2, ShieldCheck } from 'lucide-react';
@@ -30,6 +31,7 @@ export function AdminContent({
   run: RunAction;
   busy: boolean;
 }) {
+  const [viewDeposit, setViewDeposit] = useState<Activity | null>(null);
   const [q, setQ] = useState(''),
     [edit, setEdit] = useState<Plan | Vehicle | 'new' | null>(null),
     [confirmation, setConfirmation] = useState<Record<string, unknown> | null>(null),
@@ -46,6 +48,7 @@ export function AdminContent({
       }}
     />
   );
+  if (section === 'wallet-methods') return <WalletMethodsAdmin data={data} run={run} busy={busy} />;
   if (section === 'users') {
     const user = data.users?.find((u) => u.id === detail);
     if (user) {
@@ -95,7 +98,9 @@ export function AdminContent({
               </button>
               <select
                 aria-label="Account status"
-                value={user.accountStatus}
+                value={
+                  user.accountStatus.toLowerCase() === 'active' ? 'Active' : user.accountStatus
+                }
                 disabled={busy || user.uid === data.user.uid}
                 onChange={(e) =>
                   confirm({
@@ -199,14 +204,41 @@ export function AdminContent({
             ? ['Completed', 'Cancelled']
             : []
           : collection === 'transactions'
-            ? r.type === 'Trade' && r.status === 'Pending'
+            ? r.type === 'Trade' && r.status.toLowerCase() === 'pending'
               ? ['Completed', 'Cancelled']
               : []
-            : r.status === 'Pending'
+            : r.status.toLowerCase() === 'pending'
               ? ['Approved', 'Rejected']
               : [];
     return (
       <>
+        {viewDeposit && (
+          <Modal title="Demo deposit request" onClose={() => setViewDeposit(null)}>
+            <p>
+              User: {data.users?.find((u) => u.uid === viewDeposit.uid)?.email ?? viewDeposit.uid}
+            </p>
+            <p>Amount: {money(viewDeposit.amountCents / 100)} · simulated USD</p>
+            <p>Wallet method: {viewDeposit.method}</p>
+            <p>Network: {viewDeposit.network ?? '—'}</p>
+            <p className="wallet-address">
+              Address at submission: {viewDeposit.walletAddress ?? '—'}
+            </p>
+            <p className="wallet-address">
+              Reference: {viewDeposit.externalReference ?? viewDeposit.reference}
+            </p>
+            <p>Date: {date(viewDeposit.createdAt)}</p>
+            <StatusBadge status={viewDeposit.status} />
+            {viewDeposit.proofImage ? (
+              <img
+                className="wallet-qr"
+                src={viewDeposit.proofImage}
+                alt="Deposit proof screenshot"
+              />
+            ) : (
+              <p>No proof image attached.</p>
+            )}
+          </Modal>
+        )}
         <section className="card">
           <h3>
             {section === 'transactions'
@@ -249,6 +281,15 @@ export function AdminContent({
                   </td>
                   <td>
                     {r.details}
+                    {r.network && <span className="small block">Network: {r.network}</span>}
+                    {r.externalReference && (
+                      <span className="small block">Reference: {r.externalReference}</span>
+                    )}
+                    {r.proofImage && (
+                      <a className="text-link" href={r.proofImage} target="_blank" rel="noreferrer">
+                        View proof image
+                      </a>
+                    )}
                     {r.destination && (
                       <span className="small muted block">Demo destination: {r.destination}</span>
                     )}
@@ -260,6 +301,14 @@ export function AdminContent({
                   <td>{date(r.createdAt)}</td>
                   <td>
                     <div className="review-actions">
+                      {collection === 'deposits' && (
+                        <button
+                          className="button secondary small"
+                          onClick={() => setViewDeposit(r)}
+                        >
+                          View
+                        </button>
+                      )}
                       {transitions(r).map((status) => (
                         <button
                           className="button secondary small"
@@ -662,7 +711,9 @@ export function AdminContent({
       </form>
     );
   const total = (rows: Activity[]) =>
-    rows.filter((r) => r.status === 'Approved').reduce((s, r) => s + r.amountCents / 100, 0);
+    rows
+      .filter((r) => r.status.toLowerCase() === 'approved')
+      .reduce((s, r) => s + r.amountCents / 100, 0);
   return (
     <>
       <div className="grid four">
@@ -670,7 +721,8 @@ export function AdminContent({
         <StatCard
           label="Active users"
           value={String(
-            data.users?.filter((u) => !u.disabled && u.accountStatus === 'Active').length ?? 0,
+            data.users?.filter((u) => !u.disabled && u.accountStatus.toLowerCase() === 'active')
+              .length ?? 0,
           )}
         />
         <StatCard label="Approved demo deposits" value={money(total(data.deposits))} />
@@ -685,7 +737,7 @@ export function AdminContent({
           {[
             [
               'Pending deposits',
-              data.deposits.filter((d) => d.status === 'Pending').length,
+              data.deposits.filter((d) => d.status.toLowerCase() === 'pending').length,
               'deposits',
             ],
             [

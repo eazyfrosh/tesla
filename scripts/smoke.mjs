@@ -112,6 +112,8 @@ for (const p of [
   'users',
   'transactions',
   'deposits',
+  'wallet-methods',
+  'orders',
   'withdrawals',
   'investments',
   'investment-plans',
@@ -134,6 +136,14 @@ const action = async (body, asAdmin = false, expected = 200, key) =>
   await (
     await request('/api/actions', { cookie: asAdmin ? admin : cookie, body, expected, key })
   ).json();
+await action(
+  {
+    action: 'settings',
+    ...before.settings,
+    methods: ['Bank Transfer', 'Crypto', 'Card Placeholder'],
+  },
+  true,
+);
 const deposit = await action({ action: 'deposit', amount: 17.25, method: 'Bank Transfer' });
 await action(
   { action: 'review', collection: 'deposits', id: deposit.id, status: 'Approved' },
@@ -231,3 +241,5 @@ await request('/api/session', { cookie, method: 'DELETE' });
 console.log(
   `PASS: ${checks} HTTP route, access-control, workflow, idempotency, and origin checks. All roundtrip cash and holdings invariants passed.`,
 );
+
+await action({ action: 'settings', ...before.settings }, true);

@@ -1,4 +1,5 @@
 'use client';
+import { WalletDeposit } from './wallet-methods';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import {
@@ -72,6 +73,7 @@ const adminLinks = [
   ['Users', 'users', Users],
   ['Transactions', 'transactions', ReceiptText],
   ['Deposits', 'deposits', ArrowDownToLine],
+  ['Wallet Methods', 'wallet-methods', Wallet],
   ['Withdrawals', 'withdrawals', ArrowUpFromLine],
   ['Investments', 'investments', Layers],
   ['Investment Plans', 'investment-plans', BriefcaseBusiness],
@@ -463,7 +465,14 @@ function UserContent({
         </div>
         <div className="grid dashboard-charts">
           <section className="card">
-            <PortfolioChart />
+            {a.total === 0 && !data.transactions.length ? (
+              <EmptyState
+                title="Your portfolio is empty."
+                description="Your account starts at $0. Activity will appear here after you use the demo."
+              />
+            ) : (
+              <PortfolioChart basePrice={a.total} />
+            )}
           </section>
           <section className="card">
             <h3>Asset allocation</h3>
@@ -514,7 +523,7 @@ function UserContent({
           </div>
           {!a.held && (
             <EmptyState
-              title="Your portfolio starts with a first move"
+              title="Your portfolio is empty."
               description="Place a simulated trade to add a holding."
             />
           )}
@@ -545,7 +554,14 @@ function UserContent({
         </div>
         <section className="card top-space">
           <h3>Your investment activity</h3>
-          <TransactionTable rows={data.investments} />
+          {data.investments.length ? (
+            <TransactionTable rows={data.investments} />
+          ) : (
+            <EmptyState
+              title="No investments yet."
+              description="Your demo investments will appear here."
+            />
+          )}
         </section>
         {chosen && (
           <Modal title={chosen.name + ' demo allocation'} onClose={() => setChosen(null)}>
@@ -623,7 +639,17 @@ function UserContent({
   if (section === 'deposit' || section === 'withdraw')
     return (
       <div className="grid trade-grid">
-        <FundingForm kind={section} data={data} run={run} busy={busy} />
+        {section === 'deposit' ? (
+          <div className="grid">
+            <WalletDeposit data={data} run={run} busy={busy} />
+            <details className="card">
+              <summary>Other demo payment methods</summary>
+              <FundingForm kind="deposit" data={data} run={run} busy={busy} />
+            </details>
+          </div>
+        ) : (
+          <FundingForm kind={section} data={data} run={run} busy={busy} />
+        )}
         <section className="card">
           <h3>Your recent {section === 'deposit' ? 'deposits' : 'withdrawals'}</h3>
           <TransactionTable
@@ -777,7 +803,11 @@ function UserContent({
       </div>
       <div className="grid dashboard-charts">
         <section className="card">
-          <PortfolioChart />
+          {a.total === 0 && !data.transactions.length ? (
+            <EmptyState title="Your portfolio is empty." description="No account activity yet." />
+          ) : (
+            <PortfolioChart basePrice={a.total} />
+          )}
           <div className="chart-summary">
             <span>
               Available <b>{money(available)}</b>

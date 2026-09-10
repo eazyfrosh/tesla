@@ -3503,3 +3503,21 @@ th,
     height: 47px;
   }
 }
+
+.wallet-address {
+  overflow-wrap: anywhere;
+  user-select: text;
+  font-family: monospace;
+}
+.wallet-qr {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+.upload-field input {
+  max-width: 100%;
+}

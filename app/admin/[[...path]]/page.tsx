@@ -12,6 +12,8 @@ export default async function Admin({ params }: { params: Promise<{ path?: strin
     'users',
     'transactions',
     'deposits',
+    'wallet-methods',
+    'orders',
     'withdrawals',
     'investments',
     'investment-plans',
@@ -30,5 +32,5 @@ export default async function Admin({ params }: { params: Promise<{ path?: strin
     notFound();
   const data = await snapshot(user, true);
   if (path[1] && !data.users?.some((u) => u.id === path[1])) notFound();
-  return <Workspace initial={data} path={path} admin local={localMode()} />;
+  return <Workspace initial={data} path={path[0] === 'orders' ? ['vehicle-orders'] : path} admin local={localMode()} />;
 }

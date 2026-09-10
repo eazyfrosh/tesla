@@ -40,6 +40,7 @@ export function Logo() {
   );
 }
 export function StatusBadge({ status }: { status: string }) {
+  status = status.charAt(0).toUpperCase() + status.slice(1);
   return (
     <span
       className={
@@ -356,7 +357,7 @@ export function TransactionTable({
     (r) =>
       (r.reference + ' ' + r.details + ' ' + r.type).toLowerCase().includes(query.toLowerCase()) &&
       (type === 'All' || r.type === type) &&
-      (status === 'All' || r.status === status),
+      (status === 'All' || r.status.toLowerCase() === status.toLowerCase()),
   );
   const pages = Math.ceil(filtered.length / 8);
   return (
@@ -458,7 +459,7 @@ export function TransactionTable({
         </table>
         {!filtered.length && (
           <EmptyState
-            title="No activity yet"
+            title="No transactions yet."
             description="Your simulated activity will appear here."
           />
         )}

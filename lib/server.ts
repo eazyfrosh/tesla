@@ -3,6 +3,7 @@ import { atomic, list, get } from './store';
 import { currentUser } from './auth';
 import { markets, plans, vehicles, settings } from './data';
 import type {
+  WalletMethod,
   Snapshot,
   UserProfile,
   Portfolio,
@@ -30,6 +31,7 @@ export async function snapshot(user: UserProfile, admin = false): Promise<Snapsh
     users,
     portfolios,
     content,
+    walletMethods,
   ] = await Promise.all([
     get<Portfolio>('portfolios', user.uid),
     list<Market>('marketData'),
@@ -45,6 +47,7 @@ export async function snapshot(user: UserProfile, admin = false): Promise<Snapsh
     admin ? list<UserProfile>('users') : undefined,
     admin ? list<Portfolio>('portfolios') : undefined,
     admin ? list<{ id: string; title: string; body: string }>('content') : undefined,
+    list<WalletMethod>('walletMethods'),
   ]);
   if (!portfolio) throw new Error('Portfolio is missing');
   const recent = <T extends { createdAt: string }>(rows: T[]) =>
@@ -52,6 +55,9 @@ export async function snapshot(user: UserProfile, admin = false): Promise<Snapsh
   return {
     user,
     portfolio,
+    walletMethods: walletMethods
+      .filter((m) => admin || m.status === 'enabled')
+      .sort((a, b) => a.displayOrder - b.displayOrder),
     markets: m.length ? m : markets,
     plans: p,
     vehicles: v,

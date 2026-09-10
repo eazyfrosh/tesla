@@ -12,7 +12,13 @@ function harness() {
   const rows = new Map<string, object>();
   for (const [c, values] of [
     ['users', [user, admin]],
-    ['portfolios', [initialPortfolio('alice'), initialPortfolio('root')]],
+    [
+      'portfolios',
+      [
+        { ...initialPortfolio('alice'), cashCents: 1000000 },
+        { ...initialPortfolio('root'), cashCents: 1000000 },
+      ],
+    ],
     ['marketData', markets],
     ['investmentPlans', plans],
     ['platformSettings', [settings]],
@@ -263,4 +269,168 @@ test('disabled/restricted accounts and disabled payment methods cannot transact'
   h.rows.set('users/alice', demoUser('alice'));
   h.rows.set('platformSettings/main', { ...settings, methods: [] });
   await assert.rejects(h.run({ action: 'deposit', amount: 20, method: 'Crypto' }), /disabled/);
+});
+import { initializeAccount } from '../lib/registration';
+import { imageType, MAX_UPLOAD_BYTES } from '../lib/upload-validation';
+
+test('registration initializes every account metric to zero and cannot grant a role or balance', async () => {
+  const h = harness();
+  await initializeAccount(
+    h.u,
+    { uid: 'fresh-user', email: 'fresh@example.test' },
+    {
+      fullName: 'Fresh User',
+      username: 'fresh_user',
+      phone: '',
+      country: '',
+      city: '',
+      currency: 'EUR',
+      role: 'admin',
+      balance: 999999,
+    },
+  );
+  const user = await h.u.get<any>('users', 'fresh-user');
+  const portfolio = await h.u.get<Portfolio>('portfolios', 'fresh-user');
+  assert.equal(user.role, 'user');
+  assert.equal(user.currency, 'USD');
+  assert.equal(user.accountStatus, 'active');
+  for (const field of [
+    'balance',
+    'availableBalance',
+    'pendingBalance',
+    'portfolioValue',
+    'totalInvested',
+    'totalProfit',
+    'totalLoss',
+    'totalDeposits',
+    'totalWithdrawals',
+    'cashCents',
+    'reservedCents',
+  ] as const)
+    assert.equal(portfolio![field], 0, field);
+  assert.deepEqual(portfolio!.holdings, []);
+  for (const collection of ['transactions', 'deposits', 'withdrawals', 'investments', 'orders'])
+    assert.equal(
+      [...h.rows.entries()].filter(
+        ([key, value]) => key.startsWith(collection + '/') && (value as any).uid === 'fresh-user',
+      ).length,
+      0,
+    );
+  h.u.set('portfolios', 'fresh-user', { ...portfolio, cashCents: 500 });
+  await initializeAccount(h.u, { uid: 'fresh-user' });
+  assert.equal(
+    (await h.u.get<Portfolio>('portfolios', 'fresh-user'))!.cashCents,
+    500,
+    'repeat login never resets existing funds',
+  );
+});
+
+const walletInput = {
+  action: 'saveWalletMethod',
+  assetName: 'Tether',
+  symbol: 'USDT',
+  network: 'TRC20',
+  walletAddress: 'TX-manually-pasted-demo-address',
+  qrImage: '',
+  instructions: 'Simulated workflow only',
+  status: 'enabled',
+  displayOrder: 2,
+};
+test('wallet creation and address editing are admin-only and preserve creation time', async () => {
+  const h = harness();
+  const input = actionSchema.parse(walletInput);
+  await assert.rejects(h.run(input), /Administrator/);
+  await h.run(input, true);
+  const wallet = [...h.rows.entries()].find(([key]) => key.startsWith('walletMethods/'))![1] as any;
+  await h.run(
+    actionSchema.parse({
+      ...walletInput,
+      id: wallet.id,
+      walletAddress: 'NEW-pasted-address',
+      status: 'disabled',
+    }),
+    true,
+  );
+  const saved = await h.u.get<any>('walletMethods', wallet.id);
+  assert.equal(saved.walletAddress, 'NEW-pasted-address');
+  assert.equal(saved.status, 'disabled');
+  assert.equal(saved.createdAt, wallet.createdAt);
+});
+test('wallet deposit snapshots network, reference and address; approval credits zero account once', async () => {
+  const h = harness();
+  h.u.set('portfolios', 'alice', initialPortfolio('alice'));
+  await h.run(actionSchema.parse(walletInput), true);
+  const wallet = [...h.rows.entries()].find(([key]) => key.startsWith('walletMethods/'))![1] as any;
+  const request = actionSchema.parse({
+    action: 'deposit',
+    amount: 45.25,
+    method: 'forged name',
+    walletMethodId: wallet.id,
+    network: 'TRC20',
+    externalReference: 'DEMO-TEST-123',
+  });
+  const result = await h.run(request);
+  const deposit = await h.u.get<Activity>('deposits', result.id);
+  assert.equal(deposit!.status, 'pending');
+  assert.equal(deposit!.walletAddress, wallet.walletAddress);
+  assert.equal(deposit!.method, 'Tether (USDT)');
+  assert.equal(deposit!.externalReference, 'DEMO-TEST-123');
+  assert.equal(h.records().length, 0);
+  assert.equal(h.portfolio().cashCents, 0);
+  await h.run(
+    { action: 'review', collection: 'deposits', id: result.id, status: 'Approved' },
+    true,
+  );
+  assert.equal(h.portfolio().balance, 45.25);
+  assert.equal(h.portfolio().availableBalance, 45.25);
+  assert.equal(h.portfolio().totalDeposits, 45.25);
+  assert.equal(h.records().length, 1);
+  assert.equal(h.records()[0].status, 'approved');
+  await assert.rejects(
+    h.run({ action: 'review', collection: 'deposits', id: result.id, status: 'Approved' }, true),
+    /already/,
+  );
+  assert.equal(h.portfolio().cashCents, 4525);
+});
+test('disabled wallets, wrong networks and other users proof files are rejected', async () => {
+  const h = harness();
+  await h.run(actionSchema.parse(walletInput), true);
+  const wallet = [...h.rows.entries()].find(([key]) => key.startsWith('walletMethods/'))![1] as any;
+  const request = {
+    action: 'deposit',
+    amount: 50,
+    method: 'USDT',
+    walletMethodId: wallet.id,
+    network: 'TRC20',
+    externalReference: 'DEMO-REF',
+  };
+  await assert.rejects(h.run(actionSchema.parse({ ...request, network: 'ERC20' })), /Network/);
+  h.u.set('uploads', 'other-proof', { uid: 'someone-else', purpose: 'proof' });
+  await assert.rejects(
+    h.run(actionSchema.parse({ ...request, proofImage: '/api/uploads/other-proof' })),
+    /proof/,
+  );
+  h.u.set('walletMethods', wallet.id, { ...wallet, status: 'disabled' });
+  await assert.rejects(h.run(actionSchema.parse(request)), /disabled/);
+  assert.equal(h.records().length, 0);
+});
+test('deposit rejection never credits funds or creates a financial transaction', async () => {
+  const h = harness();
+  h.u.set('portfolios', 'alice', initialPortfolio('alice'));
+  const request = await h.run({ action: 'deposit', amount: 25, method: 'Bank Transfer' });
+  await h.run(
+    { action: 'review', collection: 'deposits', id: request.id, status: 'Rejected' },
+    true,
+  );
+  assert.equal(h.portfolio().cashCents, 0);
+  assert.equal(h.records().length, 0);
+  assert.equal((await h.u.get<Activity>('deposits', request.id))!.status, 'rejected');
+});
+test('image upload accepts required raster signatures and rejects renamed executable content', () => {
+  assert.equal(imageType(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0])), 'image/png');
+  assert.equal(imageType(Buffer.from([255, 216, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0])), 'image/jpeg');
+  assert.equal(imageType(Buffer.from('RIFF0000WEBP')), 'image/webp');
+  assert.throws(() => imageType(Buffer.from('<svg onload="alert(1)">')), /Upload/);
+  assert.throws(() => imageType(Buffer.from('bad')), /Invalid/);
+  assert.equal(MAX_UPLOAD_BYTES, 3145728);
 });

@@ -105,11 +105,21 @@ export function demoUser(id = 'demo-user', role: 'user' | 'admin' = 'user'): Use
   };
 }
 export function initialPortfolio(uid: string, seeded = false): Portfolio {
-  return {
+  const portfolio: Portfolio = {
     ...stamp,
     id: uid,
     uid,
-    cashCents: seeded ? 2450000 : 1000000,
+    balance: seeded ? 24500 : 0,
+    availableBalance: seeded ? 24500 : 0,
+    pendingBalance: 0,
+    portfolioValue: 0,
+    totalInvested: 0,
+    totalProfit: 0,
+    totalLoss: 0,
+    totalDeposits: 0,
+    totalWithdrawals: 0,
+    currency: 'USD',
+    cashCents: seeded ? 2450000 : 0,
     reservedCents: 0,
     holdings: seeded
       ? [
@@ -120,6 +130,13 @@ export function initialPortfolio(uid: string, seeded = false): Portfolio {
         ]
       : [],
   };
+  portfolio.portfolioValue =
+    portfolio.cashCents / 100 +
+    portfolio.holdings.reduce(
+      (sum, h) => sum + h.quantity * (markets.find((m) => m.symbol === h.symbol)?.price ?? 0),
+      0,
+    );
+  return portfolio;
 }
 export const settings: PlatformSettings = {
   ...stamp,

@@ -28,6 +28,16 @@ export interface Holding {
 }
 export interface Portfolio extends BaseRecord {
   uid: string;
+  balance?: number;
+  availableBalance?: number;
+  pendingBalance?: number;
+  portfolioValue?: number;
+  totalInvested?: number;
+  totalProfit?: number;
+  totalLoss?: number;
+  totalDeposits?: number;
+  totalWithdrawals?: number;
+  currency?: string;
   cashCents: number;
   reservedCents: number;
   holdings: Holding[];
@@ -65,6 +75,22 @@ export interface Vehicle extends BaseRecord {
   description: string;
   features: string[];
 }
+export interface WalletMethod extends BaseRecord {
+  assetName: string;
+  symbol: string;
+  network: string;
+  walletAddress: string;
+  qrImage: string;
+  instructions: string;
+  status: 'enabled' | 'disabled';
+  displayOrder: number;
+}
+export interface UploadRecord extends BaseRecord {
+  uid: string;
+  purpose: 'qr' | 'proof';
+  path: string;
+  contentType: string;
+}
 export interface Activity extends BaseRecord {
   uid: string;
   type: string;
@@ -81,6 +107,11 @@ export interface Activity extends BaseRecord {
   vehicleId?: string;
   method?: string;
   destination?: string;
+  walletMethodId?: string;
+  network?: string;
+  walletAddress?: string;
+  externalReference?: string;
+  proofImage?: string;
   duration?: number;
   timeline?: { status: string; at: string }[];
 }
@@ -97,6 +128,8 @@ export interface PlatformSettings extends BaseRecord {
   announcement: string;
 }
 export type Collection =
+  | 'walletMethods'
+  | 'uploads'
   | 'users'
   | 'portfolios'
   | 'marketData'
@@ -126,6 +159,7 @@ export interface Snapshot {
   orders: Activity[];
   notifications: Notice[];
   settings: PlatformSettings;
+  walletMethods: WalletMethod[];
   users?: UserProfile[];
   portfolios?: Portfolio[];
   content?: { id: string; title: string; body: string }[];

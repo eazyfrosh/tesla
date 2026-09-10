@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 import type { Unit } from './store';
 import type { Action } from './validation';
 import type {
+  WalletMethod,
+  UploadRecord,
   UserProfile,
   Portfolio,
   Market,
@@ -32,7 +34,8 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
   const p = await u.get<Portfolio>('portfolios', user.uid);
   ensure(p, 'Portfolio unavailable');
   const available = () => p.cashCents - p.reservedCents;
-  const saveP = () => u.set('portfolios', p.id, { ...p, updatedAt: now });
+  const changed = new Map<string, Portfolio>();
+  const saveP = () => changed.set(p.id, p);
   const notice = (uid: string, title: string, message: string) => {
     const nid = randomUUID();
     u.set('notifications', nid, { ...base, id: nid, uid, title, message, read: false });
@@ -58,6 +61,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     return r;
   };
   const adminActions = [
+    'saveWalletMethod',
     'review',
     'userStatus',
     'savePlan',
@@ -71,7 +75,10 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
   if (adminActions.includes(a.action))
     ensure(latest.role === 'admin', 'Administrator access required');
   if (['trade', 'deposit', 'withdraw', 'invest', 'order'].includes(a.action))
-    ensure(latest.accountStatus === 'Active', 'Your account is under review or restricted');
+    ensure(
+      latest.accountStatus.toLowerCase() === 'active',
+      'Your account is under review or restricted',
+    );
   if (a.action === 'trade') {
     const m = await u.get<Market>('marketData', a.symbol);
     ensure(m, 'Asset not found');
@@ -124,7 +131,17 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     notice(user.uid, 'Demo order ' + r.status.toLowerCase(), r.details);
   } else if (a.action === 'deposit' || a.action === 'withdraw') {
     const s = await u.get<PlatformSettings>('platformSettings', 'main');
-    ensure(s?.methods.includes(a.method), 'Payment method is disabled');
+    let wallet: WalletMethod | undefined;
+    if (a.action === 'deposit' && a.walletMethodId) {
+      wallet = await u.get<WalletMethod>('walletMethods', a.walletMethodId);
+      ensure(wallet?.status === 'enabled', 'Wallet method is disabled');
+      ensure(a.network === wallet.network, 'Network has changed. Refresh and try again.');
+      ensure(a.externalReference?.trim(), 'Transaction/reference ID is required');
+      if (a.proofImage) {
+        const upload = await u.get<UploadRecord>('uploads', a.proofImage.split('/').pop()!);
+        ensure(upload?.uid === user.uid && upload.purpose === 'proof', 'Invalid proof image');
+      }
+    } else ensure(s?.methods.includes(a.method), 'Payment method is disabled');
     const amount = cents(a.amount);
     if (a.action === 'withdraw') {
       ensure(available() >= amount, 'Insufficient available demo funds');
@@ -136,8 +153,24 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       amount,
       'Pending',
       'Simulated ' + a.method + ' request',
-      { method: a.method, ...(a.action === 'withdraw' ? { destination: a.destination } : {}) },
+      {
+        method: wallet ? wallet.assetName + ' (' + wallet.symbol + ')' : a.method,
+        ...(wallet && a.action === 'deposit'
+          ? {
+              walletMethodId: wallet.id,
+              network: wallet.network,
+              walletAddress: wallet.walletAddress,
+              externalReference: a.externalReference!,
+              ...(a.proofImage ? { proofImage: a.proofImage } : {}),
+            }
+          : {}),
+        ...(a.action === 'withdraw' ? { destination: a.destination } : {}),
+      },
     );
+    if (a.action === 'deposit') {
+      r.status = 'pending';
+      u.delete('transactions', id);
+    }
     u.set(a.action === 'deposit' ? 'deposits' : 'withdrawals', id, r);
     notice(user.uid, r.type + ' submitted', 'Your simulated request is awaiting review.');
   } else if (a.action === 'invest') {
@@ -147,6 +180,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     const amount = cents(a.amount);
     ensure(available() >= amount, 'Insufficient available demo funds');
     p.cashCents -= amount;
+    p.totalInvested = (p.totalInvested ?? 0) + amount / 100;
     saveP();
     const r = record('Investment', amount, 'Active', plan.name + ' · simulated allocation', {
       planId: plan.id,
@@ -186,14 +220,20 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     ensure(target, 'Account portfolio missing');
     if (collection === 'deposits' || collection === 'withdrawals') {
       ensure(
-        r.status === 'Pending' && ['Approved', 'Rejected'].includes(status),
+        r.status.toLowerCase() === 'pending' && ['Approved', 'Rejected'].includes(status),
         'Request has already been reviewed or status is invalid',
       );
-      if (collection === 'deposits' && status === 'Approved') target.cashCents += r.amountCents;
+      if (collection === 'deposits' && status === 'Approved') {
+        target.cashCents += r.amountCents;
+        target.totalDeposits = (target.totalDeposits ?? 0) + r.amountCents / 100;
+      }
       if (collection === 'withdrawals') {
         ensure(target.reservedCents >= r.amountCents, 'Reserved balance mismatch');
         target.reservedCents -= r.amountCents;
-        if (status === 'Approved') target.cashCents -= r.amountCents;
+        if (status === 'Approved') {
+          target.cashCents -= r.amountCents;
+          target.totalWithdrawals = (target.totalWithdrawals ?? 0) + r.amountCents / 100;
+        }
       }
     } else if (collection === 'investments') {
       ensure(
@@ -201,6 +241,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
         'Invalid investment transition',
       );
       target.cashCents += r.amountCents;
+      target.totalInvested = Math.max(0, (target.totalInvested ?? 0) - r.amountCents / 100);
     } else if (collection === 'orders') {
       const transitions: Record<string, string[]> = {
         Submitted: ['Processing', 'Cancelled'],
@@ -262,10 +303,14 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
         target.cashCents >= target.reservedCents,
       'Balance invariant failed',
     );
-    u.set('portfolios', target.id, { ...target, updatedAt: now });
-    const updated = { ...r, status, updatedAt: now };
+    changed.set(target.id, target);
+    const updated = {
+      ...r,
+      status: collection === 'deposits' ? status.toLowerCase() : status,
+      updatedAt: now,
+    };
     u.set(collection, r.id, updated);
-    u.set('transactions', r.id, updated);
+    if (collection !== 'deposits' || status === 'Approved') u.set('transactions', r.id, updated);
     notice(
       r.uid,
       r.type + ' ' + status.toLowerCase(),
@@ -295,6 +340,21 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       accountStatus: a.accountStatus,
       updatedAt: now,
     });
+  } else if (a.action === 'saveWalletMethod') {
+    if (a.qrImage) {
+      const upload = await u.get<UploadRecord>('uploads', a.qrImage.split('/').pop()!);
+      ensure(upload?.purpose === 'qr', 'Invalid QR image');
+    }
+    const rid = a.id || id;
+    const previous = await u.get<WalletMethod>('walletMethods', rid);
+    const { action, ...fields } = a;
+    void action;
+    u.set('walletMethods', rid, {
+      ...base,
+      ...fields,
+      id: rid,
+      createdAt: previous?.createdAt ?? now,
+    });
   } else if (a.action === 'savePlan' || a.action === 'saveVehicle') {
     const collection = a.action === 'savePlan' ? 'investmentPlans' : 'vehicles';
     const rid = a.id || id;
@@ -319,6 +379,26 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
   } else if (a.action === 'notify') {
     ensure(await u.get('users', a.uid), 'Recipient not found');
     notice(a.uid, a.title, a.message);
+  }
+  for (const portfolio of changed.values()) {
+    let held = 0,
+      cost = 0;
+    for (const holding of portfolio.holdings) {
+      const quote = await u.get<Market>('marketData', holding.symbol);
+      held += holding.quantity * (quote?.price ?? 0);
+      cost += holding.costCents / 100;
+    }
+    u.set('portfolios', portfolio.id, {
+      ...portfolio,
+      balance: portfolio.cashCents / 100,
+      availableBalance: (portfolio.cashCents - portfolio.reservedCents) / 100,
+      pendingBalance: portfolio.reservedCents / 100,
+      portfolioValue: portfolio.cashCents / 100 + held + (portfolio.totalInvested ?? 0),
+      totalProfit: Math.max(0, held - cost),
+      totalLoss: Math.max(0, cost - held),
+      currency: 'USD',
+      updatedAt: now,
+    });
   }
   const result = { ok: true, id, message: 'Demo ' + a.action + ' saved' };
   u.set('idempotency', user.uid + '_' + key, { ...base, uid: user.uid, result });

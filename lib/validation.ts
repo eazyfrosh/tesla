@@ -32,7 +32,18 @@ export const actionSchema = z.discriminatedUnion('action', [
       .refine((v) => Math.abs(v * 1e6 - Math.round(v * 1e6)) < 0.001, 'Maximum six decimal places'),
     limitPrice: money.optional(),
   }),
-  z.object({ action: z.literal('deposit'), amount: money, method: text.min(1) }),
+  z.object({
+    action: z.literal('deposit'),
+    amount: money,
+    method: text.min(1),
+    walletMethodId: id.optional(),
+    network: text.optional(),
+    externalReference: text.min(1).optional(),
+    proofImage: z
+      .string()
+      .regex(/^\/api\/uploads\/[a-zA-Z0-9-]+$/)
+      .optional(),
+  }),
   z.object({
     action: z.literal('withdraw'),
     amount: money,
@@ -107,6 +118,22 @@ export const actionSchema = z.discriminatedUnion('action', [
       .max(2000)
       .refine((s) => !/[<>]/.test(s)),
     features: z.array(text).max(20),
+  }),
+  z.object({
+    action: z.literal('saveWalletMethod'),
+    id: id.optional(),
+    assetName: text.min(1),
+    symbol: text.min(1),
+    network: text.min(1),
+    walletAddress: text.min(1),
+    qrImage: z.union([z.literal(''), z.string().regex(/^\/api\/uploads\/[a-zA-Z0-9-]+$/)]),
+    instructions: z
+      .string()
+      .trim()
+      .max(2000)
+      .refine((s) => !/[<>\u0000]/.test(s)),
+    status: z.enum(['enabled', 'disabled']),
+    displayOrder: z.coerce.number().int().min(0).max(10000),
   }),
   z.object({ action: z.literal('deleteVehicle'), id }),
   z.object({

@@ -4,8 +4,7 @@ import { adminAuth, localMode } from '@/lib/firebase-admin';
 import { localToken } from '@/lib/auth';
 import { readJson, sameOrigin, apiError, rateLimit } from '@/lib/server';
 import { atomic } from '@/lib/store';
-import { initialPortfolio } from '@/lib/data';
-import { profileSchema } from '@/lib/validation';
+import { initializeAccount } from '@/lib/registration';
 import { z } from 'zod';
 export const runtime = 'nodejs';
 export async function POST(req: NextRequest) {
@@ -22,46 +21,7 @@ export async function POST(req: NextRequest) {
       const claims = await adminAuth().verifyIdToken(idToken, true);
       if (Date.now() / 1000 - claims.auth_time > 300) throw new Error('Please sign in again');
       await atomic(async (u) => {
-        const existing = await u.get('users', claims.uid);
-        if (existing) return;
-        const profile = profileSchema.parse(
-          body.profile ?? {
-            fullName: claims.name || 'New member',
-            username: 'user_' + claims.uid.slice(0, 12),
-            phone: '',
-            country: '',
-            city: '',
-            currency: 'USD',
-          },
-        );
-        const now = new Date().toISOString();
-        u.set('users', claims.uid, {
-          ...profile,
-          id: claims.uid,
-          uid: claims.uid,
-          email: claims.email ?? '',
-          role: 'user',
-          disabled: false,
-          accountStatus: 'Active',
-          theme: 'dark',
-          notifications: true,
-          createdAt: now,
-          updatedAt: now,
-        });
-        u.set('portfolios', claims.uid, {
-          ...initialPortfolio(claims.uid),
-          createdAt: now,
-          updatedAt: now,
-        });
-        u.set('notifications', 'welcome_' + claims.uid, {
-          id: 'welcome_' + claims.uid,
-          uid: claims.uid,
-          title: 'Welcome to Volterra',
-          message: 'Your account starts with $10,000 of simulated cash. Not real funds.',
-          read: false,
-          createdAt: now,
-          updatedAt: now,
-        });
+        await initializeAccount(u, claims, body.profile);
       });
       token = await adminAuth().createSessionCookie(idToken, { expiresIn: 8 * 3600000 });
     }
