@@ -23,6 +23,7 @@ import {
   Cell,
 } from 'recharts';
 import type { Market, Vehicle, Plan, Activity, Notice } from '@/lib/types';
+import { useBrand } from './brand-provider';
 export const money = (value: number) =>
   new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -32,9 +33,14 @@ export const money = (value: number) =>
 export const date = (value: string) =>
   new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 export function Logo() {
+  const brand = useBrand();
   return (
-    <Link href="/" className="logo" aria-label="Volterra home">
-      <img className="brand-logo" src="/images/tesla-logo.png" alt="Tesla" width={46} height={60} />
+    <Link href="/" className="logo" aria-label={`${brand?.name || 'Volterra'} home`}>
+      {brand?.logoUrl ? (
+        <img className="brand-logo" src={brand.logoUrl} alt="" width={46} height={60} />
+      ) : (
+        <span>{brand?.name || 'VOLTERRA'}</span>
+      )}
     </Link>
   );
 }

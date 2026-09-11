@@ -20,6 +20,7 @@ export interface UserProfile extends BaseRecord {
   image: string;
   theme: string;
   notifications: boolean;
+  eazytoolsOwner?: boolean;
 }
 export interface Holding {
   symbol: string;
@@ -87,7 +88,7 @@ export interface WalletMethod extends BaseRecord {
 }
 export interface UploadRecord extends BaseRecord {
   uid: string;
-  purpose: 'qr' | 'proof';
+  purpose: 'qr' | 'proof' | 'brand';
   path: string;
   contentType: string;
 }
@@ -126,6 +127,9 @@ export interface PlatformSettings extends BaseRecord {
   name: string;
   supportEmail: string;
   announcement: string;
+  logoUrl: string;
+  supportPhone: string;
+  emailContent: string;
 }
 export type Collection =
   | 'walletMethods'

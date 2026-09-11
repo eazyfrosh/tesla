@@ -145,6 +145,9 @@ export const settings: PlatformSettings = {
   name: 'VOLTERRA',
   supportEmail: 'support@volterra.example',
   announcement: 'Every balance, trade, and order on Volterra is simulated. No real funds.',
+  logoUrl: '',
+  supportPhone: '',
+  emailContent: 'Questions about the platform? Our support team is ready to help.',
 };
 export const publicPages: Record<
   string,

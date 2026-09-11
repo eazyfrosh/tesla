@@ -17,7 +17,9 @@ import {
 import { Logo, MarketCard, VehicleCard, InvestmentPlanCard, money } from './ui';
 import { faqs } from '@/lib/data';
 import type { Market, Plan, Vehicle } from '@/lib/types';
+import { useBrand } from './brand-provider';
 export function PublicNav() {
+  const brand = useBrand();
   const [open, setOpen] = useState(false);
   return (
     <header className="public-nav">
@@ -32,7 +34,7 @@ export function PublicNav() {
           </Link>
         </nav>
         <div className="nav-actions">
-          <span className="demo-pill">VOLTERRA PLATFORM</span>
+          <span className="demo-pill">{brand?.name || 'VOLTERRA'} PLATFORM</span>
           <Link className="login-link" href="/login">
             Log in
           </Link>
@@ -52,6 +54,7 @@ export function PublicNav() {
   );
 }
 export function PublicFooter() {
+  const brand = useBrand();
   return (
     <footer className="footer">
       <div className="container">
@@ -59,10 +62,10 @@ export function PublicFooter() {
           <div>
             <Logo />
             <p className="muted">
-              A new perspective on markets.
-              <br />
-              An electric vision of tomorrow.
+              {brand?.emailContent ||
+                'A new perspective on markets. An electric vision of tomorrow.'}
             </p>
+            {brand?.supportPhone && <p className="muted">Phone: {brand.supportPhone}</p>}
             <span className="demo-pill">SIMULATED. ALWAYS.</span>
           </div>
           {[
@@ -122,7 +125,9 @@ export function PublicFooter() {
           brand.
         </div>
         <div className="row footer-bottom">
-          <span>© {new Date().getFullYear()} Volterra. All rights reserved.</span>
+          <span>
+            © {new Date().getFullYear()} {brand?.name || 'Volterra'}. All rights reserved.
+          </span>
           <span>
             <Globe size={14} /> English · USD
           </span>

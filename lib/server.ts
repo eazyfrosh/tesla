@@ -75,14 +75,15 @@ export async function snapshot(user: UserProfile, admin = false): Promise<Snapsh
 }
 export async function publicCatalog() {
   try {
-    const [m, p, v] = await Promise.all([
+    const [m, p, v, s] = await Promise.all([
       list<Market>('marketData'),
       list<Plan>('investmentPlans'),
       list<Vehicle>('vehicles'),
+      get<PlatformSettings>('platformSettings', 'main'),
     ]);
-    return { markets: m.length ? m : markets, plans: p, vehicles: v };
+    return { markets: m.length ? m : markets, plans: p, vehicles: v, settings: s ?? settings };
   } catch {
-    return { markets, plans, vehicles };
+    return { markets, plans, vehicles, settings };
   }
 }
 export function sameOrigin(req: NextRequest) {

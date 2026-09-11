@@ -10,6 +10,61 @@ function secret() {
     process.env.SESSION_SECRET || (globalSecret.volterraSecret ??= randomBytes(32).toString('hex'))
   );
 }
+function eazytoolsSecret() {
+  const value = process.env.EAZYTOOLS_SESSION_SECRET || process.env.SESSION_SECRET;
+  if (process.env.NODE_ENV === 'production' && (!value || value.length < 32)) {
+    throw new Error('EAZYTOOLS_SESSION_SECRET must contain at least 32 characters');
+  }
+  return value || secret();
+}
+export function eazytoolsToken(uid: string) {
+  const payload = Buffer.from(JSON.stringify({ uid, expires: Date.now() + 8 * 3600000 })).toString(
+    'base64url',
+  );
+  return (
+    payload + '.' + createHmac('sha256', eazytoolsSecret()).update(payload).digest('base64url')
+  );
+}
+export function eazytoolsSiteId(uid: string) {
+  return createHmac('sha256', eazytoolsSecret()).update(uid).digest('hex').slice(0, 24);
+}
+function eazytoolsUser(token: string): UserProfile | null {
+  const [payload, signature] = token.split('.');
+  if (!payload || !signature) return null;
+  const expected = createHmac('sha256', eazytoolsSecret()).update(payload).digest('base64url');
+  if (
+    signature.length !== expected.length ||
+    !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
+  )
+    return null;
+  const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString()) as {
+    uid?: string;
+    expires?: number;
+  };
+  if (!parsed.uid || !parsed.expires || parsed.expires < Date.now()) return null;
+  const now = new Date().toISOString();
+  return {
+    id: `eazytools-${parsed.uid}`,
+    uid: `eazytools-${parsed.uid}`,
+    email: '',
+    fullName: 'EazyTools owner',
+    username: 'eazytools-owner',
+    phone: '',
+    country: '',
+    region: '',
+    city: '',
+    currency: 'USD',
+    role: 'user',
+    disabled: false,
+    accountStatus: 'active',
+    image: '',
+    theme: 'dark',
+    notifications: false,
+    eazytoolsOwner: true,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
 export function localToken(uid: string) {
   const payload = Buffer.from(JSON.stringify({ uid, expires: Date.now() + 8 * 3600000 })).toString(
     'base64url',
@@ -17,7 +72,15 @@ export function localToken(uid: string) {
   return payload + '.' + createHmac('sha256', secret()).update(payload).digest('base64url');
 }
 export async function currentUser(): Promise<UserProfile | null> {
-  const token = (await cookies()).get('volterra-session')?.value;
+  const cookieStore = await cookies();
+  const ownerToken = cookieStore.get('volterra-eazytools-owner')?.value;
+  if (ownerToken) {
+    try {
+      const owner = eazytoolsUser(ownerToken);
+      if (owner) return owner;
+    } catch {}
+  }
+  const token = cookieStore.get('volterra-session')?.value;
   if (!token) return null;
   try {
     let uid: string;
