@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { redirect } from 'next/navigation';
 import { adminAuth, localMode } from './firebase-admin';
 import { get } from './store';
@@ -11,11 +11,21 @@ function secret() {
   );
 }
 function eazytoolsSecret() {
-  const value = process.env.EAZYTOOLS_SESSION_SECRET || process.env.SESSION_SECRET;
-  if (process.env.NODE_ENV === 'production' && (!value || value.length < 32)) {
-    throw new Error('EAZYTOOLS_SESSION_SECRET must contain at least 32 characters');
+  const dedicated = process.env.EAZYTOOLS_SESSION_SECRET;
+  const session = process.env.SESSION_SECRET;
+  const source =
+    (dedicated && dedicated.length >= 32 ? dedicated : undefined) ||
+    (session && session.length >= 32 ? session : undefined) ||
+    process.env.FIREBASE_PRIVATE_KEY;
+  if (!source && process.env.NODE_ENV === 'production') {
+    throw new Error('A server signing credential is required');
   }
-  return value || secret();
+  // Domain separation produces a stable key dedicated to this cookie even
+  // when the installation must fall back to an existing server credential.
+  return createHash('sha256')
+    .update('volterra:eazytools-owner-session:v1\0')
+    .update(source || secret())
+    .digest();
 }
 export function eazytoolsToken(uid: string) {
   const payload = Buffer.from(JSON.stringify({ uid, expires: Date.now() + 8 * 3600000 })).toString(
