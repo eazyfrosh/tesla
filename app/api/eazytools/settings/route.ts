@@ -22,8 +22,9 @@ export async function GET() {
     const user = await owner();
     const siteId = eazytoolsSiteId(user.uid.replace(/^eazytools-/, ''));
     return NextResponse.json({
-      settings: (await get<PlatformSettings>('platformSettings', siteId)) ?? {
+      settings: {
         ...defaults,
+        ...((await get<PlatformSettings>('platformSettings', siteId)) ?? {}),
         id: siteId,
       },
       siteId,
@@ -42,8 +43,9 @@ export async function POST(request: NextRequest) {
     const now = new Date().toISOString();
     let saved!: PlatformSettings;
     await atomic(async (unit) => {
-      const current = (await unit.get<PlatformSettings>('platformSettings', siteId)) ?? {
+      const current = {
         ...defaults,
+        ...((await unit.get<PlatformSettings>('platformSettings', siteId)) ?? {}),
         id: siteId,
       };
       saved = { ...current, ...input, id: siteId, updatedAt: now };

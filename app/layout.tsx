@@ -14,7 +14,10 @@ export const dynamic = 'force-dynamic';
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   let brand = defaultSettings;
   try {
-    brand = (await get<PlatformSettings>('platformSettings', 'main')) ?? defaultSettings;
+    brand = {
+      ...defaultSettings,
+      ...((await get<PlatformSettings>('platformSettings', 'main')) ?? {}),
+    };
   } catch {}
   return (
     <html lang="en" data-theme="dark">

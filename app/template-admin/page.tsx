@@ -10,8 +10,9 @@ export default async function TemplateAdminPage() {
   const user = await currentUser();
   if (!user?.eazytoolsOwner) redirect('/login');
   const siteId = eazytoolsSiteId(user.uid.replace(/^eazytools-/, ''));
-  const settings = (await get<PlatformSettings>('platformSettings', siteId)) ?? {
+  const settings = {
     ...defaults,
+    ...((await get<PlatformSettings>('platformSettings', siteId)) ?? {}),
     id: siteId,
   };
   return <TemplateOwnerEditor initial={settings} siteId={siteId} />;
