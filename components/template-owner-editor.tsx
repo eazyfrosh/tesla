@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { PlatformSettings } from '@/lib/types';
 
 export function TemplateOwnerEditor({
@@ -12,6 +12,25 @@ export function TemplateOwnerEditor({
   const [values, setValues] = useState(initial);
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
+  const [previewVersion, setPreviewVersion] = useState(initial.updatedAt);
+  const previewRef = useRef<HTMLIFrameElement>(null);
+  const sendPreview = () =>
+    previewRef.current?.contentWindow?.postMessage(
+      {
+        type: 'volterra-brand-preview',
+        settings: {
+          name: values.name,
+          logoUrl: values.logoUrl,
+          emailContent: values.emailContent,
+          supportPhone: values.supportPhone,
+        },
+      },
+      window.location.origin,
+    );
+  useEffect(() => {
+    const timer = window.setTimeout(sendPreview, 80);
+    return () => window.clearTimeout(timer);
+  }, [values]);
   const update = (key: keyof PlatformSettings, value: string) =>
     setValues((current) => ({ ...current, [key]: value }));
   async function upload(file?: File) {
@@ -52,6 +71,7 @@ export function TemplateOwnerEditor({
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       setValues(data.settings);
+      setPreviewVersion(data.settings.updatedAt);
       setStatus('Saved and published to your website.');
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Save failed');
@@ -140,9 +160,11 @@ export function TemplateOwnerEditor({
             </a>
           </div>
           <iframe
+            ref={previewRef}
             className="h-[720px] w-full rounded-2xl bg-black"
             title="Website preview"
-            src={`/site/${siteId}`}
+            src={`/site/${siteId}?version=${encodeURIComponent(previewVersion)}`}
+            onLoad={sendPreview}
           />
         </section>
       </div>

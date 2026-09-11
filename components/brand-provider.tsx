@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { PlatformSettings } from '@/lib/types';
 
 const BrandContext = createContext<PlatformSettings | null>(null);
@@ -10,7 +10,35 @@ export function BrandProvider({
   settings: PlatformSettings;
   children: React.ReactNode;
 }) {
-  return <BrandContext.Provider value={settings}>{children}</BrandContext.Provider>;
+  const [brand, setBrand] = useState(settings);
+
+  useEffect(() => setBrand(settings), [settings]);
+  useEffect(() => {
+    function receivePreview(event: MessageEvent) {
+      if (event.origin !== window.location.origin || event.data?.type !== 'volterra-brand-preview')
+        return;
+      const next = event.data.settings as Partial<PlatformSettings> | undefined;
+      if (!next) return;
+      setBrand((current) => ({
+        ...current,
+        ...(typeof next.name === 'string' ? { name: next.name.slice(0, 60) } : {}),
+        ...(typeof next.supportPhone === 'string'
+          ? { supportPhone: next.supportPhone.slice(0, 40) }
+          : {}),
+        ...(typeof next.emailContent === 'string'
+          ? { emailContent: next.emailContent.slice(0, 500) }
+          : {}),
+        ...(typeof next.logoUrl === 'string' &&
+        (next.logoUrl === '' || /^\/api\/brand-logo\/[a-zA-Z0-9-]+$/.test(next.logoUrl))
+          ? { logoUrl: next.logoUrl }
+          : {}),
+      }));
+    }
+    window.addEventListener('message', receivePreview);
+    return () => window.removeEventListener('message', receivePreview);
+  }, []);
+
+  return <BrandContext.Provider value={brand}>{children}</BrandContext.Provider>;
 }
 export function useBrand() {
   return useContext(BrandContext);
