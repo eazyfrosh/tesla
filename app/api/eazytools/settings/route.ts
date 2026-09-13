@@ -11,6 +11,23 @@ const schema = z.object({
   supportPhone: z.string().trim().max(40),
   emailContent: z.string().trim().min(2).max(500),
   logoUrl: z.union([z.literal(''), z.string().regex(/^\/api\/brand-logo\/[a-zA-Z0-9-]+$/)]),
+  whatsappEnabled: z.boolean(),
+  whatsappNumber: z
+    .string()
+    .trim()
+    .max(24)
+    .refine((value) => !value || /^\+?[0-9 ()-]+$/.test(value), 'Enter a valid WhatsApp number'),
+  telegramEnabled: z.boolean(),
+  telegramUrl: z
+    .string()
+    .trim()
+    .max(200)
+    .refine(
+      (value) => !value || /^https:\/\/(t\.me|telegram\.me)\/[a-zA-Z0-9_/?=&.-]+$/.test(value),
+      'Use a valid https://t.me link',
+    ),
+  liveChatEnabled: z.boolean(),
+  liveChatEmbedCode: z.string().trim().max(12000),
 });
 async function owner() {
   const user = await currentUser();

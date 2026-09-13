@@ -5,6 +5,7 @@ import { publicCatalog } from '@/lib/server';
 import { get } from '@/lib/store';
 import { settings as defaultSettings } from '@/lib/data';
 import type { PlatformSettings } from '@/lib/types';
+import { ContactWidgets } from '@/components/contact-widgets';
 
 export const dynamic = 'force-dynamic';
 export default async function BrandedSite({ params }: { params: Promise<{ siteId: string }> }) {
@@ -19,6 +20,7 @@ export default async function BrandedSite({ params }: { params: Promise<{ siteId
   return (
     <BrandProvider settings={settings}>
       <Landing {...await publicCatalog()} />
+      <ContactWidgets />
     </BrandProvider>
   );
 }

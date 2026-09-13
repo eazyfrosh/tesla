@@ -28,6 +28,24 @@ export function BrandProvider({
         ...(typeof next.emailContent === 'string'
           ? { emailContent: next.emailContent.slice(0, 500) }
           : {}),
+        ...(typeof next.whatsappEnabled === 'boolean'
+          ? { whatsappEnabled: next.whatsappEnabled }
+          : {}),
+        ...(typeof next.whatsappNumber === 'string'
+          ? { whatsappNumber: next.whatsappNumber.slice(0, 24) }
+          : {}),
+        ...(typeof next.telegramEnabled === 'boolean'
+          ? { telegramEnabled: next.telegramEnabled }
+          : {}),
+        ...(typeof next.telegramUrl === 'string'
+          ? { telegramUrl: next.telegramUrl.slice(0, 200) }
+          : {}),
+        ...(typeof next.liveChatEnabled === 'boolean'
+          ? { liveChatEnabled: next.liveChatEnabled }
+          : {}),
+        ...(typeof next.liveChatEmbedCode === 'string'
+          ? { liveChatEmbedCode: next.liveChatEmbedCode.slice(0, 12000) }
+          : {}),
         ...(typeof next.logoUrl === 'string' &&
         (next.logoUrl === '' || /^\/api\/brand-logo\/[a-zA-Z0-9-]+$/.test(next.logoUrl))
           ? { logoUrl: next.logoUrl }

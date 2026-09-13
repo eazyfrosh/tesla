@@ -3521,3 +3521,55 @@ th,
 .upload-field input {
   max-width: 100%;
 }
+
+.contact-widget-buttons {
+  position: fixed;
+  z-index: 1001;
+  right: 22px;
+  bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.contact-widget-button {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 999px;
+  color: white;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 160ms ease,
+    filter 160ms ease;
+}
+.contact-widget-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+.contact-widget-button.whatsapp {
+  background: #25d366;
+}
+.contact-widget-button.telegram {
+  background: #229ed9;
+}
+.custom-chat-frame {
+  position: fixed;
+  z-index: 1000;
+  right: 0;
+  bottom: 0;
+  width: min(430px, 100vw);
+  height: min(680px, 100vh);
+  border: 0;
+  background: transparent;
+}
+@media (max-width: 640px) {
+  .contact-widget-buttons {
+    right: 16px;
+    bottom: 16px;
+  }
+  .contact-widget-button {
+    width: 52px;
+    height: 52px;
+  }
+}

@@ -23,6 +23,12 @@ export function TemplateOwnerEditor({
           logoUrl: values.logoUrl,
           emailContent: values.emailContent,
           supportPhone: values.supportPhone,
+          whatsappEnabled: values.whatsappEnabled,
+          whatsappNumber: values.whatsappNumber,
+          telegramEnabled: values.telegramEnabled,
+          telegramUrl: values.telegramUrl,
+          liveChatEnabled: values.liveChatEnabled,
+          liveChatEmbedCode: values.liveChatEmbedCode,
         },
       },
       window.location.origin,
@@ -32,6 +38,8 @@ export function TemplateOwnerEditor({
     return () => window.clearTimeout(timer);
   }, [values]);
   const update = (key: keyof PlatformSettings, value: string) =>
+    setValues((current) => ({ ...current, [key]: value }));
+  const toggle = (key: 'whatsappEnabled' | 'telegramEnabled' | 'liveChatEnabled', value: boolean) =>
     setValues((current) => ({ ...current, [key]: value }));
   async function upload(file?: File) {
     if (!file) return;
@@ -66,6 +74,12 @@ export function TemplateOwnerEditor({
           logoUrl: values.logoUrl,
           emailContent: values.emailContent,
           supportPhone: values.supportPhone,
+          whatsappEnabled: values.whatsappEnabled,
+          whatsappNumber: values.whatsappNumber,
+          telegramEnabled: values.telegramEnabled,
+          telegramUrl: values.telegramUrl,
+          liveChatEnabled: values.liveChatEnabled,
+          liveChatEmbedCode: values.liveChatEmbedCode,
         }),
       });
       const data = await response.json();
@@ -132,6 +146,81 @@ export function TemplateOwnerEditor({
                 maxLength={40}
               />
             </label>
+            <fieldset className="grid gap-4 rounded-2xl border border-white/10 p-4">
+              <legend className="px-2 text-sm font-bold">
+                WhatsApp Chat Widget <span className="font-normal text-slate-500">(optional)</span>
+              </legend>
+              <label className="flex items-center gap-3 text-sm font-semibold">
+                <input
+                  type="checkbox"
+                  checked={values.whatsappEnabled}
+                  onChange={(e) => toggle('whatsappEnabled', e.target.checked)}
+                />
+                Enable WhatsApp floating button
+              </label>
+              <label className="grid gap-2 text-sm font-semibold">
+                WhatsApp number
+                <input
+                  className="rounded-xl border border-white/10 bg-black/30 px-4 py-3"
+                  value={values.whatsappNumber}
+                  onChange={(e) => update('whatsappNumber', e.target.value)}
+                  placeholder="+2348012345678"
+                  maxLength={24}
+                />
+                <span className="font-normal text-slate-500">Include the country code.</span>
+              </label>
+            </fieldset>
+            <fieldset className="grid gap-4 rounded-2xl border border-white/10 p-4">
+              <legend className="px-2 text-sm font-bold">
+                Telegram <span className="font-normal text-slate-500">(optional)</span>
+              </legend>
+              <label className="flex items-center gap-3 text-sm font-semibold">
+                <input
+                  type="checkbox"
+                  checked={values.telegramEnabled}
+                  onChange={(e) => toggle('telegramEnabled', e.target.checked)}
+                />
+                Enable Telegram floating button
+              </label>
+              <label className="grid gap-2 text-sm font-semibold">
+                Telegram URL
+                <input
+                  className="rounded-xl border border-white/10 bg-black/30 px-4 py-3"
+                  type="url"
+                  value={values.telegramUrl}
+                  onChange={(e) => update('telegramUrl', e.target.value)}
+                  placeholder="https://t.me/yourbusiness"
+                  maxLength={200}
+                />
+              </label>
+            </fieldset>
+            <fieldset className="grid gap-4 rounded-2xl border border-white/10 p-4">
+              <legend className="px-2 text-sm font-bold">
+                Custom Live Chat Embed Code{' '}
+                <span className="font-normal text-slate-500">(optional)</span>
+              </legend>
+              <label className="flex items-center gap-3 text-sm font-semibold">
+                <input
+                  type="checkbox"
+                  checked={values.liveChatEnabled}
+                  onChange={(e) => toggle('liveChatEnabled', e.target.checked)}
+                />
+                Enable custom live chat widget
+              </label>
+              <label className="grid gap-2 text-sm font-semibold">
+                Widget embed code
+                <textarea
+                  className="min-h-36 rounded-xl border border-white/10 bg-black/30 px-4 py-3 font-mono text-xs"
+                  value={values.liveChatEmbedCode}
+                  onChange={(e) => update('liveChatEmbedCode', e.target.value)}
+                  placeholder="Paste your Tawk.to, Crisp, Tidio, or other provider code"
+                  maxLength={12000}
+                />
+                <span className="font-normal text-slate-500">
+                  Runs inside an isolated frame alongside the WhatsApp and Telegram buttons.
+                </span>
+              </label>
+            </fieldset>
             <button
               className="rounded-full bg-red-500 px-5 py-3 font-bold hover:bg-red-400 disabled:opacity-60"
               disabled={busy}

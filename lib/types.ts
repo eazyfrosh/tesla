@@ -130,6 +130,12 @@ export interface PlatformSettings extends BaseRecord {
   logoUrl: string;
   supportPhone: string;
   emailContent: string;
+  whatsappEnabled: boolean;
+  whatsappNumber: string;
+  telegramEnabled: boolean;
+  telegramUrl: string;
+  liveChatEnabled: boolean;
+  liveChatEmbedCode: string;
 }
 export type Collection =
   | 'walletMethods'

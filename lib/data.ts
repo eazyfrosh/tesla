@@ -148,6 +148,12 @@ export const settings: PlatformSettings = {
   logoUrl: '',
   supportPhone: '',
   emailContent: 'Questions about the platform? Our support team is ready to help.',
+  whatsappEnabled: false,
+  whatsappNumber: '',
+  telegramEnabled: false,
+  telegramUrl: '',
+  liveChatEnabled: false,
+  liveChatEmbedCode: '',
 };
 export const publicPages: Record<
   string,
