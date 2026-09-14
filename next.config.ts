@@ -12,10 +12,10 @@ const config: NextConfig = {
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // The owner editor previews a customer site in a same-origin iframe.
-          // SAMEORIGIN keeps third-party embedding blocked while allowing that
-          // protected editor preview to render normally.
-          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://makeketplace.vercel.app",
+          },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },

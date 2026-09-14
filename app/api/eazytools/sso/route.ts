@@ -9,6 +9,9 @@ function fail(request: NextRequest, reason: string) {
 }
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token');
+  const destination = request.nextUrl.searchParams.get('destination') === 'editor'
+    ? '/template-editor'
+    : '/template-admin';
   if (!token || token.length > 4096) return fail(request, 'missing-token');
   const marketplace = (
     process.env.EAZYTOOLS_MARKETPLACE_ORIGIN || 'https://makeketplace.vercel.app'
@@ -36,7 +39,7 @@ export async function GET(request: NextRequest) {
     return fail(request, result?.reason || `marketplace-${response.status}`);
   }
   try {
-    const redirect = NextResponse.redirect(new URL('/template-admin', request.url));
+    const redirect = NextResponse.redirect(new URL(destination, request.url));
     redirect.cookies.set('volterra-eazytools-owner', eazytoolsToken(result.userId), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
