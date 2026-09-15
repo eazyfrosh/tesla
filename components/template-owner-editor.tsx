@@ -227,6 +227,12 @@ export function TemplateOwnerEditor({
             >
               {busy ? 'Please wait…' : 'Save and publish'}
             </button>
+            <a
+              className="rounded-full border border-white/15 px-5 py-3 text-center font-bold hover:bg-white/10"
+              href={`https://makeketplace.vercel.app/domains?template=volterra&site=${encodeURIComponent(siteId)}`}
+            >
+              Buy or connect a domain
+            </a>
             {status && (
               <p className="text-sm text-slate-300" role="status">
                 {status}
