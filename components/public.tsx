@@ -120,7 +120,7 @@ export function PublicFooter() {
         <div className="risk-copy">
           <b>SIMULATION ONLY · NOT REAL FUNDS.</b> Volterra is a platform for learning and
           education. Quotes, chart history, account values, testimonials, and vehicle listings are
-          illustrative. No real trading, payments, investment returns, or vehicle sales occur.
+          simulated. No real trading, payments, investment returns, or vehicle sales occur.
           Nothing here is financial advice. Volterra is not affiliated with Tesla or any listed
           brand.
         </div>
@@ -201,7 +201,7 @@ export function Landing({
               <Image
                 className="hero-car"
                 src="/images/white-tesla-hero.png"
-                alt="White Tesla Model S — illustrative EV showcase"
+                alt="White Tesla Model S — sample EV showcase"
                 width={1774}
                 height={887}
                 sizes="(max-width: 760px) 100vw, 60vw"
@@ -219,7 +219,7 @@ export function Landing({
                   </span>
                 </div>
                 <strong>$248.50</strong>
-                <svg viewBox="0 0 230 45" aria-label="Illustrative trend">
+                <svg viewBox="0 0 230 45" aria-label="Sample trend">
                   <path
                     d="M0 40 L15 30 28 35 42 16 59 23 72 12 83 28 98 18 110 25 128 8 143 13 158 4 172 17 190 5 207 10 230 1"
                     stroke="#ef5661"
@@ -242,7 +242,7 @@ export function Landing({
           <div className="container hero-stats">
             <div>
               <strong>13</strong>
-              <span>Illustrative market assets</span>
+              <span>Simulated market assets</span>
             </div>
             <div>
               <strong>$0</strong>
@@ -390,7 +390,7 @@ export function Landing({
               ))}
             </div>
             <p className="micro muted">
-              inventory. Prices and specifications are illustrative. Vehicle imagery courtesy of
+              inventory. Prices and specifications are samples. Vehicle imagery courtesy of
               Tesla, Inc.
             </p>
           </div>
@@ -443,7 +443,7 @@ export function Landing({
                   <span className="avatar">{initial}</span>
                   <span>
                     {name}
-                    <span className="micro muted">ILLUSTRATIVE PERSONA</span>
+                    <span className="micro muted">SAMPLE PERSONA</span>
                   </span>
                 </div>
               </article>

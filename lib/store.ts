@@ -41,8 +41,8 @@ function initial(): Database {
       type: 'Deposit',
       amountCents: 2450000,
       status: 'Approved',
-      reference: 'DEMO-WELCOME',
-      details: 'Illustrative opening cash · not real funds',
+      reference: 'SAMPLE-WELCOME',
+      details: 'Sample opening cash · not real funds',
     } as { id: string },
   ]);
   return data;

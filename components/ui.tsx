@@ -106,7 +106,7 @@ export function PortfolioChart({
       <div className="row">
         <div>
           <h3>{compact ? 'Market movement' : 'Portfolio performance'}</h3>
-          <p className="muted small">Illustrative curve · not account history</p>
+          <p className="muted small">Sample curve · not account history</p>
         </div>
         <div className="segmented">
           {['1D', '1W', '1M', '3M', '1Y'].map((p) => (
@@ -147,7 +147,7 @@ export function PortfolioChart({
                 borderRadius: 12,
                 color: '#fff',
               }}
-              formatter={(v) => [money(Number(v)), 'Illustrative value']}
+              formatter={(v) => [money(Number(v)), 'Sample value']}
             />
             <Area
               type="monotone"
@@ -227,7 +227,7 @@ export function MarketCard({ market: m }: { market: Market }) {
         <ArrowUpRight size={17} className="muted" />
       </div>
       <strong className="market-price">{money(m.price)}</strong>
-      <svg className="sparkline" viewBox="0 0 200 36" aria-label="Illustrative market trend">
+      <svg className="sparkline" viewBox="0 0 200 36" aria-label="Sample market trend">
         <path
           d={
             m.change > 0
@@ -277,7 +277,7 @@ export function VehicleCard({
         <div className="row vehicle-bottom">
           <div>
             <strong>{money(v.price)}</strong>
-            <span className="micro muted">ILLUSTRATIVE PRICE</span>
+            <span className="micro muted">SAMPLE PRICE</span>
           </div>
           <Link
             className="icon-button"

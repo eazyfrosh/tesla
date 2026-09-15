@@ -182,7 +182,7 @@ export function VehicleDetail({
           <h1>{v.model}</h1>
           <p className="muted">{v.condition} · All-electric</p>
           <strong className="detail-price">{money(v.price)}</strong>
-          <span className="micro muted">ILLUSTRATIVE PRICE · NO REAL SALE</span>
+          <span className="micro muted">SAMPLE PRICE · NO REAL SALE</span>
           <div className="spec-grid">
             {[
               [Zap, v.range + ' mi', 'Estimated range'],

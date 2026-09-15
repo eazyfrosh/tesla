@@ -452,7 +452,7 @@ function UserContent({
         <div className="grid four">
           <StatCard label="Total portfolio value" value={money(a.total)} />
           <StatCard
-            label="Illustrative daily change"
+            label="Simulated daily change"
             value={money(
               a.holdings.reduce((s, h) => s + (h.value * (h.market?.change ?? 0)) / 100, 0),
             )}
@@ -468,7 +468,7 @@ function UserContent({
             {a.total === 0 && !data.transactions.length ? (
               <EmptyState
                 title="Your portfolio is empty."
-                description="Your account starts at $0. Activity will appear here after you use the demo."
+                description="Your account starts at $0. Activity will appear here after you use the practice workspace."
               />
             ) : (
               <PortfolioChart basePrice={a.total} />
@@ -559,7 +559,7 @@ function UserContent({
           ) : (
             <EmptyState
               title="No investments yet."
-              description="Your demo investments will appear here."
+              description="Your practice investments will appear here."
             />
           )}
         </section>
@@ -643,7 +643,7 @@ function UserContent({
           <div className="grid">
             <WalletDeposit data={data} run={run} busy={busy} />
             <details className="card">
-              <summary>Other demo payment methods</summary>
+              <summary>Other practice payment methods</summary>
               <FundingForm kind="deposit" data={data} run={run} busy={busy} />
             </details>
           </div>

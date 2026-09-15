@@ -54,7 +54,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       amountCents,
       status,
       details,
-      reference: 'DEMO-' + id.slice(0, 8).toUpperCase(),
+      reference: 'SAMPLE-' + id.slice(0, 8).toUpperCase(),
       ...extra,
     };
     u.set('transactions', id, r);
@@ -86,7 +86,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     const amount = cents(a.quantity * (a.orderType === 'Limit' ? a.limitPrice! : m.price));
     let h = p.holdings.find((h) => h.symbol === a.symbol);
     if (a.side === 'Buy') {
-      ensure(available() >= amount, 'Insufficient available demo funds');
+      ensure(available() >= amount, 'Insufficient available practice funds');
       if (a.orderType === 'Limit') p.reservedCents += amount;
       else {
         p.cashCents -= amount;
@@ -128,7 +128,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       });
     }
     saveP();
-    notice(user.uid, 'Demo order ' + r.status.toLowerCase(), r.details);
+    notice(user.uid, 'Practice order ' + r.status.toLowerCase(), r.details);
   } else if (a.action === 'deposit' || a.action === 'withdraw') {
     const s = await u.get<PlatformSettings>('platformSettings', 'main');
     let wallet: WalletMethod | undefined;
@@ -144,7 +144,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     } else ensure(s?.methods.includes(a.method), 'Payment method is disabled');
     const amount = cents(a.amount);
     if (a.action === 'withdraw') {
-      ensure(available() >= amount, 'Insufficient available demo funds');
+      ensure(available() >= amount, 'Insufficient available practice funds');
       p.reservedCents += amount;
       saveP();
     }
@@ -178,7 +178,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     ensure(plan?.active, 'Plan is unavailable');
     ensure(a.amount >= plan.min && a.amount <= plan.max, 'Amount outside plan limits');
     const amount = cents(a.amount);
-    ensure(available() >= amount, 'Insufficient available demo funds');
+    ensure(available() >= amount, 'Insufficient available practice funds');
     p.cashCents -= amount;
     p.totalInvested = (p.totalInvested ?? 0) + amount / 100;
     saveP();
@@ -190,7 +190,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     notice(
       user.uid,
       'Investment created',
-      'Demo principal allocated. No returns are guaranteed or accrued.',
+      'Practice principal allocated. No returns are guaranteed or accrued.',
     );
   } else if (a.action === 'order') {
     const v = await u.get<Vehicle>('vehicles', a.vehicleId);
@@ -207,7 +207,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     notice(
       user.uid,
       'Vehicle order created',
-      'Your demo reservation has been submitted. No payment was taken.',
+      'Your practice reservation has been submitted. No payment was taken.',
     );
   } else if (a.action === 'review' || a.action === 'cancelTrade') {
     const collection = a.action === 'cancelTrade' ? 'transactions' : a.collection;
@@ -400,7 +400,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       updatedAt: now,
     });
   }
-  const result = { ok: true, id, message: 'Demo ' + a.action + ' saved' };
+  const result = { ok: true, id, message: 'Practice ' + a.action + ' saved' };
   u.set('idempotency', user.uid + '_' + key, { ...base, uid: user.uid, result });
   if (adminActions.includes(a.action))
     u.set('auditLogs', id, {

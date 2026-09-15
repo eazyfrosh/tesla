@@ -38,7 +38,7 @@ export const plans: Plan[] = ['Starter', 'Growth', 'Premium', 'Elite'].map((name
     'Start with a small simulated allocation and learn the fundamentals.',
     'Explore a broader allocation with a longer practice horizon.',
     'Practice a concentrated strategy and understand volatility.',
-    'Model an advanced allocation across a longer demo cycle.',
+    'Model an advanced allocation across a longer practice cycle.',
   ][i],
   benefits: ['Simulated allocation', 'Transparent lifecycle', 'No guaranteed returns'],
   risk: ['Moderate', 'Moderate', 'High', 'High'][i],
@@ -67,7 +67,7 @@ export const vehicles: Vehicle[] = ['Model S', 'Model 3', 'Model X', 'Model Y', 
     battery: ['100 kWh', '82 kWh', '100 kWh', '75 kWh', '123 kWh'][i],
     performance: ['3.1', '4.2', '3.8', '4.8', '4.1'][i] + ' sec · 0–60 mph',
     description:
-      'An all-electric perspective on everyday driving. This fictional listing is provided for product demonstration; specifications and prices are illustrative, and no vehicle is offered for sale.',
+      'An all-electric perspective on everyday driving. This sample listing is provided for product preview; specifications and prices are samples, and no vehicle is offered for sale.',
     features: [
       'All-electric powertrain',
       'Panoramic cabin',
@@ -89,7 +89,7 @@ export function demoUser(id = 'demo-user', role: 'user' | 'admin' = 'user'): Use
     id,
     uid: id,
     email: role === 'admin' ? 'admin@volterra.example' : 'alex@volterra.example',
-    fullName: role === 'admin' ? 'Demo Administrator' : 'Alex Morgan',
+    fullName: role === 'admin' ? 'Practice Administrator' : 'Alex Morgan',
     username: role === 'admin' ? 'administrator' : 'alexm',
     phone: '',
     country: 'United States',
@@ -166,11 +166,11 @@ export const publicPages: Record<
     sections: [
       [
         'Our purpose',
-        'Learn how trading, portfolio allocation, and vehicle reservations work in a fictional environment. No money changes hands.',
+        'Learn how trading, portfolio allocation, and vehicle reservations work in a simulated environment. No money changes hands.',
       ],
       [
         'Independently imagined',
-        'Volterra is an original demo platform. We are not affiliated with Tesla or any listed manufacturer, exchange, or financial institution.',
+        'Volterra is an original simulated platform. We are not affiliated with Tesla or any listed manufacturer, exchange, or financial institution.',
       ],
     ],
   },
@@ -180,11 +180,11 @@ export const publicPages: Record<
     sections: [
       [
         'One connected workspace',
-        'Explore markets, a simulated wallet, allocation plans, and an illustrative EV catalog.',
+        'Explore markets, a simulated wallet, allocation plans, and a sample EV catalog.',
       ],
       [
         'Visible by design',
-        'Every account and activity record is marked as a demo. There are no guaranteed returns or real payment confirmations.',
+        'Every account and activity record is simulated. There are no guaranteed returns or real payment confirmations.',
       ],
     ],
   },
@@ -194,13 +194,13 @@ export const publicPages: Record<
     sections: [
       [
         'Market simulation',
-        'Place simulated market and limit orders across an illustrative multi-asset universe.',
+        'Place simulated market and limit orders across a sample multi-asset universe.',
       ],
       ['Portfolio practice', 'Review holdings, allocation, and cost basis.'],
-      ['Demo wallet', 'Submit funding and withdrawal requests for administrator review.'],
+      ['Practice wallet', 'Submit funding and withdrawal requests for administrator review.'],
       [
         'Electric vehicle discovery',
-        'Compare fictional EV listings and track a simulated reservation.',
+        'Compare sample EV listings and track a simulated reservation.',
       ],
     ],
   },
@@ -210,21 +210,21 @@ export const publicPages: Record<
     sections: [
       [
         'A simulated market',
-        'All quotes are illustrative by default. Charts do not represent real historical performance.',
+        'All quotes are simulated by default. Charts do not represent real historical performance.',
       ],
       [
         'Orders that teach',
-        'Market orders execute against the demo quote. Limit orders reserve cash or holdings and remain pending until reviewed for an eligible fill.',
+        'Market orders execute against the simulated quote. Limit orders reserve cash or holdings and remain pending until reviewed for an eligible fill.',
       ],
     ],
   },
   terms: {
-    title: 'Demo terms of use',
-    intro: 'This service is a fictional software demonstration, not a financial service.',
+    title: 'Practice terms of use',
+    intro: 'This service is a simulated software experience, not a financial service.',
     sections: [
       [
         'No financial relationship',
-        'Using Volterra does not open a brokerage, investment, custody, or bank account. Demo units have no monetary value.',
+        'Using Volterra does not open a brokerage, investment, custody, or bank account. Practice units have no monetary value.',
       ],
       [
         'No real orders',
@@ -232,17 +232,17 @@ export const publicPages: Record<
       ],
       [
         'Acceptable use',
-        'Use fictional destination details. Do not submit real bank account details, private keys, card numbers, or sensitive identity documents.',
+        'Use sample destination details. Do not submit real bank account details, private keys, card numbers, or sensitive identity documents.',
       ],
       [
         'Availability',
-        'Demo records may be reset. This illustrative policy must be reviewed and adapted before any public operational launch.',
+        'Practice records may be reset. This sample policy must be reviewed and adapted before any public operational launch.',
       ],
     ],
   },
   privacy: {
     title: 'Privacy, with intention.',
-    intro: 'Only provide the information you need to use this demo.',
+    intro: 'Only provide the information you need to use this practice workspace.',
     sections: [
       [
         'Data collected',
@@ -267,8 +267,8 @@ export const publicPages: Record<
     intro: 'Volterra is a simulation. Nothing here is investment advice.',
     sections: [
       [
-        'Illustrative data',
-        'Quotes, charts, examples, testimonials, and inventory are fictional. Simulated results do not predict real performance.',
+        'Sample data',
+        'Quotes, charts, examples, testimonials, and inventory are samples. Simulated results do not predict real performance.',
       ],
       [
         'Real investing carries risk',
@@ -282,19 +282,19 @@ export const publicPages: Record<
   },
   'safety-of-funds': {
     title: 'No real funds. No ambiguity.',
-    intro: 'There are no real funds held by this demo.',
+    intro: 'There are no real funds held by this simulated platform.',
     sections: [
       [
         'Simulated wallet',
-        'Balances are fictional units controlled by server-side application logic. They cannot be redeemed.',
+        'Balances are simulated units controlled by server-side application logic. They cannot be redeemed.',
       ],
       [
-        'Demo payment methods',
-        'Payment options are workflow demonstrations. Never transfer cryptocurrency or send a real payment to use this app.',
+        'Practice payment methods',
+        'Payment options are simulated workflows. Never transfer cryptocurrency or send a real payment to use this app.',
       ],
       [
         'Protected records',
-        'Server-verified sessions, role checks, atomic balance changes, and restricted database rules protect demo account integrity.',
+        'Server-verified sessions, role checks, atomic balance changes, and restricted database rules protect practice account integrity.',
       ],
     ],
   },
@@ -304,7 +304,7 @@ export const publicPages: Record<
     sections: [
       [
         'Execution',
-        'Market orders use the current server-side demo quote. No exchange is contacted. Limit orders stay pending until an administrator processes an eligible fill.',
+        'Market orders use the current server-side simulated quote. No exchange is contacted. Limit orders stay pending until an administrator processes an eligible fill.',
       ],
       [
         'Precision',
@@ -316,7 +316,7 @@ export const publicPages: Record<
       ],
       [
         'Fees and performance',
-        'The demo charges no fees, models no slippage, and does not accrue investment returns. Illustrative chart history is not a statement of account.',
+        'The practice workspace charges no fees, models no slippage, and does not accrue investment returns. Sample chart history is not a statement of account.',
       ],
     ],
   },
@@ -324,16 +324,16 @@ export const publicPages: Record<
 export const faqs = [
   [
     'Is this real investing?',
-    'No. Volterra is a fictional demonstration. All balances, trades, funding requests, and reservations are simulated.',
+    'No. Volterra is a simulated experience. All balances, trades, funding requests, and reservations are simulated.',
   ],
   [
     'Do I need to deposit money?',
-    'Never send money. Your account starts with practice funds, and additional demo funding can be requested inside the wallet.',
+    'Never send money. Your account starts with practice funds, and additional practice funding can be requested inside the wallet.',
   ],
-  ['Are market prices live?', 'No. By default, every quote and chart is illustrative.'],
+  ['Are market prices live?', 'No. By default, every quote and chart is simulated.'],
   [
     'Can I buy a vehicle here?',
-    'You can create a simulated reservation and follow its demo timeline. No real vehicle purchase is made.',
+    'You can create a simulated reservation and follow its practice timeline. No real vehicle purchase is made.',
   ],
   [
     'Do investment plans guarantee a return?',

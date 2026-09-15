@@ -213,7 +213,7 @@ export function AdminContent({
     return (
       <>
         {viewDeposit && (
-          <Modal title="Demo deposit request" onClose={() => setViewDeposit(null)}>
+          <Modal title="Practice deposit request" onClose={() => setViewDeposit(null)}>
             <p>
               User: {data.users?.find((u) => u.uid === viewDeposit.uid)?.email ?? viewDeposit.uid}
             </p>
@@ -348,7 +348,7 @@ export function AdminContent({
             headings={
               isPlan
                 ? ['Plan', 'Allocation range', 'Duration', 'Risk', 'Status', 'Edit']
-                : ['Vehicle', 'Year', 'Illustrative price', 'Status', 'Edit']
+                : ['Vehicle', 'Year', 'Sample price', 'Status', 'Edit']
             }
           >
             {isPlan
@@ -435,7 +435,7 @@ export function AdminContent({
     return (
       <>
         <section className="card">
-          <h3>Illustrative market quotes</h3>
+          <h3>Simulated market quotes</h3>
           <p className="muted">
             These values are current quotes. Updating a quote does not automatically fill pending
             limit orders.
@@ -486,7 +486,7 @@ export function AdminContent({
                 />
               </label>
               <label>
-                Illustrative movement %
+                Simulated movement %
                 <input
                   name="change"
                   type="number"
@@ -861,7 +861,7 @@ function CatalogEditor({
             {input('make', 'Make', 'text', 'Tesla')}
             {input('model', 'Model')}
             {input('year', 'Year', 'number', 2025)}
-            {input('price', 'Illustrative price USD', 'number', 45000)}
+            {input('price', 'Sample price USD', 'number', 45000)}
             {input('mileage', 'Mileage', 'number', 0)}
             {input('range', 'Range in miles', 'number', 300)}
           </div>

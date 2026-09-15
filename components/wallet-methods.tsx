@@ -277,9 +277,9 @@ export function WalletDeposit({
       }}
     >
       <span className="demo-pill">NOT REAL FUNDS</span>
-      <h2>Submit a demo deposit.</h2>
+      <h2>Submit a practice deposit.</h2>
       <p className="muted">
-        Addresses and QR codes are displayed for demonstration. Do not send real funds. Approval
+        Addresses and QR codes are displayed for practice. Do not send real funds. Approval
         credits simulated USD only.
       </p>
       <label>
@@ -326,7 +326,7 @@ export function WalletDeposit({
           <img
             className="wallet-qr"
             src={method.qrImage}
-            alt={method.symbol + ' ' + method.network + ' QR code — demo only'}
+            alt={method.symbol + ' ' + method.network + ' QR code — practice only'}
           />
         )}
         <p className="preserve-lines muted">{method.instructions}</p>
@@ -349,7 +349,7 @@ export function WalletDeposit({
       </label>
       <ImageUpload purpose="proof" value={proof} onChange={setProof} onBusy={setUploading} />
       <button className="button" disabled={busy || uploading}>
-        {busy ? 'Submitting…' : 'Submit demo deposit request'}
+        {busy ? 'Submitting…' : 'Submit practice deposit request'}
       </button>
     </form>
   );
