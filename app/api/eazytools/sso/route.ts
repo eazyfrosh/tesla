@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const requestedDestination = request.nextUrl.searchParams.get('destination');
   const destination = requestedDestination === 'preview'
     ? 'preview'
-    : requestedDestination === 'editor' ? '/template-editor' : '/template-admin';
+    : requestedDestination === 'editor' ? '/template-editor' : '/owner-admin';
   if (!token || token.length > 4096) return fail(request, 'missing-token');
   const marketplace = (
     process.env.EAZYTOOLS_MARKETPLACE_ORIGIN || 'https://makeketplace.vercel.app'
