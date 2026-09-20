@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const requestedDestination = request.nextUrl.searchParams.get('destination');
   const destination = requestedDestination === 'preview'
     ? 'preview'
-    : requestedDestination === 'editor' ? '/template-editor' : '/owner-admin';
+    : requestedDestination === 'editor' ? '/template-editor' : '/admin';
   if (!token || token.length > 4096) return fail(request, 'missing-token');
   const marketplace = (
     process.env.EAZYTOOLS_MARKETPLACE_ORIGIN || 'https://makeketplace.vercel.app'
@@ -55,6 +55,13 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       path: '/',
       maxAge: 28800,
+    });
+    redirect.cookies.set('volterra-template-site', siteId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 30 * 24 * 60 * 60,
     });
     return redirect;
   } catch (error) {

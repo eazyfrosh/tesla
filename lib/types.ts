@@ -1,6 +1,7 @@
 export type Role = 'user' | 'admin';
 export interface BaseRecord {
   id: string;
+  workspaceId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -115,6 +116,13 @@ export interface Activity extends BaseRecord {
   proofImage?: string;
   duration?: number;
   timeline?: { status: string; at: string }[];
+  direction?: 'credit' | 'debit';
+  currency?: string;
+  previousBalanceCents?: number;
+  newBalanceCents?: number;
+  actorId?: string;
+  effectiveAt?: string;
+  reversalOf?: string;
 }
 export interface Notice extends BaseRecord {
   uid: string;
@@ -136,6 +144,7 @@ export interface PlatformSettings extends BaseRecord {
   telegramUrl: string;
   liveChatEnabled: boolean;
   liveChatEmbedCode: string;
+  allowNegativeDemoBalance?: boolean;
 }
 export type Collection =
   | 'walletMethods'

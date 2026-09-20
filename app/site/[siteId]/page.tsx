@@ -19,7 +19,7 @@ export default async function BrandedSite({ params }: { params: Promise<{ siteId
   };
   return (
     <BrandProvider settings={settings}>
-      <Landing {...await publicCatalog()} />
+      <Landing {...await publicCatalog(siteId)} />
       <ContactWidgets />
     </BrandProvider>
   );

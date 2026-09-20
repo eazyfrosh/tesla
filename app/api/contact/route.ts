@@ -16,6 +16,8 @@ export async function POST(req: NextRequest) {
       .parse(await readJson(req));
     const id = 'contact_' + randomUUID(),
       now = new Date().toISOString();
+    const workspaceId = req.cookies.get('volterra-template-site')?.value || 'default';
+    if (!/^[a-f0-9]{24}$|^default$/.test(workspaceId)) throw new Error('Invalid website workspace');
     await atomic(async (u) => {
       u.set('content', id, {
         id,
@@ -24,7 +26,7 @@ export async function POST(req: NextRequest) {
         createdAt: now,
         updatedAt: now,
       });
-    });
+    }, workspaceId);
     return NextResponse.json({
       ok: true,
       message: 'Your message has been saved for administrator review.',

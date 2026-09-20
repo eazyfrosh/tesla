@@ -83,6 +83,17 @@ export const actionSchema = z.discriminatedUnion('action', [
     disabled: z.boolean(),
     accountStatus: z.enum(['Active', 'Under review', 'Restricted']),
   }),
+  z.object({
+    action: z.literal('adminBalanceAdjust'),
+    userId: id,
+    direction: z.enum(['credit', 'debit']),
+    amount: money,
+    currency: z.enum(['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD']),
+    reason: text.min(2),
+    description: text.min(2),
+    transactionDate: z.iso.datetime().optional(),
+    confirmation: z.literal('DEMO BALANCE MANAGEMENT'),
+  }),
   z
     .object({
       action: z.literal('savePlan'),

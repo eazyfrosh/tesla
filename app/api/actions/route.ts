@@ -19,7 +19,10 @@ export async function POST(req: NextRequest) {
     const key = req.headers.get('idempotency-key');
     if (!key || !/^[a-zA-Z0-9-]{16,100}$/.test(key))
       throw new Error('Valid idempotency key required');
-    return NextResponse.json(await atomic((u) => execute(u, user, parsed.data, key)));
+    const workspaceId = user.workspaceId ?? 'default';
+    return NextResponse.json(
+      await atomic((u) => execute(u, user, parsed.data, key), workspaceId),
+    );
   } catch (e) {
     return apiError(e);
   }

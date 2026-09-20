@@ -101,3 +101,18 @@ Uploads use a private Vercel Blob store through `@vercel/blob`. In Vercel, open 
 Images are limited to 3 MB and PNG/JPEG/WEBP signatures. `uploads` stores metadata; wallet/deposit records store `/api/uploads/{id}` URLs. These URLs fetch private Vercel Blob objects through session-protected routes, so proof screenshots are not publicly shared. QR files are administrator-uploaded and visible to signed-in users. The local development fallback stores upload files under ignored `.local-data/uploads`; production requires the connected Blob store.
 
 Checks: `npm test` includes registration, zero balances, role restrictions, address editing, proof ownership, deposit states, and duplicate-credit prevention. `TEST_ORIGIN=http://127.0.0.1:3004 node scripts/wallet-smoke.mjs` tests upload/download and concurrent approval against a local development server on port 3004. It uses development demo logins and must not be run against production. Existing `scripts/smoke.mjs` checks the full route set and financial round trips. Live Firebase signup/Storage verification requires a configured Admin service account and enabled bucket.
+
+## EazyTools private template administration
+
+The Premium Templates **Generate / Open Admin** action validates the signed EazyTools licence, creates an HTTP-only owner session, derives the site workspace on the server, and opens `/admin`. No workspace ID or role supplied by the browser is used for authorization.
+
+Each published `/site/{siteId}` response stores the site association in an HTTP-only cookie. Users who register from that website are created inside `premiumTemplateSites/{siteId}`. Its users, portfolios, simulated transactions, requests, wallet methods, uploads, idempotency records and audit records live in subcollections below that site. Firestore rules deny direct browser access to the complete tenant tree; the verified Next.js server is the only writer.
+
+To create an owner administrator:
+
+1. The customer must have an active EazyTools Premium Templates subscription.
+2. In EazyTools, open **Premium Templates** and choose **Generate / Open Admin** for Volterra.
+3. EazyTools sends a short-lived signed licence token to `/api/eazytools/sso`.
+4. Volterra validates it server-side and opens that customer’s `/admin` workspace. No default password is created.
+
+Required environment variables are unchanged: Firebase client variables, `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`, `SESSION_SECRET`, `EAZYTOOLS_SESSION_SECRET`, and `EAZYTOOLS_MARKETPLACE_ORIGIN`. Connect a private Vercel Blob store for QR and proof images. Deploy `firestore.rules` after this update; no additional composite index is currently required.

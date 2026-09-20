@@ -426,6 +426,47 @@ test('deposit rejection never credits funds or creates a financial transaction',
   assert.equal(h.records().length, 0);
   assert.equal((await h.u.get<Activity>('deposits', request.id))!.status, 'rejected');
 });
+test('admin demo balance adjustment updates balance and immutable ledger exactly once', async () => {
+  const h = harness();
+  const action = actionSchema.parse({
+    action: 'adminBalanceAdjust',
+    userId: 'alice',
+    direction: 'credit',
+    amount: 250,
+    currency: 'USD',
+    reason: 'Customer support correction',
+    description: 'Demo account credit',
+    confirmation: 'DEMO BALANCE MANAGEMENT',
+  });
+  await h.run(action, true, 'balance-adjustment-one');
+  await h.run(action, true, 'balance-adjustment-one');
+  assert.equal(h.portfolio().cashCents, 1025000);
+  const entry = h.records().find((row) => row.type === 'Demo Balance Adjustment')!;
+  assert.equal(entry.previousBalanceCents, 1000000);
+  assert.equal(entry.newBalanceCents, 1025000);
+  assert.equal(entry.actorId, 'root');
+  assert.ok([...h.rows.keys()].some((key) => key.startsWith('auditLogs/balance_')));
+});
+test('admin demo debit cannot make a balance negative', async () => {
+  const h = harness();
+  await assert.rejects(
+    h.run(
+      actionSchema.parse({
+        action: 'adminBalanceAdjust',
+        userId: 'alice',
+        direction: 'debit',
+        amount: 10001,
+        currency: 'USD',
+        reason: 'Correction',
+        description: 'Attempted over-debit',
+        confirmation: 'DEMO BALANCE MANAGEMENT',
+      }),
+      true,
+    ),
+    /negative demo balance/,
+  );
+  assert.equal(h.portfolio().cashCents, 1000000);
+});
 test('image upload accepts required raster signatures and rejects renamed executable content', () => {
   assert.equal(imageType(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0])), 'image/png');
   assert.equal(imageType(Buffer.from([255, 216, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0])), 'image/jpeg');

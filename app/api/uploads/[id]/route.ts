@@ -9,7 +9,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     const user = await apiUser();
     const { id } = await params;
     if (!/^[a-zA-Z0-9-]{1,100}$/.test(id)) return new NextResponse(null, { status: 404 });
-    const file = await get<UploadRecord>('uploads', id);
+    const file = await get<UploadRecord>('uploads', id, user.workspaceId ?? 'default');
     if (!file || (file.purpose === 'proof' && file.uid !== user.uid && user.role !== 'admin'))
       return new NextResponse(null, { status: 404 });
     return new NextResponse(new Uint8Array(await readUpload(file.path)), {

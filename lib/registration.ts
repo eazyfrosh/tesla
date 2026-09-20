@@ -5,6 +5,7 @@ export async function initializeAccount(
   u: Unit,
   claims: { uid: string; email?: string; name?: string },
   inputProfile?: unknown,
+  workspaceId = 'default',
 ) {
   const existing = await u.get('users', claims.uid);
   if (existing) return;
@@ -23,6 +24,7 @@ export async function initializeAccount(
     ...profile,
     id: claims.uid,
     uid: claims.uid,
+    workspaceId,
     email: claims.email ?? '',
     currency: 'USD',
     role: 'user',
@@ -35,12 +37,14 @@ export async function initializeAccount(
   });
   u.set('portfolios', claims.uid, {
     ...initialPortfolio(claims.uid),
+    workspaceId,
     createdAt: now,
     updatedAt: now,
   });
   u.set('notifications', 'welcome_' + claims.uid, {
     id: 'welcome_' + claims.uid,
     uid: claims.uid,
+    workspaceId,
     title: 'Welcome to Volterra',
     message: 'Your account starts at $0. No real funds are used.',
     read: false,

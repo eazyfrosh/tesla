@@ -17,6 +17,11 @@ service cloud.firestore {
     match /vehicles/{id} { allow read: if true; allow write: if false; }
     match /investmentPlans/{id} { allow read: if true; allow write: if false; }
     match /marketData/{id} { allow read: if true; allow write: if false; }
+    // Premium-template tenant data is server-only. The server resolves the
+    // workspace from the signed session; browsers cannot supply a site ID.
+    match /premiumTemplateSites/{siteId}/{document=**} {
+      allow read, write: if false;
+    }
     match /{document=**} { allow read, write: if false; }
   }
 }

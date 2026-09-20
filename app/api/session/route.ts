@@ -20,9 +20,12 @@ export async function POST(req: NextRequest) {
       const idToken = z.string().min(30).max(10000).parse(body.idToken);
       const claims = await adminAuth().verifyIdToken(idToken, true);
       if (Date.now() / 1000 - claims.auth_time > 300) throw new Error('Please sign in again');
+      const cookieStore = await cookies();
+      const workspaceId = cookieStore.get('volterra-template-site')?.value || 'default';
+      if (!/^[a-f0-9]{24}$|^default$/.test(workspaceId)) throw new Error('Invalid website workspace');
       await atomic(async (u) => {
-        await initializeAccount(u, claims, body.profile);
-      });
+        await initializeAccount(u, claims, body.profile, workspaceId);
+      }, workspaceId);
       token = await adminAuth().createSessionCookie(idToken, { expiresIn: 8 * 3600000 });
     }
     (await cookies()).set('volterra-session', token, {

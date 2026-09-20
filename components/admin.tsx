@@ -3,7 +3,7 @@ import { WalletMethodsAdmin } from './wallet-methods';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Plus, ArrowRight, Edit, Trash2, ShieldCheck } from 'lucide-react';
-import type { Snapshot, Plan, Vehicle, Activity } from '@/lib/types';
+import type { Snapshot, Plan, Vehicle, Activity, UserProfile } from '@/lib/types';
 import type { RunAction } from './workspace';
 import {
   StatCard,
@@ -32,6 +32,7 @@ export function AdminContent({
   busy: boolean;
 }) {
   const [viewDeposit, setViewDeposit] = useState<Activity | null>(null);
+  const [balanceUser, setBalanceUser] = useState<UserProfile | null>(null);
   const [q, setQ] = useState(''),
     [edit, setEdit] = useState<Plan | Vehicle | 'new' | null>(null),
     [confirmation, setConfirmation] = useState<Record<string, unknown> | null>(null),
@@ -115,6 +116,13 @@ export function AdminContent({
                   <option key={s}>{s}</option>
                 ))}
               </select>
+              <button
+                className="button"
+                disabled={busy || user.uid === data.user.uid}
+                onClick={() => setBalanceUser(user)}
+              >
+                Demo Balance Management
+              </button>
             </div>
             <h3>Account holdings</h3>
             <AdminTable headings={['Symbol', 'Quantity', 'Cost basis']}>
@@ -138,6 +146,15 @@ export function AdminContent({
             </section>
           ))}
           {dialog}
+          {balanceUser && (
+            <DemoBalanceModal
+              user={balanceUser}
+              currentCents={p?.cashCents ?? 0}
+              busy={busy}
+              run={run}
+              onClose={() => setBalanceUser(null)}
+            />
+          )}
         </>
       );
     }
@@ -762,6 +779,84 @@ export function AdminContent({
         <TransactionTable rows={data.transactions} compact />
       </section>
     </>
+  );
+}
+
+function DemoBalanceModal({
+  user,
+  currentCents,
+  busy,
+  run,
+  onClose,
+}: {
+  user: UserProfile;
+  currentCents: number;
+  busy: boolean;
+  run: RunAction;
+  onClose: () => void;
+}) {
+  const [draft, setDraft] = useState<Record<string, string> | null>(null);
+  const signedAmount = draft
+    ? Math.round(Number(draft.amount) * 100) * (draft.direction === 'credit' ? 1 : -1)
+    : 0;
+  return (
+    <Modal title="Demo Balance Management — no real money is held or transferred" onClose={onClose}>
+      {!draft ? (
+        <form
+          className="form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const values = Object.fromEntries(new FormData(event.currentTarget)) as Record<string, string>;
+            setDraft(values);
+          }}
+        >
+          <p className="demo-banner">DEMO / SIMULATED BALANCE</p>
+          <p><b>{user.fullName}</b> · current balance {money(currentCents / 100)}</p>
+          <div className="grid two">
+            <label>Direction<select name="direction"><option value="credit">Add funds</option><option value="debit">Remove funds</option></select></label>
+            <label>Amount<input name="amount" type="number" min="0.01" step="0.01" required /></label>
+          </div>
+          <label>Currency<select name="currency" defaultValue={user.currency}>{['USD','EUR','GBP','NGN','CAD','AUD'].map(value => <option key={value}>{value}</option>)}</select></label>
+          <label>Reason<input name="reason" maxLength={200} required /></label>
+          <label>Description<textarea name="description" maxLength={200} required /></label>
+          <label>Transaction date (optional)<input name="transactionDate" type="datetime-local" /></label>
+          <button className="button" disabled={busy}>Preview adjustment</button>
+        </form>
+      ) : (
+        <div className="form">
+          <p className="demo-banner">CONFIRM DEMO / SIMULATED ADJUSTMENT</p>
+          <p>Previous balance: <b>{money(currentCents / 100)}</b></p>
+          <p>Adjustment: <b>{draft.direction === 'credit' ? '+' : '-'}{money(Number(draft.amount))}</b></p>
+          <p>New balance: <b>{money((currentCents + signedAmount) / 100)}</b></p>
+          <p>Reason: {draft.reason}</p>
+          <div className="row">
+            <button
+              className="button"
+              disabled={busy}
+              onClick={async () => {
+                const ok = await run({
+                  action: 'adminBalanceAdjust',
+                  userId: user.uid,
+                  direction: draft.direction,
+                  amount: Number(draft.amount),
+                  currency: draft.currency,
+                  reason: draft.reason,
+                  description: draft.description,
+                  ...(draft.transactionDate
+                    ? { transactionDate: new Date(draft.transactionDate).toISOString() }
+                    : {}),
+                  confirmation: 'DEMO BALANCE MANAGEMENT',
+                });
+                if (ok) onClose();
+              }}
+            >
+              Confirm adjustment
+            </button>
+            <button className="button secondary" onClick={() => setDraft(null)}>Back</button>
+          </div>
+        </div>
+      )}
+    </Modal>
   );
 }
 function CatalogEditor({

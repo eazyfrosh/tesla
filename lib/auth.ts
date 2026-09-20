@@ -53,6 +53,7 @@ function eazytoolsUser(token: string): UserProfile | null {
   };
   if (!parsed.uid || !parsed.expires || parsed.expires < Date.now()) return null;
   const now = new Date().toISOString();
+  const workspaceId = eazytoolsSiteId(parsed.uid);
   return {
     id: `eazytools-${parsed.uid}`,
     uid: `eazytools-${parsed.uid}`,
@@ -64,13 +65,14 @@ function eazytoolsUser(token: string): UserProfile | null {
     region: '',
     city: '',
     currency: 'USD',
-    role: 'user',
+    role: 'admin',
     disabled: false,
     accountStatus: 'active',
     image: '',
     theme: 'dark',
     notifications: false,
     eazytoolsOwner: true,
+    workspaceId,
     createdAt: now,
     updatedAt: now,
   };
@@ -109,7 +111,8 @@ export async function currentUser(): Promise<UserProfile | null> {
     } else {
       uid = (await adminAuth().verifySessionCookie(token, true)).uid;
     }
-    const user = await get<UserProfile>('users', uid);
+    const workspaceId = cookieStore.get('volterra-template-site')?.value || 'default';
+    const user = await get<UserProfile>('users', uid, workspaceId);
     return user && !user.disabled ? user : null;
   } catch {
     return null;
@@ -118,6 +121,6 @@ export async function currentUser(): Promise<UserProfile | null> {
 export async function requireUser(admin = false) {
   const user = await currentUser();
   if (!user) redirect('/login');
-  if (admin && user.role !== 'admin') redirect('/dashboard');
+  if (admin && user.role !== 'admin' && !user.eazytoolsOwner) redirect('/dashboard');
   return user;
 }

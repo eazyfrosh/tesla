@@ -30,11 +30,14 @@ export async function POST(req: NextRequest) {
     const contentType = imageType(bytes);
     const id = randomUUID(),
       now = new Date().toISOString();
+    const workspaceId = user.workspaceId ?? 'default';
     const objectPath =
-      'uploads/' + user.uid + '/' + id + '.' + contentType.split('/')[1].replace('jpeg', 'jpg');
+      'uploads/' + workspaceId + '/' + user.uid + '/' + id + '.' + contentType.split('/')[1].replace('jpeg', 'jpg');
     await writeUpload(objectPath, bytes, contentType);
     await atomic(async (u) => {
-      const current = await u.get<{ role: string; disabled: boolean }>('users', user.uid);
+      const current = user.eazytoolsOwner
+        ? user
+        : await u.get<{ role: string; disabled: boolean }>('users', user.uid);
       if (!current || current.disabled || (purpose === 'qr' && current.role !== 'admin'))
         throw new Error('Administrator access required');
       u.set('uploads', id, {
@@ -46,7 +49,7 @@ export async function POST(req: NextRequest) {
         createdAt: now,
         updatedAt: now,
       });
-    });
+    }, workspaceId);
     return NextResponse.json({ url: '/api/uploads/' + id });
   } catch (e) {
     return apiError(e);

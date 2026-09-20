@@ -12,6 +12,7 @@ import type {
   Activity,
   PlatformSettings,
 } from './types';
+import { initialPortfolio } from './data';
 export function cents(amount: number) {
   const value = Math.round(amount * 100);
   if (!Number.isSafeInteger(value) || value < 1) throw new Error('Amount must be at least $0.01');
@@ -23,15 +24,17 @@ function ensure(ok: unknown, message: string): asserts ok {
 export async function execute(u: Unit, user: UserProfile, a: Action, key: string) {
   const now = new Date().toISOString(),
     id = randomUUID();
-  const base = { id, createdAt: now, updatedAt: now };
-  const latest = await u.get<UserProfile>('users', user.uid);
+  const base = { id, workspaceId: user.workspaceId ?? 'default', createdAt: now, updatedAt: now };
+  const latest = user.eazytoolsOwner ? user : await u.get<UserProfile>('users', user.uid);
   ensure(latest && !latest.disabled, 'Account unavailable');
   const prior = await u.get<{ result: { ok: boolean; id: string; message: string } }>(
     'idempotency',
     user.uid + '_' + key,
   );
   if (prior) return prior.result;
-  const p = await u.get<Portfolio>('portfolios', user.uid);
+  const p = user.eazytoolsOwner
+    ? initialPortfolio(user.uid)
+    : await u.get<Portfolio>('portfolios', user.uid);
   ensure(p, 'Portfolio unavailable');
   const available = () => p.cashCents - p.reservedCents;
   const changed = new Map<string, Portfolio>();
@@ -64,6 +67,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     'saveWalletMethod',
     'review',
     'userStatus',
+    'adminBalanceAdjust',
     'savePlan',
     'saveVehicle',
     'deleteVehicle',
@@ -340,6 +344,54 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       accountStatus: a.accountStatus,
       updatedAt: now,
     });
+  } else if (a.action === 'adminBalanceAdjust') {
+    ensure(a.userId !== user.uid, 'Use a customer account for demo balance adjustments');
+    const targetUser = await u.get<UserProfile>('users', a.userId);
+    const target = await u.get<Portfolio>('portfolios', a.userId);
+    ensure(targetUser && target, 'Website user account not found');
+    ensure(targetUser.currency === a.currency, 'Account currency does not match');
+    const amountCents = cents(a.amount);
+    const previousBalanceCents = target.cashCents;
+    const adjustment = a.direction === 'credit' ? amountCents : -amountCents;
+    const nextBalance = previousBalanceCents + adjustment;
+    const workspaceSettings = await u.get<PlatformSettings>('platformSettings', 'main');
+    ensure(
+      nextBalance >= 0 || workspaceSettings?.allowNegativeDemoBalance === true,
+      'This adjustment would create a negative demo balance',
+    );
+    const entry: Activity = {
+      ...base,
+      uid: a.userId,
+      type: 'Demo Balance Adjustment',
+      direction: a.direction,
+      amountCents,
+      currency: a.currency,
+      status: 'Completed',
+      reference: 'DEMO-' + id.slice(0, 8).toUpperCase(),
+      details: a.description + ' · ' + a.reason,
+      previousBalanceCents,
+      newBalanceCents: nextBalance,
+      actorId: user.uid,
+      effectiveAt: a.transactionDate ?? now,
+    };
+    u.set('portfolios', target.id, {
+      ...target,
+      cashCents: nextBalance,
+      balance: nextBalance / 100,
+      availableBalance: (nextBalance - target.reservedCents) / 100,
+      updatedAt: now,
+    });
+    u.set('transactions', id, entry);
+    u.set('auditLogs', 'balance_' + id, {
+      ...base,
+      id: 'balance_' + id,
+      actor: user.uid,
+      action: 'adminBalanceAdjust',
+      target: a.userId,
+      before: { demoBalanceCents: previousBalanceCents },
+      after: { demoBalanceCents: nextBalance, transactionId: id },
+    });
+    notice(a.userId, 'Demo balance updated', a.description);
   } else if (a.action === 'saveWalletMethod') {
     if (a.qrImage) {
       const upload = await u.get<UploadRecord>('uploads', a.qrImage.split('/').pop()!);
@@ -407,7 +459,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       ...base,
       actor: user.uid,
       action: a.action,
-      target: 'id' in a ? a.id : null,
+      target: 'id' in a ? a.id : 'userId' in a ? a.userId : null,
     });
   return result;
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { atomic, list, get } from './store';
 import { currentUser } from './auth';
-import { markets, plans, vehicles, settings } from './data';
+import { initialPortfolio, markets, plans, vehicles, settings } from './data';
 import type {
   WalletMethod,
   Snapshot,
@@ -16,6 +16,7 @@ import type {
 } from './types';
 export async function snapshot(user: UserProfile, admin = false): Promise<Snapshot> {
   const uid = admin ? undefined : user.uid;
+  const workspaceId = user.workspaceId ?? 'default';
   const [
     portfolio,
     m,
@@ -33,28 +34,29 @@ export async function snapshot(user: UserProfile, admin = false): Promise<Snapsh
     content,
     walletMethods,
   ] = await Promise.all([
-    get<Portfolio>('portfolios', user.uid),
-    list<Market>('marketData'),
-    list<Plan>('investmentPlans'),
-    list<Vehicle>('vehicles'),
-    list<Activity>('transactions', uid),
-    list<Activity>('deposits', uid),
-    list<Activity>('withdrawals', uid),
-    list<Activity>('investments', uid),
-    list<Activity>('orders', uid),
-    list<Notice>('notifications', uid),
-    get<PlatformSettings>('platformSettings', 'main'),
-    admin ? list<UserProfile>('users') : undefined,
-    admin ? list<Portfolio>('portfolios') : undefined,
-    admin ? list<{ id: string; title: string; body: string }>('content') : undefined,
-    list<WalletMethod>('walletMethods'),
+    get<Portfolio>('portfolios', user.uid, workspaceId),
+    list<Market>('marketData', undefined, workspaceId),
+    list<Plan>('investmentPlans', undefined, workspaceId),
+    list<Vehicle>('vehicles', undefined, workspaceId),
+    list<Activity>('transactions', uid, workspaceId),
+    list<Activity>('deposits', uid, workspaceId),
+    list<Activity>('withdrawals', uid, workspaceId),
+    list<Activity>('investments', uid, workspaceId),
+    list<Activity>('orders', uid, workspaceId),
+    list<Notice>('notifications', uid, workspaceId),
+    get<PlatformSettings>('platformSettings', 'main', workspaceId),
+    admin ? list<UserProfile>('users', undefined, workspaceId) : undefined,
+    admin ? list<Portfolio>('portfolios', undefined, workspaceId) : undefined,
+    admin ? list<{ id: string; title: string; body: string }>('content', undefined, workspaceId) : undefined,
+    list<WalletMethod>('walletMethods', undefined, workspaceId),
   ]);
-  if (!portfolio) throw new Error('Portfolio is missing');
+  const account = portfolio ?? (user.eazytoolsOwner ? initialPortfolio(user.uid) : undefined);
+  if (!account) throw new Error('Portfolio is missing');
   const recent = <T extends { createdAt: string }>(rows: T[]) =>
     rows.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return {
     user,
-    portfolio,
+    portfolio: account,
     walletMethods: walletMethods
       .filter((m) => admin || m.status === 'enabled')
       .sort((a, b) => a.displayOrder - b.displayOrder),
@@ -73,13 +75,13 @@ export async function snapshot(user: UserProfile, admin = false): Promise<Snapsh
     content,
   };
 }
-export async function publicCatalog() {
+export async function publicCatalog(workspaceId?: string) {
   try {
     const [m, p, v, s] = await Promise.all([
-      list<Market>('marketData'),
-      list<Plan>('investmentPlans'),
-      list<Vehicle>('vehicles'),
-      get<PlatformSettings>('platformSettings', 'main'),
+      list<Market>('marketData', undefined, workspaceId),
+      list<Plan>('investmentPlans', undefined, workspaceId),
+      list<Vehicle>('vehicles', undefined, workspaceId),
+      get<PlatformSettings>('platformSettings', 'main', workspaceId),
     ]);
     return { markets: m.length ? m : markets, plans: p, vehicles: v, settings: s ?? settings };
   } catch {
@@ -130,7 +132,8 @@ export async function rateLimit(key: string, max = 40) {
 export async function apiUser(admin = false) {
   const user = await currentUser();
   if (!user) throw new Error('Authentication required');
-  if (admin && user.role !== 'admin') throw new Error('Administrator access required');
+  if (admin && user.role !== 'admin' && !user.eazytoolsOwner)
+    throw new Error('Administrator access required');
   return user;
 }
 export function apiError(error: unknown) {
