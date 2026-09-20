@@ -68,6 +68,9 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     'review',
     'userStatus',
     'adminBalanceAdjust',
+    'adminTransaction',
+    'reverseTransaction',
+    'deleteWalletMethod',
     'savePlan',
     'saveVehicle',
     'deleteVehicle',
@@ -392,6 +395,120 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       after: { demoBalanceCents: nextBalance, transactionId: id },
     });
     notice(a.userId, 'Demo balance updated', a.description);
+  } else if (a.action === 'adminTransaction') {
+    ensure(a.userId !== user.uid, 'Choose a website user account');
+    const targetUser = await u.get<UserProfile>('users', a.userId);
+    const target = await u.get<Portfolio>('portfolios', a.userId);
+    ensure(targetUser && target, 'Website user account not found');
+    ensure(targetUser.currency === a.currency, 'Account currency does not match');
+    const amountCents = cents(a.amount);
+    const previousBalanceCents = target.cashCents;
+    const adjustment =
+      a.status === 'Completed' ? (a.direction === 'credit' ? amountCents : -amountCents) : 0;
+    const nextBalance = previousBalanceCents + adjustment;
+    const workspaceSettings = await u.get<PlatformSettings>('platformSettings', 'main');
+    ensure(
+      nextBalance >= 0 || workspaceSettings?.allowNegativeDemoBalance === true,
+      'This transaction would create a negative demo balance',
+    );
+    if (adjustment !== 0) {
+      u.set('portfolios', target.id, {
+        ...target,
+        cashCents: nextBalance,
+        balance: nextBalance / 100,
+        availableBalance: (nextBalance - target.reservedCents) / 100,
+        updatedAt: now,
+      });
+    }
+    const entry: Activity = {
+      ...base,
+      uid: a.userId,
+      type: 'Admin Simulated Transaction',
+      direction: a.direction,
+      amountCents,
+      currency: a.currency,
+      status: a.status,
+      reference: 'DEMO-' + id.slice(0, 8).toUpperCase(),
+      details: a.description,
+      previousBalanceCents,
+      newBalanceCents: nextBalance,
+      actorId: user.uid,
+      effectiveAt: a.transactionDate ?? now,
+    };
+    u.set('transactions', id, entry);
+    u.set('auditLogs', 'transaction_' + id, {
+      ...base,
+      id: 'transaction_' + id,
+      actor: user.uid,
+      action: 'adminTransaction',
+      target: a.userId,
+      before: { demoBalanceCents: previousBalanceCents },
+      after: { demoBalanceCents: nextBalance, transactionId: id, status: a.status },
+    });
+  } else if (a.action === 'reverseTransaction') {
+    const original = await u.get<Activity>('transactions', a.id);
+    ensure(original, 'Transaction not found');
+    ensure(
+      original.type === 'Admin Simulated Transaction' ||
+        original.type === 'Demo Balance Adjustment',
+      'Only administrator-created simulated transactions can be reversed',
+    );
+    ensure(
+      original.status === 'Completed' && original.direction,
+      'Only completed balance transactions can be reversed',
+    );
+    ensure(
+      !(await u.get('idempotency', 'reversal_' + original.id)),
+      'This transaction has already been reversed',
+    );
+    const target = await u.get<Portfolio>('portfolios', original.uid);
+    ensure(target, 'Website user account not found');
+    const adjustment =
+      original.direction === 'credit' ? -original.amountCents : original.amountCents;
+    const nextBalance = target.cashCents + adjustment;
+    const workspaceSettings = await u.get<PlatformSettings>('platformSettings', 'main');
+    ensure(
+      nextBalance >= 0 || workspaceSettings?.allowNegativeDemoBalance === true,
+      'This reversal would create a negative demo balance',
+    );
+    u.set('portfolios', target.id, {
+      ...target,
+      cashCents: nextBalance,
+      balance: nextBalance / 100,
+      availableBalance: (nextBalance - target.reservedCents) / 100,
+      updatedAt: now,
+    });
+    const reversal: Activity = {
+      ...base,
+      uid: original.uid,
+      type: 'Simulated Transaction Reversal',
+      direction: original.direction === 'credit' ? 'debit' : 'credit',
+      amountCents: original.amountCents,
+      currency: original.currency,
+      status: 'Completed',
+      reference: 'REV-' + id.slice(0, 8).toUpperCase(),
+      details: a.reason,
+      previousBalanceCents: target.cashCents,
+      newBalanceCents: nextBalance,
+      actorId: user.uid,
+      effectiveAt: now,
+      reversalOf: original.id,
+    };
+    u.set('transactions', id, reversal);
+    u.set('idempotency', 'reversal_' + original.id, {
+      ...base,
+      id: 'reversal_' + original.id,
+      result: { ok: true, id, message: 'Reversed' },
+    });
+    u.set('auditLogs', 'reversal_' + id, {
+      ...base,
+      id: 'reversal_' + id,
+      actor: user.uid,
+      action: 'reverseTransaction',
+      target: original.id,
+      before: { demoBalanceCents: target.cashCents },
+      after: { demoBalanceCents: nextBalance, reversalId: id },
+    });
   } else if (a.action === 'saveWalletMethod') {
     if (a.qrImage) {
       const upload = await u.get<UploadRecord>('uploads', a.qrImage.split('/').pop()!);
@@ -406,6 +523,19 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       ...fields,
       id: rid,
       createdAt: previous?.createdAt ?? now,
+    });
+  } else if (a.action === 'deleteWalletMethod') {
+    const method = await u.get<WalletMethod>('walletMethods', a.id);
+    ensure(method, 'Payment method not found');
+    u.delete('walletMethods', a.id);
+    u.set('auditLogs', 'wallet_method_delete_' + id, {
+      ...base,
+      id: 'wallet_method_delete_' + id,
+      actor: user.uid,
+      action: 'deleteWalletMethod',
+      target: a.id,
+      before: { assetName: method.assetName, network: method.network, status: method.status },
+      after: null,
     });
   } else if (a.action === 'savePlan' || a.action === 'saveVehicle') {
     const collection = a.action === 'savePlan' ? 'investmentPlans' : 'vehicles';

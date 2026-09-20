@@ -148,6 +148,28 @@ export const actionSchema = z.discriminatedUnion('action', [
   }),
   z.object({ action: z.literal('deleteVehicle'), id }),
   z.object({
+    action: z.literal('adminTransaction'),
+    userId: id,
+    direction: z.enum(['credit', 'debit']),
+    amount: money,
+    currency: z.enum(['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD']),
+    description: text.min(2),
+    status: z.enum(['Pending', 'Completed', 'Cancelled']),
+    transactionDate: z.iso.datetime().optional(),
+    confirmation: z.literal('CREATE SIMULATED TRANSACTION'),
+  }),
+  z.object({
+    action: z.literal('reverseTransaction'),
+    id,
+    reason: text.min(2),
+    confirmation: z.literal('REVERSE SIMULATED TRANSACTION'),
+  }),
+  z.object({
+    action: z.literal('deleteWalletMethod'),
+    id,
+    confirmation: z.literal('DELETE PAYMENT METHOD'),
+  }),
+  z.object({
     action: z.literal('settings'),
     methods: z.array(z.enum(['Bank Transfer', 'Crypto', 'Card Placeholder'])),
     name: text.min(2),

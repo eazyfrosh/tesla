@@ -467,6 +467,63 @@ test('admin demo debit cannot make a balance negative', async () => {
   );
   assert.equal(h.portfolio().cashCents, 1000000);
 });
+test('admin simulated transaction is idempotent and reversal is a new immutable entry', async () => {
+  const h = harness();
+  const create = actionSchema.parse({
+    action: 'adminTransaction',
+    userId: 'alice',
+    direction: 'credit',
+    amount: 75,
+    currency: 'USD',
+    description: 'Simulated account activity',
+    status: 'Completed',
+    confirmation: 'CREATE SIMULATED TRANSACTION',
+  });
+  const created = await h.run(create, true, 'manual-transaction-one');
+  await h.run(create, true, 'manual-transaction-one');
+  assert.equal(h.portfolio().cashCents, 1007500);
+  await h.run(
+    actionSchema.parse({
+      action: 'reverseTransaction',
+      id: created.id,
+      reason: 'Correcting administrator entry',
+      confirmation: 'REVERSE SIMULATED TRANSACTION',
+    }),
+    true,
+    'reversal-one',
+  );
+  assert.equal(h.portfolio().cashCents, 1000000);
+  const original = await h.u.get<Activity>('transactions', created.id);
+  assert.equal(original!.status, 'Completed');
+  assert.ok(h.records().some((row) => row.reversalOf === created.id));
+  await assert.rejects(
+    h.run(
+      actionSchema.parse({
+        action: 'reverseTransaction',
+        id: created.id,
+        reason: 'Duplicate attempt',
+        confirmation: 'REVERSE SIMULATED TRANSACTION',
+      }),
+      true,
+      'reversal-two',
+    ),
+    /already been reversed/,
+  );
+});
+test('wallet method deletion is admin-only and audited', async () => {
+  const h = harness();
+  await h.run(actionSchema.parse(walletInput), true);
+  const wallet = [...h.rows.entries()].find(([key]) => key.startsWith('walletMethods/'))![1] as any;
+  const action = actionSchema.parse({
+    action: 'deleteWalletMethod',
+    id: wallet.id,
+    confirmation: 'DELETE PAYMENT METHOD',
+  });
+  await assert.rejects(h.run(action), /Administrator/);
+  await h.run(action, true);
+  assert.equal(await h.u.get('walletMethods', wallet.id), undefined);
+  assert.ok([...h.rows.keys()].some((key) => key.startsWith('auditLogs/wallet_method_delete_')));
+});
 test('image upload accepts required raster signatures and rejects renamed executable content', () => {
   assert.equal(imageType(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0])), 'image/png');
   assert.equal(imageType(Buffer.from([255, 216, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0])), 'image/jpeg');

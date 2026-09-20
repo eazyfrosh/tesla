@@ -33,6 +33,8 @@ export function AdminContent({
 }) {
   const [viewDeposit, setViewDeposit] = useState<Activity | null>(null);
   const [balanceUser, setBalanceUser] = useState<UserProfile | null>(null);
+  const [createTransaction, setCreateTransaction] = useState(false);
+  const [reverseTarget, setReverseTarget] = useState<Activity | null>(null);
   const [q, setQ] = useState(''),
     [edit, setEdit] = useState<Plan | Vehicle | 'new' | null>(null),
     [confirmation, setConfirmation] = useState<Record<string, unknown> | null>(null),
@@ -256,12 +258,60 @@ export function AdminContent({
             )}
           </Modal>
         )}
+        {createTransaction && (
+          <SimulatedTransactionModal
+            users={(data.users ?? []).filter((user) => user.role !== 'admin')}
+            busy={busy}
+            run={run}
+            onClose={() => setCreateTransaction(false)}
+          />
+        )}
+        {reverseTarget && (
+          <Modal title="Reverse simulated transaction" onClose={() => setReverseTarget(null)}>
+            <form
+              className="form"
+              onSubmit={async (event) => {
+                event.preventDefault();
+                const reason = String(new FormData(event.currentTarget).get('reason'));
+                if (
+                  await run({
+                    action: 'reverseTransaction',
+                    id: reverseTarget.id,
+                    reason,
+                    confirmation: 'REVERSE SIMULATED TRANSACTION',
+                  })
+                )
+                  setReverseTarget(null);
+              }}
+            >
+              <p className="demo-banner">DEMO / SIMULATED ONLY</p>
+              <p>
+                The original <b>{reverseTarget.reference}</b> record will remain immutable. A new
+                opposite ledger entry will be created.
+              </p>
+              <label>
+                Reversal reason
+                <textarea name="reason" minLength={2} maxLength={200} required />
+              </label>
+              <button className="button" disabled={busy}>
+                Confirm reversal
+              </button>
+            </form>
+          </Modal>
+        )}
         <section className="card">
-          <h3>
-            {section === 'transactions'
-              ? 'All simulated activity'
-              : 'Review simulated ' + section.replace('-', ' ')}
-          </h3>
+          <div className="row">
+            <h3>
+              {section === 'transactions'
+                ? 'All simulated activity'
+                : 'Review simulated ' + section.replace('-', ' ')}
+            </h3>
+            {section === 'transactions' && (
+              <button className="button" onClick={() => setCreateTransaction(true)}>
+                <Plus size={17} /> Create simulated transaction
+              </button>
+            )}
+          </div>
           <p className="muted small">
             Balance updates are atomic and protected against duplicate review. Completing an
             investment returns principal only.
@@ -306,6 +356,7 @@ export function AdminContent({
                   </td>
                   <td>{money(r.amountCents / 100)}</td>
                   <td>
+                    <span className="demo-pill">DEMO / SIMULATED</span>
                     <StatusBadge status={r.status} />
                   </td>
                   <td>{date(r.createdAt)}</td>
@@ -333,6 +384,18 @@ export function AdminContent({
                             : status}
                         </button>
                       ))}
+                      {collection === 'transactions' &&
+                        r.status === 'Completed' &&
+                        (r.type === 'Admin Simulated Transaction' ||
+                          r.type === 'Demo Balance Adjustment') && (
+                          <button
+                            className="button secondary small"
+                            disabled={busy}
+                            onClick={() => setReverseTarget(r)}
+                          >
+                            Reverse
+                          </button>
+                        )}
                     </div>
                   </td>
                 </tr>
@@ -782,6 +845,138 @@ export function AdminContent({
   );
 }
 
+function SimulatedTransactionModal({
+  users,
+  busy,
+  run,
+  onClose,
+}: {
+  users: UserProfile[];
+  busy: boolean;
+  run: RunAction;
+  onClose: () => void;
+}) {
+  const [draft, setDraft] = useState<Record<string, string> | null>(null);
+  return (
+    <Modal title="Create simulated transaction" onClose={onClose}>
+      {!draft ? (
+        <form
+          className="form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            setDraft(
+              Object.fromEntries(new FormData(event.currentTarget)) as Record<string, string>,
+            );
+          }}
+        >
+          <p className="demo-banner">DEMO / SIMULATED — NO REAL MONEY</p>
+          <label>
+            Website user
+            <select name="userId" required>
+              <option value="">Select a user</option>
+              {users.map((user) => (
+                <option value={user.uid} key={user.uid}>
+                  {user.fullName} · {user.email}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="grid two">
+            <label>
+              Direction
+              <select name="direction">
+                <option value="credit">Credit</option>
+                <option value="debit">Debit</option>
+              </select>
+            </label>
+            <label>
+              Amount
+              <input name="amount" type="number" min="0.01" step="0.01" required />
+            </label>
+          </div>
+          <div className="grid two">
+            <label>
+              Currency
+              <select name="currency" defaultValue="USD">
+                {['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD'].map((value) => (
+                  <option key={value}>{value}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Status
+              <select name="status" defaultValue="Completed">
+                <option>Pending</option>
+                <option>Completed</option>
+                <option>Cancelled</option>
+              </select>
+            </label>
+          </div>
+          <label>
+            Description
+            <textarea name="description" minLength={2} maxLength={200} required />
+          </label>
+          <label>
+            Transaction date (optional)
+            <input name="transactionDate" type="datetime-local" />
+          </label>
+          <button className="button" disabled={!users.length}>
+            Preview transaction
+          </button>
+        </form>
+      ) : (
+        <div className="form">
+          <p className="demo-banner">CONFIRM DEMO / SIMULATED TRANSACTION</p>
+          <p>
+            User: <b>{users.find((user) => user.uid === draft.userId)?.email}</b>
+          </p>
+          <p>
+            Direction: <b>{draft.direction}</b>
+          </p>
+          <p>
+            Amount:{' '}
+            <b>
+              {draft.currency}{' '}
+              {Number(draft.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </b>
+          </p>
+          <p>
+            Status: <b>{draft.status}</b>
+          </p>
+          <p>Description: {draft.description}</p>
+          <div className="row">
+            <button
+              className="button"
+              disabled={busy}
+              onClick={async () => {
+                const ok = await run({
+                  action: 'adminTransaction',
+                  userId: draft.userId,
+                  direction: draft.direction,
+                  amount: Number(draft.amount),
+                  currency: draft.currency,
+                  description: draft.description,
+                  status: draft.status,
+                  ...(draft.transactionDate
+                    ? { transactionDate: new Date(draft.transactionDate).toISOString() }
+                    : {}),
+                  confirmation: 'CREATE SIMULATED TRANSACTION',
+                });
+                if (ok) onClose();
+              }}
+            >
+              Confirm transaction
+            </button>
+            <button className="button secondary" onClick={() => setDraft(null)}>
+              Back
+            </button>
+          </div>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
 function DemoBalanceModal({
   user,
   currentCents,
@@ -806,28 +1001,70 @@ function DemoBalanceModal({
           className="form"
           onSubmit={(event) => {
             event.preventDefault();
-            const values = Object.fromEntries(new FormData(event.currentTarget)) as Record<string, string>;
+            const values = Object.fromEntries(new FormData(event.currentTarget)) as Record<
+              string,
+              string
+            >;
             setDraft(values);
           }}
         >
           <p className="demo-banner">DEMO / SIMULATED BALANCE</p>
-          <p><b>{user.fullName}</b> · current balance {money(currentCents / 100)}</p>
+          <p>
+            <b>{user.fullName}</b> · current balance {money(currentCents / 100)}
+          </p>
           <div className="grid two">
-            <label>Direction<select name="direction"><option value="credit">Add funds</option><option value="debit">Remove funds</option></select></label>
-            <label>Amount<input name="amount" type="number" min="0.01" step="0.01" required /></label>
+            <label>
+              Direction
+              <select name="direction">
+                <option value="credit">Add funds</option>
+                <option value="debit">Remove funds</option>
+              </select>
+            </label>
+            <label>
+              Amount
+              <input name="amount" type="number" min="0.01" step="0.01" required />
+            </label>
           </div>
-          <label>Currency<select name="currency" defaultValue={user.currency}>{['USD','EUR','GBP','NGN','CAD','AUD'].map(value => <option key={value}>{value}</option>)}</select></label>
-          <label>Reason<input name="reason" maxLength={200} required /></label>
-          <label>Description<textarea name="description" maxLength={200} required /></label>
-          <label>Transaction date (optional)<input name="transactionDate" type="datetime-local" /></label>
-          <button className="button" disabled={busy}>Preview adjustment</button>
+          <label>
+            Currency
+            <select name="currency" defaultValue={user.currency}>
+              {['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD'].map((value) => (
+                <option key={value}>{value}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Reason
+            <input name="reason" maxLength={200} required />
+          </label>
+          <label>
+            Description
+            <textarea name="description" maxLength={200} required />
+          </label>
+          <label>
+            Transaction date (optional)
+            <input name="transactionDate" type="datetime-local" />
+          </label>
+          <button className="button" disabled={busy}>
+            Preview adjustment
+          </button>
         </form>
       ) : (
         <div className="form">
           <p className="demo-banner">CONFIRM DEMO / SIMULATED ADJUSTMENT</p>
-          <p>Previous balance: <b>{money(currentCents / 100)}</b></p>
-          <p>Adjustment: <b>{draft.direction === 'credit' ? '+' : '-'}{money(Number(draft.amount))}</b></p>
-          <p>New balance: <b>{money((currentCents + signedAmount) / 100)}</b></p>
+          <p>
+            Previous balance: <b>{money(currentCents / 100)}</b>
+          </p>
+          <p>
+            Adjustment:{' '}
+            <b>
+              {draft.direction === 'credit' ? '+' : '-'}
+              {money(Number(draft.amount))}
+            </b>
+          </p>
+          <p>
+            New balance: <b>{money((currentCents + signedAmount) / 100)}</b>
+          </p>
           <p>Reason: {draft.reason}</p>
           <div className="row">
             <button
@@ -852,7 +1089,9 @@ function DemoBalanceModal({
             >
               Confirm adjustment
             </button>
-            <button className="button secondary" onClick={() => setDraft(null)}>Back</button>
+            <button className="button secondary" onClick={() => setDraft(null)}>
+              Back
+            </button>
           </div>
         </div>
       )}

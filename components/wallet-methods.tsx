@@ -83,6 +83,7 @@ export function WalletMethodsAdmin({
   busy: boolean;
 }) {
   const [editing, setEditing] = useState<WalletMethod | 'new' | null>(null);
+  const [deleting, setDeleting] = useState<WalletMethod | null>(null);
   const [qrImage, setQrImage] = useState('');
   const [uploading, setUploading] = useState(false);
   const item = editing && editing !== 'new' ? editing : undefined;
@@ -123,15 +124,20 @@ export function WalletMethodsAdmin({
               Network: {method.network} · Order: {method.displayOrder}
             </p>
             <p className="wallet-address">{method.walletAddress}</p>
-            <button
-              className="button secondary"
-              onClick={() => {
-                setQrImage(method.qrImage);
-                setEditing(method);
-              }}
-            >
-              Edit wallet method
-            </button>
+            <div className="row">
+              <button
+                className="button secondary"
+                onClick={() => {
+                  setQrImage(method.qrImage);
+                  setEditing(method);
+                }}
+              >
+                Edit wallet method
+              </button>
+              <button className="button secondary" onClick={() => setDeleting(method)}>
+                Delete
+              </button>
+            </div>
           </article>
         ))}
       </div>
@@ -225,6 +231,39 @@ export function WalletMethodsAdmin({
           </form>
         </Modal>
       )}
+      {deleting && (
+        <Modal title="Delete payment method" onClose={() => setDeleting(null)}>
+          <p>
+            Delete{' '}
+            <b>
+              {deleting.assetName} · {deleting.network}
+            </b>
+            ? This removes it from the customer deposit options and records the action in the
+            immutable audit log.
+          </p>
+          <div className="row">
+            <button
+              className="button"
+              disabled={busy}
+              onClick={async () => {
+                if (
+                  await run({
+                    action: 'deleteWalletMethod',
+                    id: deleting.id,
+                    confirmation: 'DELETE PAYMENT METHOD',
+                  })
+                )
+                  setDeleting(null);
+              }}
+            >
+              Confirm delete
+            </button>
+            <button className="button secondary" onClick={() => setDeleting(null)}>
+              Cancel
+            </button>
+          </div>
+        </Modal>
+      )}
     </section>
   );
 }
@@ -279,8 +318,8 @@ export function WalletDeposit({
       <span className="demo-pill">NOT REAL FUNDS</span>
       <h2>Submit a practice deposit.</h2>
       <p className="muted">
-        Addresses and QR codes are displayed for practice. Do not send real funds. Approval
-        credits simulated USD only.
+        Addresses and QR codes are displayed for practice. Do not send real funds. Approval credits
+        simulated USD only.
       </p>
       <label>
         Wallet method
