@@ -36,7 +36,15 @@ export function eazytoolsToken(uid: string) {
   );
 }
 export function eazytoolsSiteId(uid: string) {
-  return createHmac('sha256', eazytoolsSecret()).update(uid).digest('hex').slice(0, 24);
+  // v2 deliberately uses a domain-separated identifier. The original owner
+  // admin temporarily shared its workspace with the legacy /admin flow, which
+  // could leave general-admin records visible to an EazyTool customer. A
+  // dedicated identifier gives every EazyTool owner a clean tenant boundary.
+  return createHmac('sha256', eazytoolsSecret())
+    .update('volterra:eazytools-workspace:v2\0')
+    .update(uid)
+    .digest('hex')
+    .slice(0, 24);
 }
 function eazytoolsUser(token: string): UserProfile | null {
   const [payload, signature] = token.split('.');

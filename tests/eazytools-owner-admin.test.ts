@@ -22,6 +22,7 @@ test('generated owner admin is authenticated and bound to a stable site id', () 
   assert.ok(admin.includes('owner?.eazytoolsOwner'));
   assert.ok(auth.includes('eazytoolsSiteId(parsed.uid)'));
   assert.ok(auth.includes('workspaceId'));
+  assert.match(auth, /volterra:eazytools-workspace:v2/);
   assert.match(admin, /snapshot\(owner, true\)/);
   assert.match(nativeAdmin, /if \(user\.eazytoolsOwner\) redirect\('\/owner-admin'\)/);
 });
