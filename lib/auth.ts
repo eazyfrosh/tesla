@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { adminAuth, localMode } from './firebase-admin';
 import { get } from './store';
 import type { UserProfile } from './types';
+import { bindUserWorkspace, userWorkspace } from './workspace-membership';
 const globalSecret = globalThis as typeof globalThis & { volterraSecret?: string };
 function secret() {
   return (
@@ -119,8 +120,20 @@ export async function currentUser(): Promise<UserProfile | null> {
     } else {
       uid = (await adminAuth().verifySessionCookie(token, true)).uid;
     }
-    const workspaceId = cookieStore.get('volterra-template-site')?.value || 'default';
-    const user = await get<UserProfile>('users', uid, workspaceId);
+    const selectedWorkspace = cookieStore.get('volterra-template-site')?.value || 'default';
+    let workspaceId = (await userWorkspace(uid)) || selectedWorkspace;
+    let user = await get<UserProfile>('users', uid, workspaceId);
+    // Backfill accounts created before persistent membership records existed.
+    if (!user && workspaceId !== selectedWorkspace) {
+      const selectedUser = await get<UserProfile>('users', uid, selectedWorkspace);
+      if (selectedUser) {
+        await bindUserWorkspace(uid, selectedWorkspace);
+        workspaceId = selectedWorkspace;
+        user = selectedUser;
+      }
+    } else if (user && !(await userWorkspace(uid))) {
+      await bindUserWorkspace(uid, workspaceId);
+    }
     return user && !user.disabled ? user : null;
   } catch {
     return null;

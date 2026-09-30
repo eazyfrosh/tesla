@@ -14,6 +14,7 @@ import type {
   Notice,
   PlatformSettings,
 } from './types';
+import { bindWorkspaceUsers } from './workspace-membership';
 export async function snapshot(user: UserProfile, admin = false): Promise<Snapshot> {
   const uid = admin ? undefined : user.uid;
   const workspaceId = user.workspaceId ?? 'default';
@@ -47,11 +48,16 @@ export async function snapshot(user: UserProfile, admin = false): Promise<Snapsh
     get<PlatformSettings>('platformSettings', 'main', workspaceId),
     admin ? list<UserProfile>('users', undefined, workspaceId) : undefined,
     admin ? list<Portfolio>('portfolios', undefined, workspaceId) : undefined,
-    admin ? list<{ id: string; title: string; body: string }>('content', undefined, workspaceId) : undefined,
+    admin
+      ? list<{ id: string; title: string; body: string }>('content', undefined, workspaceId)
+      : undefined,
     list<WalletMethod>('walletMethods', undefined, workspaceId),
   ]);
   const account = portfolio ?? (user.eazytoolsOwner ? initialPortfolio(user.uid) : undefined);
   if (!account) throw new Error('Portfolio is missing');
+  if (admin && user.eazytoolsOwner && users) {
+    await bindWorkspaceUsers(users, workspaceId);
+  }
   const recent = <T extends { createdAt: string }>(rows: T[]) =>
     rows.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return {

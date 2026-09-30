@@ -22,6 +22,11 @@ service cloud.firestore {
     match /premiumTemplateSites/{siteId}/{document=**} {
       allow read, write: if false;
     }
+    // Server-owned identity-to-workspace binding. Browsers must never choose
+    // or alter their tenant membership.
+    match /volterraUserWorkspaces/{uid} {
+      allow read, write: if false;
+    }
     match /{document=**} { allow read, write: if false; }
   }
 }

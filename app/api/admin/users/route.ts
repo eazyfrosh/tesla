@@ -5,6 +5,7 @@ import { adminAuth, localMode } from '@/lib/firebase-admin';
 import { initializeAccount } from '@/lib/registration';
 import { apiError, apiUser, rateLimit, readJson, sameOrigin } from '@/lib/server';
 import { atomic } from '@/lib/store';
+import { bindUserWorkspace } from '@/lib/workspace-membership';
 
 export const runtime = 'nodejs';
 
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
         updatedAt: now,
       });
     }, workspaceId);
+    await bindUserWorkspace(account.uid, workspaceId);
 
     return NextResponse.json(
       {
