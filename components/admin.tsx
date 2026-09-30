@@ -2,7 +2,7 @@
 import { WalletMethodsAdmin } from './wallet-methods';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, ArrowRight, Edit, Trash2, ShieldCheck } from 'lucide-react';
+import { Plus, ArrowRight, Edit, Trash2, ShieldCheck, UserPlus } from 'lucide-react';
 import type { Snapshot, Plan, Vehicle, Activity, UserProfile } from '@/lib/types';
 import type { RunAction } from './workspace';
 import {
@@ -33,6 +33,7 @@ export function AdminContent({
 }) {
   const [viewDeposit, setViewDeposit] = useState<Activity | null>(null);
   const [balanceUser, setBalanceUser] = useState<UserProfile | null>(null);
+  const [createUser, setCreateUser] = useState(false);
   const [createTransaction, setCreateTransaction] = useState(false);
   const [reverseTarget, setReverseTarget] = useState<Activity | null>(null);
   const [q, setQ] = useState(''),
@@ -161,42 +162,54 @@ export function AdminContent({
       );
     }
     return (
-      <section className="card">
-        <div className="filters">
-          <input
-            aria-label="Search users"
-            placeholder="Search name, email, or username…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-        </div>
-        <AdminTable headings={['Member', 'Email', 'Role', 'Status', 'Joined', 'Action']}>
-          {data.users
-            ?.filter((u) =>
-              (u.fullName + u.email + u.username).toLowerCase().includes(q.toLowerCase()),
-            )
-            .map((u) => (
-              <tr key={u.id}>
-                <td>
-                  <b>{u.fullName}</b>
-                  <span className="small muted block">@{u.username}</span>
-                </td>
-                <td>{u.email}</td>
-                <td>{u.role}</td>
-                <td>
-                  <StatusBadge status={u.disabled ? 'Restricted' : u.accountStatus} />
-                </td>
-                <td>{date(u.createdAt)}</td>
-                <td>
-                  <Link href={'/admin/users/' + u.id} className="text-link">
-                    View account
-                    <ArrowRight size={15} />
-                  </Link>
-                </td>
-              </tr>
-            ))}
-        </AdminTable>
-      </section>
+      <>
+        <section className="card">
+          <div className="row">
+            <div>
+              <h2>Website users</h2>
+              <p className="muted">Create and manage accounts for this Volterra website.</p>
+            </div>
+            <button className="button" onClick={() => setCreateUser(true)}>
+              <UserPlus size={17} /> Create user
+            </button>
+          </div>
+          <div className="filters top-space">
+            <input
+              aria-label="Search users"
+              placeholder="Search name, email, or username…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+          </div>
+          <AdminTable headings={['Member', 'Email', 'Role', 'Status', 'Joined', 'Action']}>
+            {data.users
+              ?.filter((u) =>
+                (u.fullName + u.email + u.username).toLowerCase().includes(q.toLowerCase()),
+              )
+              .map((u) => (
+                <tr key={u.id}>
+                  <td>
+                    <b>{u.fullName}</b>
+                    <span className="small muted block">@{u.username}</span>
+                  </td>
+                  <td>{u.email}</td>
+                  <td>{u.role}</td>
+                  <td>
+                    <StatusBadge status={u.disabled ? 'Restricted' : u.accountStatus} />
+                  </td>
+                  <td>{date(u.createdAt)}</td>
+                  <td>
+                    <Link href={'/admin/users/' + u.id} className="text-link">
+                      View account
+                      <ArrowRight size={15} />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+          </AdminTable>
+        </section>
+        {createUser && <CreateUserModal onClose={() => setCreateUser(false)} />}
+      </>
     );
   }
   if (
@@ -842,6 +855,151 @@ export function AdminContent({
         <TransactionTable rows={data.transactions} compact />
       </section>
     </>
+  );
+}
+
+function CreateUserModal({ onClose }: { onClose: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  return (
+    <Modal title="Create website user" onClose={onClose}>
+      <p className="muted">
+        This creates a sign-in account for this Volterra website only. The user starts with a
+        simulated balance of $0.
+      </p>
+      <form
+        className="form"
+        onSubmit={async (event) => {
+          event.preventDefault();
+          setError('');
+          const form = new FormData(event.currentTarget);
+          if (form.get('password') !== form.get('confirmPassword')) {
+            setError('Passwords do not match.');
+            return;
+          }
+
+          setBusy(true);
+          try {
+            const response = await fetch('/api/admin/users', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: form.get('email'),
+                password: form.get('password'),
+                fullName: form.get('fullName'),
+                username: form.get('username'),
+                phone: form.get('phone'),
+                country: form.get('country'),
+                region: form.get('region'),
+                city: form.get('city'),
+                currency: form.get('currency'),
+              }),
+            });
+            const result = (await response.json().catch(() => null)) as {
+              error?: string;
+              message?: string;
+            } | null;
+            if (!response.ok)
+              throw new Error(result?.error || 'User account could not be created.');
+            window.location.reload();
+          } catch (reason) {
+            setError(
+              reason instanceof Error ? reason.message : 'User account could not be created.',
+            );
+            setBusy(false);
+          }
+        }}
+      >
+        <div className="grid two">
+          <label>
+            Full name
+            <input name="fullName" required minLength={2} maxLength={200} autoComplete="off" />
+          </label>
+          <label>
+            Username
+            <input
+              name="username"
+              required
+              minLength={3}
+              maxLength={30}
+              pattern="[A-Za-z0-9_]+"
+              placeholder="customer_name"
+              autoComplete="off"
+            />
+          </label>
+        </div>
+        <label>
+          Email address
+          <input name="email" type="email" required maxLength={254} autoComplete="off" />
+        </label>
+        <div className="grid two">
+          <label>
+            Temporary password
+            <input
+              name="password"
+              type="password"
+              required
+              minLength={12}
+              maxLength={128}
+              autoComplete="new-password"
+            />
+          </label>
+          <label>
+            Confirm password
+            <input
+              name="confirmPassword"
+              type="password"
+              required
+              minLength={12}
+              maxLength={128}
+              autoComplete="new-password"
+            />
+          </label>
+        </div>
+        <div className="grid two">
+          <label>
+            Phone number
+            <input name="phone" type="tel" maxLength={50} autoComplete="off" />
+          </label>
+          <label>
+            Currency
+            <select name="currency" defaultValue="USD">
+              {['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD'].map((currency) => (
+                <option key={currency}>{currency}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div className="grid three">
+          <label>
+            Country
+            <input name="country" maxLength={100} autoComplete="off" />
+          </label>
+          <label>
+            State / region
+            <input name="region" maxLength={100} autoComplete="off" />
+          </label>
+          <label>
+            City
+            <input name="city" maxLength={100} autoComplete="off" />
+          </label>
+        </div>
+        {error && (
+          <p className="alert negative" role="alert">
+            {error}
+          </p>
+        )}
+        <p className="small muted">
+          Share the temporary password securely. Passwords are handled by Firebase Authentication
+          and are never saved in the Volterra database.
+        </p>
+        <button className="button" disabled={busy}>
+          {busy ? 'Creating user…' : 'Create user account'}
+          {!busy && <UserPlus size={16} />}
+        </button>
+      </form>
+    </Modal>
   );
 }
 
