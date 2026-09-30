@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { requireUser } from '@/lib/auth';
 import { snapshot } from '@/lib/server';
 import { localMode } from '@/lib/firebase-admin';
@@ -6,6 +6,7 @@ import { Workspace } from '@/components/workspace';
 export const dynamic = 'force-dynamic';
 export default async function Admin({ params }: { params: Promise<{ path?: string[] }> }) {
   const user = await requireUser(true);
+  if (user.eazytoolsOwner) redirect('/owner-admin');
   const { path = [] } = await params;
   const valid = [
     '',

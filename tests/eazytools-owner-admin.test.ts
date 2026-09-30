@@ -3,19 +3,27 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const sso = readFileSync(new URL('../app/api/eazytools/sso/route.ts', import.meta.url), 'utf8');
-const admin = readFileSync(new URL('../app/owner-admin/page.tsx', import.meta.url), 'utf8');
+const admin = readFileSync(
+  new URL('../app/owner-admin/[[...path]]/page.tsx', import.meta.url),
+  'utf8',
+);
+const nativeAdmin = readFileSync(
+  new URL('../app/admin/[[...path]]/page.tsx', import.meta.url),
+  'utf8',
+);
 const auth = readFileSync(new URL('../lib/auth.ts', import.meta.url), 'utf8');
 
 test('EazyTools destinations keep admin, editor and preview separate', () => {
-  assert.match(sso, /requestedDestination === 'editor' \? '\/template-editor' : '\/admin'/);
+  assert.match(sso, /requestedDestination === 'editor' \? '\/template-editor' : '\/owner-admin'/);
   assert.match(sso, /destination === 'preview' \? `\/site\/\$\{siteId\}`/);
 });
 
 test('generated owner admin is authenticated and bound to a stable site id', () => {
-  assert.ok(admin.includes('user?.eazytoolsOwner'));
+  assert.ok(admin.includes('owner?.eazytoolsOwner'));
   assert.ok(auth.includes('eazytoolsSiteId(parsed.uid)'));
   assert.ok(auth.includes('workspaceId'));
-  assert.ok(admin.includes("redirect('/admin')"));
+  assert.match(admin, /snapshot\(owner, true\)/);
+  assert.match(nativeAdmin, /if \(user\.eazytoolsOwner\) redirect\('\/owner-admin'\)/);
 });
 
 test('premium template data is stored in a server-only tenant path', () => {

@@ -87,16 +87,18 @@ const adminLinks = [
 export type RunAction = (data: Record<string, unknown>) => Promise<boolean>;
 export function Sidebar({
   admin,
+  adminBase,
   section,
   open,
   onClose,
 }: {
   admin: boolean;
+  adminBase: string;
   section: string;
   open: boolean;
   onClose: () => void;
 }) {
-  const base = admin ? '/admin' : '/dashboard';
+  const base = admin ? adminBase : '/dashboard';
   return (
     <>
       <div className={open ? 'drawer-backdrop visible' : 'drawer-backdrop'} onClick={onClose} />
@@ -223,6 +225,7 @@ export function Workspace({
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState<{ text: string; error: boolean } | null>(null);
   const section = path[0] ?? '';
+  const adminBase = data.user.eazytoolsOwner ? '/owner-admin' : '/admin';
   useEffect(() => {
     setData(initial);
   }, [initial]);
@@ -254,7 +257,13 @@ export function Workspace({
   const activeTitle = (admin ? adminLinks : links).find((l) => l[1] === section)?.[0] ?? 'Overview';
   return (
     <div className="workspace">
-      <Sidebar admin={admin} section={section} open={open} onClose={() => setOpen(false)} />
+      <Sidebar
+        admin={admin}
+        adminBase={adminBase}
+        section={section}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
       <div className="workspace-main">
         <Topbar data={data} admin={admin} onMenu={() => setOpen(true)} />
         <main className="workspace-content">
@@ -291,7 +300,10 @@ export function Workspace({
             </div>
             {!section && (
               <div className="heading-actions">
-                <Link href={admin ? '/admin/deposits' : '/dashboard/deposit'} className="button">
+                <Link
+                  href={admin ? `${adminBase}/deposits` : '/dashboard/deposit'}
+                  className="button"
+                >
                   <Plus size={17} />
                   {admin ? 'Review requests' : 'Add funds'}
                 </Link>

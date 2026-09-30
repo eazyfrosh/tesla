@@ -31,6 +31,7 @@ export function AdminContent({
   run: RunAction;
   busy: boolean;
 }) {
+  const adminBase = data.user.eazytoolsOwner ? '/owner-admin' : '/admin';
   const [viewDeposit, setViewDeposit] = useState<Activity | null>(null);
   const [balanceUser, setBalanceUser] = useState<UserProfile | null>(null);
   const [createUser, setCreateUser] = useState(false);
@@ -199,7 +200,7 @@ export function AdminContent({
                   </td>
                   <td>{date(u.createdAt)}</td>
                   <td>
-                    <Link href={'/admin/users/' + u.id} className="text-link">
+                    <Link href={`${adminBase}/users/${u.id}`} className="text-link">
                       View account
                       <ArrowRight size={15} />
                     </Link>
@@ -348,7 +349,7 @@ export function AdminContent({
                 <tr key={r.id}>
                   <td>
                     <b>{r.reference}</b>
-                    <Link className="small muted block" href={'/admin/users/' + r.uid}>
+                    <Link className="small muted block" href={`${adminBase}/users/${r.uid}`}>
                       {data.users?.find((u) => u.id === r.uid)?.fullName ?? r.uid}
                     </Link>
                   </td>
@@ -838,7 +839,7 @@ export function AdminContent({
             ],
             ['Vehicle orders', data.orders.length, 'vehicle-orders'],
           ].map(([label, count, url]) => (
-            <Link className="admin-summary-row" href={'/admin/' + url} key={label}>
+            <Link className="admin-summary-row" href={`${adminBase}/${url}`} key={label}>
               <span>{label}</span>
               <b>{count}</b>
               <ArrowRight size={16} />
