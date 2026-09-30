@@ -14,7 +14,7 @@ const config: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://makeketplace.vercel.app",
+            value: "frame-ancestors 'self' https://makeketplace.vercel.app https://eazytool.app https://www.eazytool.app",
           },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
