@@ -84,16 +84,30 @@ const adminLinks = [
   ['Content', 'content', FileText],
   ['Settings', 'settings', Settings],
 ] as const;
+const ownerAdminLinks = [
+  ['Overview', '', LayoutDashboard],
+  ['Website Users', 'users', Users],
+  ['Simulated Transactions', 'transactions', ReceiptText],
+  ['Deposit Requests', 'deposits', ArrowDownToLine],
+  ['Payment Methods', 'wallet-methods', Wallet],
+  ['Withdrawal Requests', 'withdrawals', ArrowUpFromLine],
+  ['Investments', 'investments', Layers],
+  ['Website Notifications', 'notifications', Bell],
+  ['Website Content', 'content', FileText],
+  ['Website Settings', 'settings', Settings],
+] as const;
 export type RunAction = (data: Record<string, unknown>) => Promise<boolean>;
 export function Sidebar({
   admin,
   adminBase,
+  tenantAdmin,
   section,
   open,
   onClose,
 }: {
   admin: boolean;
   adminBase: string;
+  tenantAdmin: boolean;
   section: string;
   open: boolean;
   onClose: () => void;
@@ -113,23 +127,27 @@ export function Sidebar({
             <X size={18} />
           </button>
         </div>
-        <span className="sidebar-label">{admin ? 'ADMINISTRATION' : 'YOUR WORKSPACE'}</span>
+        <span className="sidebar-label">
+          {tenantAdmin ? 'EAZYTOOL WEBSITE ADMIN' : admin ? 'ADMINISTRATION' : 'YOUR WORKSPACE'}
+        </span>
         <nav aria-label={admin ? 'Admin navigation' : 'Dashboard navigation'}>
-          {(admin ? adminLinks : links).map(([name, path, Icon], i) => (
-            <Link
-              className={
-                (section === path ? 'active ' : '') +
-                (!admin && [5, 9, 12].includes(i) ? 'nav-divider' : '')
-              }
-              key={path}
-              href={base + (path ? '/' + path : '')}
-              onClick={onClose}
-            >
-              <Icon size={18} />
-              {name}
-              {path === 'trade' && <span className="nav-new"></span>}
-            </Link>
-          ))}
+          {(tenantAdmin ? ownerAdminLinks : admin ? adminLinks : links).map(
+            ([name, path, Icon], i) => (
+              <Link
+                className={
+                  (section === path ? 'active ' : '') +
+                  (!admin && [5, 9, 12].includes(i) ? 'nav-divider' : '')
+                }
+                key={path}
+                href={base + (path ? '/' + path : '')}
+                onClick={onClose}
+              >
+                <Icon size={18} />
+                {name}
+                {path === 'trade' && <span className="nav-new"></span>}
+              </Link>
+            ),
+          )}
         </nav>
         <div className="sidebar-bottom">
           <div className="sandbox-note">
@@ -169,6 +187,7 @@ export function Topbar({
   admin: boolean;
   onMenu: () => void;
 }) {
+  const tenantAdmin = Boolean(admin && data.user.eazytoolsOwner);
   return (
     <header className="topbar">
       <div className="row">
@@ -176,7 +195,8 @@ export function Topbar({
           <Menu size={21} />
         </button>
         <span className="topbar-breadcrumb">
-          {data.settings.name} <span>/</span> <b>{admin ? 'Administration' : 'Overview'}</b>
+          {data.settings.name} <span>/</span>{' '}
+          <b>{tenantAdmin ? 'EazyTool Website Admin' : admin ? 'Administration' : 'Overview'}</b>
         </span>
       </div>
       <div className="topbar-actions">
@@ -225,7 +245,8 @@ export function Workspace({
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState<{ text: string; error: boolean } | null>(null);
   const section = path[0] ?? '';
-  const adminBase = data.user.eazytoolsOwner ? '/owner-admin' : '/admin';
+  const tenantAdmin = Boolean(admin && data.user.eazytoolsOwner);
+  const adminBase = tenantAdmin ? '/owner-admin' : '/admin';
   useEffect(() => {
     setData(initial);
   }, [initial]);
@@ -254,12 +275,16 @@ export function Workspace({
       setBusy(false);
     }
   };
-  const activeTitle = (admin ? adminLinks : links).find((l) => l[1] === section)?.[0] ?? 'Overview';
+  const activeTitle =
+    (tenantAdmin ? ownerAdminLinks : admin ? adminLinks : links).find(
+      (link) => link[1] === section,
+    )?.[0] ?? 'Overview';
   return (
     <div className="workspace">
       <Sidebar
         admin={admin}
         adminBase={adminBase}
+        tenantAdmin={tenantAdmin}
         section={section}
         open={open}
         onClose={() => setOpen(false)}

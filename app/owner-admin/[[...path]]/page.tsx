@@ -13,13 +13,8 @@ const sections = [
   'transactions',
   'deposits',
   'wallet-methods',
-  'orders',
   'withdrawals',
   'investments',
-  'investment-plans',
-  'markets',
-  'vehicles',
-  'vehicle-orders',
   'notifications',
   'content',
   'settings',
@@ -45,12 +40,5 @@ export default async function EazyToolsOwnerAdmin({
   const data = await snapshot(owner, true);
   if (path[1] && !data.users?.some((user) => user.id === path[1])) notFound();
 
-  return (
-    <Workspace
-      initial={data}
-      path={path[0] === 'orders' ? ['vehicle-orders'] : path}
-      admin
-      local={localMode()}
-    />
-  );
+  return <Workspace initial={data} path={path} admin local={localMode()} />;
 }

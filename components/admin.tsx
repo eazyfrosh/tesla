@@ -837,7 +837,9 @@ export function AdminContent({
               data.investments.filter((d) => d.status === 'Active').length,
               'investments',
             ],
-            ['Vehicle orders', data.orders.length, 'vehicle-orders'],
+            ...(data.user.eazytoolsOwner
+              ? []
+              : [['Vehicle orders', data.orders.length, 'vehicle-orders']]),
           ].map(([label, count, url]) => (
             <Link className="admin-summary-row" href={`${adminBase}/${url}`} key={label}>
               <span>{label}</span>
@@ -847,7 +849,11 @@ export function AdminContent({
           ))}
           <div className="alert">
             <ShieldCheck size={18} />
-            <p>All administrative changes affect account records only.</p>
+            <p>
+              {data.user.eazytoolsOwner
+                ? 'This private EazyTool workspace contains only your website data.'
+                : 'All administrative changes affect account records only.'}
+            </p>
           </div>
         </section>
       </div>
