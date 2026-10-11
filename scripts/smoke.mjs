@@ -163,7 +163,7 @@ const withdrawal = await action({
   action: 'withdraw',
   amount: 17.25,
   method: 'Bank Transfer',
-  destination: 'DEMO TEST DESTINATION',
+  destination: 'PRACTICE TEST DESTINATION',
 });
 await action(
   { action: 'review', collection: 'withdrawals', id: withdrawal.id, status: 'Approved' },

@@ -58,7 +58,7 @@ async function main() {
       amountCents: 100000,
       status: 'Active',
       reference: 'DEMO-SEED-PLAN',
-      details: 'Growth · sample simulated allocation',
+      details: 'Growth · sample practice allocation',
       planId: 'growth',
       duration: 30,
       createdAt: now,
@@ -103,7 +103,7 @@ async function main() {
       {
         id: 'welcome-' + uid,
         uid,
-        title: 'Welcome to your demo workspace',
+        title: 'Welcome to your practice workspace',
         message: 'Seeded values and historical samples are fictional, not financial records.',
         read: false,
         createdAt: now,
@@ -111,7 +111,7 @@ async function main() {
       },
     );
     await batch.commit();
-    console.log('Created ' + role + ' demo account.');
+    console.log('Created ' + role + ' practice account.');
   }
   console.log('Seed complete. Existing records were preserved.');
 }

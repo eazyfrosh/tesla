@@ -87,7 +87,7 @@ const adminLinks = [
 const ownerAdminLinks = [
   ['Overview', '', LayoutDashboard],
   ['Website Users', 'users', Users],
-  ['Simulated Transactions', 'transactions', ReceiptText],
+  ['Practice Transactions', 'transactions', ReceiptText],
   ['Deposit Requests', 'deposits', ArrowDownToLine],
   ['Payment Methods', 'wallet-methods', Wallet],
   ['Withdrawal Requests', 'withdrawals', ArrowUpFromLine],
@@ -154,7 +154,7 @@ export function Sidebar({
             <span className="red-dot" />
             <b> mode</b>
             <p>
-              All activity is simulated.
+              All activity is practice.
               <br />
               No real funds.
             </p>
@@ -296,7 +296,7 @@ export function Workspace({
             <ShieldCheck size={15} />
             <span>
               {local ? 'Local sandbox · ' : ''}
-              {data.settings.announcement || 'Simulated account · Not real funds'}
+              {data.settings.announcement || 'Practice account · Not real funds'}
             </span>
             <Link href="/risk-warning">
               Learn more <ArrowUpRight size={13} />
@@ -317,7 +317,7 @@ export function Workspace({
               </h1>
               <p className="muted">
                 {section
-                  ? 'Every value and action in this workspace is simulated.'
+                  ? 'Every value and action in this workspace is practice.'
                   : admin
                     ? 'A clear view of your platform and pending activity.'
                     : 'Here’s where you stand. Let’s make your next move count.'}
@@ -351,7 +351,7 @@ export function Workspace({
           <div className="workspace-footer">
             <span>VOLTERRA · financial platform</span>
             <span>
-              <span className="red-dot" /> All systems simulated
+              <span className="red-dot" /> All systems practice
             </span>
           </div>
         </main>
@@ -449,7 +449,7 @@ function UserContent({
                 </strong>
               )}
             </div>
-            <span className="demo-pill">SIMULATED QUOTES</span>
+            <span className="demo-pill">PRACTICE QUOTES</span>
           </div>
           <PortfolioChart compact basePrice={market?.price ?? data.markets[0].price} />
           <div className="grid three mini-stats">
@@ -459,7 +459,7 @@ function UserContent({
             </div>
             <div>
               <span>Execution</span>
-              <b>Simulated</b>
+              <b>Practice</b>
             </div>
             <div>
               <span>Trading fees</span>
@@ -489,7 +489,7 @@ function UserContent({
         <div className="grid four">
           <StatCard label="Total portfolio value" value={money(a.total)} />
           <StatCard
-            label="Simulated daily change"
+            label="Practice daily change"
             value={money(
               a.holdings.reduce((s, h) => s + (h.value * (h.market?.change ?? 0)) / 100, 0),
             )}
@@ -561,7 +561,7 @@ function UserContent({
           {!a.held && (
             <EmptyState
               title="Your portfolio is empty."
-              description="Place a simulated trade to add a holding."
+              description="Place a practice trade to add a holding."
             />
           )}
         </section>
@@ -615,7 +615,7 @@ function UserContent({
                 until an administrator completes or cancels the allocation. No returns accrue.
               </p>
               <label>
-                Amount in simulated USD
+                Amount in account USD
                 <input
                   name="amount"
                   type="number"
@@ -647,7 +647,7 @@ function UserContent({
               <Wallet size={26} />
             </div>
             <h2>{money(data.portfolio.cashCents / 100)}</h2>
-            <p className="muted">Simulated USD · not real funds</p>
+            <p className="muted">Account USD · not real funds</p>
             <div className="row">
               <Link className="button" href="/dashboard/deposit">
                 <Plus size={17} />
@@ -749,7 +749,7 @@ function UserContent({
             })}
           </div>
           <p className="muted">
-            This timeline represents a simulated order. No payment, shipment, or delivery occurs.
+            This timeline represents a practice order. No payment, shipment, or delivery occurs.
           </p>
           <Link href="/dashboard/orders" className="button secondary">
             Back to orders
@@ -801,7 +801,7 @@ function UserContent({
         ) : (
           <EmptyState
             title="You’re all caught up"
-            description="Updates about your simulated activity will appear here."
+            description="Updates about your illustrative activity will appear here."
           />
         )}
       </section>
@@ -1052,7 +1052,7 @@ function TradeForm({
         />
       </label>
       <label>
-        Amount · simulated USD
+        Amount · account USD
         <input
           type="number"
           step="0.01"
@@ -1124,11 +1124,11 @@ function FundingForm({
       <h2>{kind === 'deposit' ? 'Fund your next idea.' : 'Request a withdrawal.'}</h2>
       <p className="muted">
         {kind === 'deposit'
-          ? 'Submit a simulated funding request for administrator review. Never send a real payment.'
+          ? 'Submit a practice funding request for administrator review. Never send a real payment.'
           : 'The requested amount is reserved immediately. Approval deducts it; rejection releases it.'}
       </p>
       <label>
-        Amount · simulated USD
+        Amount · account USD
         <input
           name="amount"
           type="number"
@@ -1279,7 +1279,7 @@ function AccountForm({
         <p className="small muted">
           Member since {date(data.user.createdAt)}
           <br />
-          Simulated account · USD
+          Practice account · USD
         </p>
         <button
           className="button secondary"

@@ -35,7 +35,7 @@ function initial(): Database {
       id: 'welcome',
       uid: 'demo-user',
       title: 'Your next chapter starts here',
-      message: 'Welcome to your simulated workspace. No real funds are used.',
+      message: 'Welcome to your practice workspace. No real funds are used.',
       read: false,
     } as { id: string },
   ]);
@@ -61,10 +61,7 @@ async function readLocal(): Promise<Database> {
     return initial();
   }
 }
-export async function atomic<T>(
-  fn: (unit: Unit) => Promise<T>,
-  workspaceId?: string,
-): Promise<T> {
+export async function atomic<T>(fn: (unit: Unit) => Promise<T>, workspaceId?: string): Promise<T> {
   if (localMode()) {
     const task = lock.then(async () => {
       const data = await readLocal();
@@ -108,14 +105,20 @@ export async function atomic<T>(
     return result;
   });
 }
-export async function get<T>(c: Collection, id: string, workspaceId?: string): Promise<T | undefined> {
+export async function get<T>(
+  c: Collection,
+  id: string,
+  workspaceId?: string,
+): Promise<T | undefined> {
   if (localMode()) return (await readLocal())[bucket(c, workspaceId)]?.[id] as T | undefined;
   const s = await collectionRef(c, workspaceId).doc(id).get();
   return s.exists ? (s.data() as T) : undefined;
 }
 export async function list<T>(c: Collection, uid?: string, workspaceId?: string): Promise<T[]> {
   if (localMode())
-    return Object.values((await readLocal())[bucket(c, workspaceId)] ?? {}).filter((v) => !uid || v.uid === uid) as T[];
+    return Object.values((await readLocal())[bucket(c, workspaceId)] ?? {}).filter(
+      (v) => !uid || v.uid === uid,
+    ) as T[];
   let q: FirebaseFirestore.Query = collectionRef(c, workspaceId);
   if (uid) q = q.where('uid', '==', uid);
   return (await q.limit(500).get()).docs.map((d) => d.data() as T);

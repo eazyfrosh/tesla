@@ -66,7 +66,7 @@ export function PublicFooter() {
                 'A new perspective on markets. An electric vision of tomorrow.'}
             </p>
             {brand?.supportPhone && <p className="muted">Phone: {brand.supportPhone}</p>}
-            <span className="demo-pill">SIMULATED. ALWAYS.</span>
+            <span className="demo-pill">PRACTICE. ALWAYS.</span>
           </div>
           {[
             [
@@ -118,11 +118,10 @@ export function PublicFooter() {
           ))}
         </div>
         <div className="risk-copy">
-          <b>SIMULATION ONLY · NOT REAL FUNDS.</b> Volterra is a platform for learning and
-          education. Quotes, chart history, account values, testimonials, and vehicle listings are
-          simulated. No real trading, payments, investment returns, or vehicle sales occur.
-          Nothing here is financial advice. Volterra is not affiliated with Tesla or any listed
-          brand.
+          <b>PRACTICE ONLY · NOT REAL FUNDS.</b> Volterra is a platform for learning and education.
+          Quotes, chart history, account values, testimonials, and vehicle listings are practice. No
+          real trading, payments, investment returns, or vehicle sales occur. Nothing here is
+          financial advice. Volterra is not affiliated with Tesla or any listed brand.
         </div>
         <div className="row footer-bottom">
           <span>
@@ -191,7 +190,7 @@ export function Landing({
                 </Link>
               </div>
               <div className="hero-trust">
-                <ShieldCheck size={16} /> A simulated environment. Zero real funds.
+                <ShieldCheck size={16} /> A learning environment. Zero real funds.
               </div>
             </div>
             <div className="hero-visual">
@@ -242,7 +241,7 @@ export function Landing({
           <div className="container hero-stats">
             <div>
               <strong>13</strong>
-              <span>Simulated market assets</span>
+              <span>Illustrative market assets</span>
             </div>
             <div>
               <strong>$0</strong>
@@ -254,7 +253,7 @@ export function Landing({
             </div>
             <div>
               <strong>100%</strong>
-              <span>Simulated. No real funds.</span>
+              <span>Practice. No real funds.</span>
             </div>
           </div>
         </section>
@@ -281,7 +280,7 @@ export function Landing({
               </h2>
             </div>
             <p className="muted">
-              From your first simulated trade to your next electric obsession. Get the whole picture
+              From your first practice trade to your next electric obsession. Get the whole picture
               in one place.
             </p>
           </div>
@@ -296,7 +295,7 @@ export function Landing({
               [
                 Wallet,
                 'Your wallet. In perspective.',
-                'Keep simulated funds, allocations, and every request organized in one transparent workspace.',
+                'Keep virtual funds, allocations, and every request organized in one transparent workspace.',
                 '/services',
               ],
               [
@@ -327,7 +326,7 @@ export function Landing({
             <div className="wallet-preview card">
               <div className="row">
                 <Logo />
-                <span className="demo-pill">SIMULATED WALLET</span>
+                <span className="demo-pill">PRACTICE WALLET</span>
               </div>
               <p className="muted">Your starting balance</p>
               <strong>
@@ -346,7 +345,7 @@ export function Landing({
               </h2>
               <p className="muted">
                 Explore funding, track every movement, and understand your available balance. With
-                every simulated request visible from start to finish.
+                every illustrative request visible from start to finish.
               </p>
               <Link href="/register" className="text-link">
                 Explore your wallet <ArrowRight size={18} />
@@ -390,8 +389,8 @@ export function Landing({
               ))}
             </div>
             <p className="micro muted">
-              inventory. Prices and specifications are samples. Vehicle imagery courtesy of
-              Tesla, Inc.
+              inventory. Prices and specifications are samples. Vehicle imagery courtesy of Tesla,
+              Inc.
             </p>
           </div>
         </section>
@@ -420,7 +419,7 @@ export function Landing({
                 'AM',
                 'Alex M.',
                 'A clear place to learn',
-                '“Seeing my simulated wallet, holdings, and market view together makes the mechanics easier to understand.”',
+                '“Seeing my virtual wallet, holdings, and market view together makes the mechanics easier to understand.”',
               ],
               [
                 'JL',
@@ -462,12 +461,12 @@ export function Landing({
                 [
                   '02',
                   'Explore your possibilities',
-                  'Discover simulated markets, plans, and electric vehicles.',
+                  'Discover illustrative markets, plans, and electric vehicles.',
                 ],
                 [
                   '03',
                   'Put ideas in motion',
-                  'Simulate a trade, allocate simulated funds, or reserve an EV.',
+                  'Practice a trade, allocate virtual funds, or reserve an EV.',
                 ],
               ].map(([n, t, d]) => (
                 <div className="step" key={n}>

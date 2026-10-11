@@ -93,7 +93,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     const amount = cents(a.quantity * (a.orderType === 'Limit' ? a.limitPrice! : m.price));
     let h = p.holdings.find((h) => h.symbol === a.symbol);
     if (a.side === 'Buy') {
-      ensure(available() >= amount, 'Insufficient available practice funds');
+      ensure(available() >= amount, 'Insufficient available virtual funds');
       if (a.orderType === 'Limit') p.reservedCents += amount;
       else {
         p.cashCents -= amount;
@@ -115,7 +115,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       'Trade',
       amount,
       a.orderType === 'Limit' ? 'Pending' : 'Completed',
-      `${a.side} ${a.quantity} ${a.symbol} · simulated`,
+      `${a.side} ${a.quantity} ${a.symbol} · practice`,
       {
         symbol: a.symbol,
         quantity: a.quantity,
@@ -151,7 +151,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     } else ensure(s?.methods.includes(a.method), 'Payment method is disabled');
     const amount = cents(a.amount);
     if (a.action === 'withdraw') {
-      ensure(available() >= amount, 'Insufficient available practice funds');
+      ensure(available() >= amount, 'Insufficient available virtual funds');
       p.reservedCents += amount;
       saveP();
     }
@@ -159,7 +159,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       a.action === 'deposit' ? 'Deposit' : 'Withdrawal',
       amount,
       'Pending',
-      'Simulated ' + a.method + ' request',
+      'Practice ' + a.method + ' request',
       {
         method: wallet ? wallet.assetName + ' (' + wallet.symbol + ')' : a.method,
         ...(wallet && a.action === 'deposit'
@@ -179,17 +179,17 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       u.delete('transactions', id);
     }
     u.set(a.action === 'deposit' ? 'deposits' : 'withdrawals', id, r);
-    notice(user.uid, r.type + ' submitted', 'Your simulated request is awaiting review.');
+    notice(user.uid, r.type + ' submitted', 'Your illustrative request is awaiting review.');
   } else if (a.action === 'invest') {
     const plan = await u.get<Plan>('investmentPlans', a.planId);
     ensure(plan?.active, 'Plan is unavailable');
     ensure(a.amount >= plan.min && a.amount <= plan.max, 'Amount outside plan limits');
     const amount = cents(a.amount);
-    ensure(available() >= amount, 'Insufficient available practice funds');
+    ensure(available() >= amount, 'Insufficient available virtual funds');
     p.cashCents -= amount;
     p.totalInvested = (p.totalInvested ?? 0) + amount / 100;
     saveP();
-    const r = record('Investment', amount, 'Active', plan.name + ' · simulated allocation', {
+    const r = record('Investment', amount, 'Active', plan.name + ' · illustrative allocation', {
       planId: plan.id,
       duration: plan.duration,
     });
@@ -206,7 +206,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       'Vehicle order',
       cents(v.price),
       'Submitted',
-      v.make + ' ' + v.model + ' · simulated reservation',
+      v.make + ' ' + v.model + ' · illustrative reservation',
       { vehicleId: v.id, timeline: [{ status: 'Submitted', at: now }] },
     );
     u.set('orders', id, r);
@@ -214,7 +214,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     notice(
       user.uid,
       'Vehicle order created',
-      'Your practice reservation has been submitted. No payment was taken.',
+      'Your illustrative reservation has been submitted. No payment was taken.',
     );
   } else if (a.action === 'review' || a.action === 'cancelTrade') {
     const collection = a.action === 'cancelTrade' ? 'transactions' : a.collection;
@@ -321,7 +321,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     notice(
       r.uid,
       r.type + ' ' + status.toLowerCase(),
-      'Your simulated ' + r.type.toLowerCase() + ' status has changed.',
+      'Your practice ' + r.type.toLowerCase() + ' status has changed.',
     );
   } else if (a.action === 'profile') {
     u.set('users', user.uid, { ...latest, ...a.profile, updatedAt: now });
@@ -348,7 +348,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       updatedAt: now,
     });
   } else if (a.action === 'adminBalanceAdjust') {
-    ensure(a.userId !== user.uid, 'Use a customer account for demo balance adjustments');
+    ensure(a.userId !== user.uid, 'Use a customer account for illustrative balance adjustments');
     const targetUser = await u.get<UserProfile>('users', a.userId);
     const target = await u.get<Portfolio>('portfolios', a.userId);
     ensure(targetUser && target, 'Website user account not found');
@@ -360,17 +360,17 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     const workspaceSettings = await u.get<PlatformSettings>('platformSettings', 'main');
     ensure(
       nextBalance >= 0 || workspaceSettings?.allowNegativeDemoBalance === true,
-      'This adjustment would create a negative demo balance',
+      'This adjustment would create a negative account balance',
     );
     const entry: Activity = {
       ...base,
       uid: a.userId,
-      type: 'Demo Balance Adjustment',
+      type: 'Balance Adjustment',
       direction: a.direction,
       amountCents,
       currency: a.currency,
       status: 'Completed',
-      reference: 'DEMO-' + id.slice(0, 8).toUpperCase(),
+      reference: 'SAMPLE-' + id.slice(0, 8).toUpperCase(),
       details: a.description + ' · ' + a.reason,
       previousBalanceCents,
       newBalanceCents: nextBalance,
@@ -391,10 +391,10 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       actor: user.uid,
       action: 'adminBalanceAdjust',
       target: a.userId,
-      before: { demoBalanceCents: previousBalanceCents },
-      after: { demoBalanceCents: nextBalance, transactionId: id },
+      before: { accountBalanceCents: previousBalanceCents },
+      after: { accountBalanceCents: nextBalance, transactionId: id },
     });
-    notice(a.userId, 'Demo balance updated', a.description);
+    notice(a.userId, 'Practice balance updated', a.description);
   } else if (a.action === 'adminTransaction') {
     ensure(a.userId !== user.uid, 'Choose a website user account');
     const targetUser = await u.get<UserProfile>('users', a.userId);
@@ -409,7 +409,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     const workspaceSettings = await u.get<PlatformSettings>('platformSettings', 'main');
     ensure(
       nextBalance >= 0 || workspaceSettings?.allowNegativeDemoBalance === true,
-      'This transaction would create a negative demo balance',
+      'This transaction would create a negative account balance',
     );
     if (adjustment !== 0) {
       u.set('portfolios', target.id, {
@@ -423,12 +423,12 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     const entry: Activity = {
       ...base,
       uid: a.userId,
-      type: 'Admin Simulated Transaction',
+      type: 'Administrator Transaction',
       direction: a.direction,
       amountCents,
       currency: a.currency,
       status: a.status,
-      reference: 'DEMO-' + id.slice(0, 8).toUpperCase(),
+      reference: 'SAMPLE-' + id.slice(0, 8).toUpperCase(),
       details: a.description,
       previousBalanceCents,
       newBalanceCents: nextBalance,
@@ -442,16 +442,15 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       actor: user.uid,
       action: 'adminTransaction',
       target: a.userId,
-      before: { demoBalanceCents: previousBalanceCents },
-      after: { demoBalanceCents: nextBalance, transactionId: id, status: a.status },
+      before: { accountBalanceCents: previousBalanceCents },
+      after: { accountBalanceCents: nextBalance, transactionId: id, status: a.status },
     });
   } else if (a.action === 'reverseTransaction') {
     const original = await u.get<Activity>('transactions', a.id);
     ensure(original, 'Transaction not found');
     ensure(
-      original.type === 'Admin Simulated Transaction' ||
-        original.type === 'Demo Balance Adjustment',
-      'Only administrator-created simulated transactions can be reversed',
+      original.type === 'Administrator Transaction' || original.type === 'Balance Adjustment',
+      'Only administrator-created illustrative transactions can be reversed',
     );
     ensure(
       original.status === 'Completed' && original.direction,
@@ -469,7 +468,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     const workspaceSettings = await u.get<PlatformSettings>('platformSettings', 'main');
     ensure(
       nextBalance >= 0 || workspaceSettings?.allowNegativeDemoBalance === true,
-      'This reversal would create a negative demo balance',
+      'This reversal would create a negative account balance',
     );
     u.set('portfolios', target.id, {
       ...target,
@@ -481,7 +480,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     const reversal: Activity = {
       ...base,
       uid: original.uid,
-      type: 'Simulated Transaction Reversal',
+      type: 'Transaction Reversal',
       direction: original.direction === 'credit' ? 'debit' : 'credit',
       amountCents: original.amountCents,
       currency: original.currency,
@@ -506,8 +505,8 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       actor: user.uid,
       action: 'reverseTransaction',
       target: original.id,
-      before: { demoBalanceCents: target.cashCents },
-      after: { demoBalanceCents: nextBalance, reversalId: id },
+      before: { accountBalanceCents: target.cashCents },
+      after: { accountBalanceCents: nextBalance, reversalId: id },
     });
   } else if (a.action === 'saveWalletMethod') {
     if (a.qrImage) {

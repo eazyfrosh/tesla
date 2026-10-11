@@ -102,7 +102,7 @@ export function WalletMethodsAdmin({
         </button>
       </div>
       <p className="muted">
-        Configure addresses and QR images for the simulated deposit workflow. No real payments are
+        Configure addresses and QR images for the practice deposit workflow. No real payments are
         processed.
       </p>
       {!data.walletMethods.length && (
@@ -319,7 +319,7 @@ export function WalletDeposit({
       <h2>Submit a practice deposit.</h2>
       <p className="muted">
         Addresses and QR codes are displayed for practice. Do not send real funds. Approval credits
-        simulated USD only.
+        account USD only.
       </p>
       <label>
         Wallet method
@@ -371,7 +371,7 @@ export function WalletDeposit({
         <p className="preserve-lines muted">{method.instructions}</p>
       </section>
       <label>
-        Amount · simulated USD
+        Amount · account USD
         <input
           name="amount"
           type="number"

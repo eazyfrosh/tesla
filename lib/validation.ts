@@ -92,7 +92,7 @@ export const actionSchema = z.discriminatedUnion('action', [
     reason: text.min(2),
     description: text.min(2),
     transactionDate: z.iso.datetime().optional(),
-    confirmation: z.literal('DEMO BALANCE MANAGEMENT'),
+    confirmation: z.literal('PRACTICE BALANCE MANAGEMENT'),
   }),
   z
     .object({
@@ -156,13 +156,13 @@ export const actionSchema = z.discriminatedUnion('action', [
     description: text.min(2),
     status: z.enum(['Pending', 'Completed', 'Cancelled']),
     transactionDate: z.iso.datetime().optional(),
-    confirmation: z.literal('CREATE SIMULATED TRANSACTION'),
+    confirmation: z.literal('CREATE PRACTICE TRANSACTION'),
   }),
   z.object({
     action: z.literal('reverseTransaction'),
     id,
     reason: text.min(2),
-    confirmation: z.literal('REVERSE SIMULATED TRANSACTION'),
+    confirmation: z.literal('REVERSE PRACTICE TRANSACTION'),
   }),
   z.object({
     action: z.literal('deleteWalletMethod'),

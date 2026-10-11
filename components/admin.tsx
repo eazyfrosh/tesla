@@ -46,7 +46,7 @@ export function AdminContent({
   const dialog = confirmation && (
     <ConfirmDialog
       title="Confirm administrator action"
-      description="This updates simulated records. Approval and lifecycle changes are audited and cannot be submitted twice."
+      description="This updates illustrative records. Approval and lifecycle changes are audited and cannot be submitted twice."
       onClose={() => setConfirmation(null)}
       onConfirm={async () => {
         if (await run(confirmation)) setConfirmation(null);
@@ -125,7 +125,7 @@ export function AdminContent({
                 disabled={busy || user.uid === data.user.uid}
                 onClick={() => setBalanceUser(user)}
               >
-                Demo Balance Management
+                Balance Management
               </button>
             </div>
             <h3>Account holdings</h3>
@@ -250,7 +250,7 @@ export function AdminContent({
             <p>
               User: {data.users?.find((u) => u.uid === viewDeposit.uid)?.email ?? viewDeposit.uid}
             </p>
-            <p>Amount: {money(viewDeposit.amountCents / 100)} · simulated USD</p>
+            <p>Amount: {money(viewDeposit.amountCents / 100)} · account USD</p>
             <p>Wallet method: {viewDeposit.method}</p>
             <p>Network: {viewDeposit.network ?? '—'}</p>
             <p className="wallet-address">
@@ -281,7 +281,7 @@ export function AdminContent({
           />
         )}
         {reverseTarget && (
-          <Modal title="Reverse simulated transaction" onClose={() => setReverseTarget(null)}>
+          <Modal title="Reverse illustrative transaction" onClose={() => setReverseTarget(null)}>
             <form
               className="form"
               onSubmit={async (event) => {
@@ -292,13 +292,13 @@ export function AdminContent({
                     action: 'reverseTransaction',
                     id: reverseTarget.id,
                     reason,
-                    confirmation: 'REVERSE SIMULATED TRANSACTION',
+                    confirmation: 'REVERSE PRACTICE TRANSACTION',
                   })
                 )
                   setReverseTarget(null);
               }}
             >
-              <p className="demo-banner">DEMO / SIMULATED ONLY</p>
+              <p className="demo-banner">PRACTICE ONLY</p>
               <p>
                 The original <b>{reverseTarget.reference}</b> record will remain immutable. A new
                 opposite ledger entry will be created.
@@ -317,12 +317,12 @@ export function AdminContent({
           <div className="row">
             <h3>
               {section === 'transactions'
-                ? 'All simulated activity'
-                : 'Review simulated ' + section.replace('-', ' ')}
+                ? 'All illustrative activity'
+                : 'Review practice ' + section.replace('-', ' ')}
             </h3>
             {section === 'transactions' && (
               <button className="button" onClick={() => setCreateTransaction(true)}>
-                <Plus size={17} /> Create simulated transaction
+                <Plus size={17} /> Create illustrative transaction
               </button>
             )}
           </div>
@@ -370,7 +370,7 @@ export function AdminContent({
                   </td>
                   <td>{money(r.amountCents / 100)}</td>
                   <td>
-                    <span className="demo-pill">DEMO / SIMULATED</span>
+                    <span className="demo-pill">PRACTICE</span>
                     <StatusBadge status={r.status} />
                   </td>
                   <td>{date(r.createdAt)}</td>
@@ -400,8 +400,8 @@ export function AdminContent({
                       ))}
                       {collection === 'transactions' &&
                         r.status === 'Completed' &&
-                        (r.type === 'Admin Simulated Transaction' ||
-                          r.type === 'Demo Balance Adjustment') && (
+                        (r.type === 'Administrator Transaction' ||
+                          r.type === 'Balance Adjustment') && (
                           <button
                             className="button secondary small"
                             disabled={busy}
@@ -418,7 +418,7 @@ export function AdminContent({
           {!records.length && (
             <EmptyState
               title="No requests to review"
-              description="New simulated activity will appear here."
+              description="New illustrative activity will appear here."
             />
           )}
         </section>
@@ -529,7 +529,7 @@ export function AdminContent({
     return (
       <>
         <section className="card">
-          <h3>Simulated market quotes</h3>
+          <h3>Illustrative market quotes</h3>
           <p className="muted">
             These values are current quotes. Updating a quote does not automatically fill pending
             limit orders.
@@ -580,7 +580,7 @@ export function AdminContent({
                 />
               </label>
               <label>
-                Simulated movement %
+                Illustrative movement %
                 <input
                   name="change"
                   type="number"
@@ -789,7 +789,7 @@ export function AdminContent({
           </label>
         ))}
         <p className="small muted">
-          Methods are simulated request forms. No payment destination or card processor is
+          Methods are illustrative request forms. No payment destination or card processor is
           connected.
         </p>
         <button className="button" disabled={busy}>
@@ -873,7 +873,7 @@ function CreateUserModal({ onClose }: { onClose: () => void }) {
     <Modal title="Create website user" onClose={onClose}>
       <p className="muted">
         This creates a sign-in account for this Volterra website only. The user starts with a
-        simulated balance of $0.
+        illustrative balance of $0.
       </p>
       <form
         className="form"
@@ -1023,7 +1023,7 @@ function SimulatedTransactionModal({
 }) {
   const [draft, setDraft] = useState<Record<string, string> | null>(null);
   return (
-    <Modal title="Create simulated transaction" onClose={onClose}>
+    <Modal title="Create illustrative transaction" onClose={onClose}>
       {!draft ? (
         <form
           className="form"
@@ -1034,7 +1034,7 @@ function SimulatedTransactionModal({
             );
           }}
         >
-          <p className="demo-banner">DEMO / SIMULATED — NO REAL MONEY</p>
+          <p className="demo-banner">PRACTICE ONLY — NO REAL MONEY</p>
           <label>
             Website user
             <select name="userId" required>
@@ -1091,7 +1091,7 @@ function SimulatedTransactionModal({
         </form>
       ) : (
         <div className="form">
-          <p className="demo-banner">CONFIRM DEMO / SIMULATED TRANSACTION</p>
+          <p className="demo-banner">CONFIRM PRACTICE TRANSACTION</p>
           <p>
             User: <b>{users.find((user) => user.uid === draft.userId)?.email}</b>
           </p>
@@ -1125,7 +1125,7 @@ function SimulatedTransactionModal({
                   ...(draft.transactionDate
                     ? { transactionDate: new Date(draft.transactionDate).toISOString() }
                     : {}),
-                  confirmation: 'CREATE SIMULATED TRANSACTION',
+                  confirmation: 'CREATE PRACTICE TRANSACTION',
                 });
                 if (ok) onClose();
               }}
@@ -1160,7 +1160,7 @@ function DemoBalanceModal({
     ? Math.round(Number(draft.amount) * 100) * (draft.direction === 'credit' ? 1 : -1)
     : 0;
   return (
-    <Modal title="Demo Balance Management — no real money is held or transferred" onClose={onClose}>
+    <Modal title="Balance Management — no real money is held or transferred" onClose={onClose}>
       {!draft ? (
         <form
           className="form"
@@ -1173,7 +1173,7 @@ function DemoBalanceModal({
             setDraft(values);
           }}
         >
-          <p className="demo-banner">DEMO / SIMULATED BALANCE</p>
+          <p className="demo-banner">PRACTICE BALANCE</p>
           <p>
             <b>{user.fullName}</b> · current balance {money(currentCents / 100)}
           </p>
@@ -1216,7 +1216,7 @@ function DemoBalanceModal({
         </form>
       ) : (
         <div className="form">
-          <p className="demo-banner">CONFIRM DEMO / SIMULATED ADJUSTMENT</p>
+          <p className="demo-banner">CONFIRM PRACTICE ADJUSTMENT</p>
           <p>
             Previous balance: <b>{money(currentCents / 100)}</b>
           </p>
@@ -1247,7 +1247,7 @@ function DemoBalanceModal({
                   ...(draft.transactionDate
                     ? { transactionDate: new Date(draft.transactionDate).toISOString() }
                     : {}),
-                  confirmation: 'DEMO BALANCE MANAGEMENT',
+                  confirmation: 'PRACTICE BALANCE MANAGEMENT',
                 });
                 if (ok) onClose();
               }}
@@ -1349,7 +1349,7 @@ function CatalogEditor({
               name="benefits"
               rows={3}
               defaultValue={(
-                (v.benefits as string[]) ?? ['Simulated allocation', 'No guaranteed returns']
+                (v.benefits as string[]) ?? ['Illustrative allocation', 'No guaranteed returns']
               ).join('\n')}
             />
           </label>

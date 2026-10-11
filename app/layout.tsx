@@ -7,7 +7,7 @@ import type { PlatformSettings } from '@/lib/types';
 export const metadata: Metadata = {
   title: { default: 'Volterra — Think ahead. Move electric.', template: '%s | Volterra' },
   description:
-    'Explore simulated markets, portfolio strategies, and discover electric vehicles. A platform. No real funds.',
+    'Explore illustrative markets, portfolio strategies, and discover electric vehicles. A platform. No real funds.',
   robots: { index: false, follow: false },
 };
 export const dynamic = 'force-dynamic';

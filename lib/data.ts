@@ -35,12 +35,12 @@ export const plans: Plan[] = ['Starter', 'Growth', 'Premium', 'Elite'].map((name
   max: [999, 4999, 19999, 100000][i],
   duration: [7, 30, 60, 90][i],
   description: [
-    'Start with a small simulated allocation and learn the fundamentals.',
+    'Start with a small illustrative allocation and learn the fundamentals.',
     'Explore a broader allocation with a longer practice horizon.',
     'Practice a concentrated strategy and understand volatility.',
     'Model an advanced allocation across a longer practice cycle.',
   ][i],
-  benefits: ['Simulated allocation', 'Transparent lifecycle', 'No guaranteed returns'],
+  benefits: ['Illustrative allocation', 'Transparent lifecycle', 'No guaranteed returns'],
   risk: ['Moderate', 'Moderate', 'High', 'High'][i],
   active: true,
 }));
@@ -144,7 +144,7 @@ export const settings: PlatformSettings = {
   methods: ['Bank Transfer', 'Crypto', 'Card Placeholder'],
   name: 'VOLTERRA',
   supportEmail: 'support@volterra.example',
-  announcement: 'Every balance, trade, and order on Volterra is simulated. No real funds.',
+  announcement: 'Every balance, trade, and order on Volterra is practice. No real funds.',
   logoUrl: '',
   supportPhone: '',
   emailContent: 'Questions about the platform? Our support team is ready to help.',
@@ -161,16 +161,15 @@ export const publicPages: Record<
 > = {
   about: {
     title: 'A clearer way to explore what’s next.',
-    intro:
-      'Volterra brings market simulation and electric mobility into one considered experience.',
+    intro: 'Volterra brings market practice and electric mobility into one considered experience.',
     sections: [
       [
         'Our purpose',
-        'Learn how trading, portfolio allocation, and vehicle reservations work in a simulated environment. No money changes hands.',
+        'Learn how trading, portfolio allocation, and vehicle reservations work in a learning environment. No money changes hands.',
       ],
       [
         'Independently imagined',
-        'Volterra is an original simulated platform. We are not affiliated with Tesla or any listed manufacturer, exchange, or financial institution.',
+        'Volterra is an original practice platform. We are not affiliated with Tesla or any listed manufacturer, exchange, or financial institution.',
       ],
     ],
   },
@@ -180,11 +179,11 @@ export const publicPages: Record<
     sections: [
       [
         'One connected workspace',
-        'Explore markets, a simulated wallet, allocation plans, and a sample EV catalog.',
+        'Explore markets, a virtual wallet, allocation plans, and a sample EV catalog.',
       ],
       [
         'Visible by design',
-        'Every account and activity record is simulated. There are no guaranteed returns or real payment confirmations.',
+        'Every account and activity record is practice. There are no guaranteed returns or real payment confirmations.',
       ],
     ],
   },
@@ -193,14 +192,14 @@ export const publicPages: Record<
     intro: 'Explore four complementary ways to practice.',
     sections: [
       [
-        'Market simulation',
-        'Place simulated market and limit orders across a sample multi-asset universe.',
+        'Market practice',
+        'Place practice market and limit orders across a sample multi-asset universe.',
       ],
       ['Portfolio practice', 'Review holdings, allocation, and cost basis.'],
-      ['Practice wallet', 'Submit funding and withdrawal requests for administrator review.'],
+      ['Virtual wallet', 'Submit funding and withdrawal requests for administrator review.'],
       [
         'Electric vehicle discovery',
-        'Compare sample EV listings and track a simulated reservation.',
+        'Compare sample EV listings and track a illustrative reservation.',
       ],
     ],
   },
@@ -209,18 +208,18 @@ export const publicPages: Record<
     intro: 'Study the mechanics before taking a position.',
     sections: [
       [
-        'A simulated market',
-        'All quotes are simulated by default. Charts do not represent real historical performance.',
+        'A practice market',
+        'All quotes are practice by default. Charts do not represent real historical performance.',
       ],
       [
         'Orders that teach',
-        'Market orders execute against the simulated quote. Limit orders reserve cash or holdings and remain pending until reviewed for an eligible fill.',
+        'Market orders execute against the practice quote. Limit orders reserve cash or holdings and remain pending until reviewed for an eligible fill.',
       ],
     ],
   },
   terms: {
     title: 'Practice terms of use',
-    intro: 'This service is a simulated software experience, not a financial service.',
+    intro: 'This service is a practice software experience, not a financial service.',
     sections: [
       [
         'No financial relationship',
@@ -228,7 +227,7 @@ export const publicPages: Record<
       ],
       [
         'No real orders',
-        'Trades, funding requests, investments, and vehicle reservations are simulated and create no right to funds, returns, or delivery.',
+        'Trades, funding requests, investments, and vehicle reservations are practice and create no right to funds, returns, or delivery.',
       ],
       [
         'Acceptable use',
@@ -246,7 +245,7 @@ export const publicPages: Record<
     sections: [
       [
         'Data collected',
-        'Firebase Authentication handles sign-in credentials. Profiles and simulated activity are stored in Firestore when configured. Passwords are never stored in profile documents.',
+        'Firebase Authentication handles sign-in credentials. Profiles and illustrative activity are stored in Firestore when configured. Passwords are never stored in profile documents.',
       ],
       [
         'Session storage',
@@ -264,11 +263,11 @@ export const publicPages: Record<
   },
   'risk-warning': {
     title: 'Understand the risk. Always.',
-    intro: 'Volterra is a simulation. Nothing here is investment advice.',
+    intro: 'Volterra is a practice. Nothing here is investment advice.',
     sections: [
       [
         'Sample data',
-        'Quotes, charts, examples, testimonials, and inventory are samples. Simulated results do not predict real performance.',
+        'Quotes, charts, examples, testimonials, and inventory are samples. Practice results do not predict real performance.',
       ],
       [
         'Real investing carries risk',
@@ -282,15 +281,15 @@ export const publicPages: Record<
   },
   'safety-of-funds': {
     title: 'No real funds. No ambiguity.',
-    intro: 'There are no real funds held by this simulated platform.',
+    intro: 'There are no real funds held by this practice platform.',
     sections: [
       [
-        'Simulated wallet',
-        'Balances are simulated units controlled by server-side application logic. They cannot be redeemed.',
+        'Virtual wallet',
+        'Balances are practice units controlled by server-side application logic. They cannot be redeemed.',
       ],
       [
         'Practice payment methods',
-        'Payment options are simulated workflows. Never transfer cryptocurrency or send a real payment to use this app.',
+        'Payment options are practice workflows. Never transfer cryptocurrency or send a real payment to use this app.',
       ],
       [
         'Protected records',
@@ -300,11 +299,11 @@ export const publicPages: Record<
   },
   'trading-conditions': {
     title: 'Know the mechanics.',
-    intro: 'Simple, explicit conditions for a simulated environment.',
+    intro: 'Simple, explicit conditions for a learning environment.',
     sections: [
       [
         'Execution',
-        'Market orders use the current server-side simulated quote. No exchange is contacted. Limit orders stay pending until an administrator processes an eligible fill.',
+        'Market orders use the current server-side practice quote. No exchange is contacted. Limit orders stay pending until an administrator processes an eligible fill.',
       ],
       [
         'Precision',
@@ -312,7 +311,7 @@ export const publicPages: Record<
       ],
       [
         'Settlement',
-        'Simulated market trades settle immediately. Withdrawals reserve available cash until approved or rejected. Investment allocations lock principal until completed or cancelled.',
+        'Practice market trades settle immediately. Withdrawals reserve available cash until approved or rejected. Investment allocations lock principal until completed or cancelled.',
       ],
       [
         'Fees and performance',
@@ -324,20 +323,20 @@ export const publicPages: Record<
 export const faqs = [
   [
     'Is this real investing?',
-    'No. Volterra is a simulated experience. All balances, trades, funding requests, and reservations are simulated.',
+    'No. Volterra is a practice experience. All balances, trades, funding requests, and reservations are practice.',
   ],
   [
     'Do I need to deposit money?',
-    'Never send money. Your account starts with practice funds, and additional practice funding can be requested inside the wallet.',
+    'Never send money. Your account starts with virtual funds, and additional practice funding can be requested inside the wallet.',
   ],
-  ['Are market prices live?', 'No. By default, every quote and chart is simulated.'],
+  ['Are market prices live?', 'No. By default, every quote and chart is practice.'],
   [
     'Can I buy a vehicle here?',
-    'You can create a simulated reservation and follow its practice timeline. No real vehicle purchase is made.',
+    'You can create a illustrative reservation and follow its practice timeline. No real vehicle purchase is made.',
   ],
   [
     'Do investment plans guarantee a return?',
-    'No. Plans simulate allocations and lifecycles. No interest or investment return is promised or paid.',
+    'No. Plans illustrative allocations and lifecycles. No interest or investment return is promised or paid.',
   ],
   [
     'How is my account protected?',

@@ -1,6 +1,6 @@
 # VOLTERRA
 
-Original full-stack EV and market simulation built with Next.js 16.3.4 App Router, React 19, TypeScript, Tailwind CSS 4, Firebase Authentication, Firestore, Firebase Admin, Recharts, and Lucide. Deployable to Vercel using the Node.js runtime. There is no Express server.
+Original full-stack EV and market practice built with Next.js 16.3.4 App Router, React 19, TypeScript, Tailwind CSS 4, Firebase Authentication, Firestore, Firebase Admin, Recharts, and Lucide. Deployable to Vercel using the Node.js runtime. There is no Express server.
 
 **Every balance, quote, chart, funding request, trade, allocation, and vehicle order is fictional. No real funds, payments, investment returns, or vehicle deliveries are supported.**
 
@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. Without Firebase credentials, development mode exposes **Demo user** and **Demo admin** buttons on the login page. The server persists this isolated sandbox in `.local-data/database.json`. It serializes writes and signs HTTP-only sessions. This fallback is forbidden when `NODE_ENV=production` or `VERCEL` is set. It is a development convenience, not a production database or authentication system.
+Open http://localhost:3000. Without Firebase credentials, development mode exposes **Practice user** and **Practice admin** buttons on the login page. The server persists this isolated sandbox in `.local-data/database.json`. It serializes writes and signs HTTP-only sessions. This fallback is forbidden when `NODE_ENV=production` or `VERCEL` is set. It is a development convenience, not a production database or authentication system.
 
 Firebase sign-up, sign-in, and password-reset forms require the Firebase configuration below. The local sandbox never pretends those external services are configured.
 
@@ -27,7 +27,7 @@ Firebase sign-up, sign-in, and password-reset forms require the Firebase configu
    ```
 
 5. Set `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`, `SEED_USER_EMAIL`, and `SEED_USER_PASSWORD` in `.env.local`, with unique 12+ character passwords. Run `npm run seed` once. The script creates Auth users, profile roles, portfolios, market quotes, plans, vehicles, sample activity, and notifications. Existing records and accounts are preserved, never overwritten. No passwords are written to Firestore or printed.
-6. Sign in with the seeded administrator account. Normal registration always creates a `user` role and $10,000 of simulated cash. Admin roles are provisioned only by the trusted seed process; no browser or API action grants roles.
+6. Sign in with the seeded administrator account. Normal registration always creates a `user` role and $10,000 of virtual cash. Admin roles are provisioned only by the trusted seed process; no browser or API action grants roles.
 
 ## Vercel deployment
 
@@ -52,10 +52,10 @@ The application builds without secrets. Protected production features fail close
 - `lib/store.ts`: Firestore transaction adapter and local serialized file adapter. Reads are completed before buffered Firestore writes commit.
 - `lib/auth.ts`: server session verification, revocation checks, fresh profile and role checks.
 - `lib/validation.ts`: Zod input allowlists. Unknown profile properties, balances, and roles cannot be smuggled into writes.
-- `lib/market-service.ts`: server-only provider boundary. Default quotes are configurable mock data. To add Twelve Data/Finnhub/Alpha Vantage, implement `MarketDataProvider`, normalize symbols, keep credentials server-side, and decide how that feed changes the explicit simulation label. Merely setting an API key does not enable live data.
+- `lib/market-service.ts`: server-only provider boundary. Default quotes are configurable mock data. To add Twelve Data/Finnhub/Alpha Vantage, implement `MarketDataProvider`, normalize symbols, keep credentials server-side, and decide how that feed changes the explicit practice label. Merely setting an API key does not enable live data.
 - `scripts/seed.ts`: idempotent development seed for a configured Firebase project.
 - `tests/engine.test.ts`: money, roles, duplicate approval, limit orders, withdrawal reservations, investment lifecycle, vehicle availability, and validation tests.
-- `scripts/smoke.mjs`: HTTP route and workflow integration checks against a running **local sandbox**: `node scripts/smoke.mjs`. It creates labeled demo activity and restores cash/holdings through roundtrip operations. It does not delete audit records.
+- `scripts/smoke.mjs`: HTTP route and workflow integration checks against a running **local sandbox**: `node scripts/smoke.mjs`. It creates labeled illustrative activity and restores cash/holdings through roundtrip operations. It does not delete audit records.
 
 ## Security model
 
@@ -67,14 +67,14 @@ Money is integer USD cents; quantities have at most six decimal places. No margi
 
 All records use UTC ISO `createdAt`/`updatedAt` timestamps consistently. Database collections: `users`, `portfolios`, `transactions`, `deposits`, `withdrawals`, `investments`, `investmentPlans`, `orders`, `vehicles`, `notifications`, `platformSettings`, `marketData`, `content`, `rateLimits`, `idempotency`, `auditLogs`.
 
-## Demonstration boundaries and launch review
+## Illustrative boundaries and launch review
 
-- Recharts curves and percentage quote movements are clearly labeled illustrative; they are not historical account performance. Holdings value and unrealized P/L use actual demo holdings and server quotes. Currency is a preference only; balances stay denominated in USD.
+- Recharts curves and percentage quote movements are clearly labeled illustrative; they are not historical account performance. Holdings value and unrealized P/L use actual illustrative holdings and server quotes. Currency is a preference only; balances stay denominated in USD.
 - Funding methods are request placeholders. Do not collect actual card details, account numbers, private keys, or real cryptocurrency deposits.
-- Transaction tables have search, filters, and pagination over up to 500 loaded records per collection. For large deployments, replace this bounded demo snapshot with indexed cursor pagination and aggregate counters before increasing account volumes.
+- Transaction tables have search, filters, and pagination over up to 500 loaded records per collection. For large deployments, replace this bounded illustrative snapshot with indexed cursor pagination and aggregate counters before increasing account volumes.
 - No external email is sent by contact or notification forms; contact submissions enter the admin content inbox. Firebase password reset is the only email integration.
 - Seed history is explicitly illustrative opening activity, not a complete financial ledger. This is not financial accounting software.
-- Policies, testimonials, and vehicle prices/specifications are demo copy, not jurisdiction-reviewed legal documents or genuine customer testimonials.
+- Policies, testimonials, and vehicle prices/specifications are illustrative copy, not jurisdiction-reviewed legal documents or genuine customer testimonials.
 - Vehicle thumbnails are external Tesla CDN assets verified on official product pages, credited as courtesy of Tesla, Inc. External availability is outside this app’s control. Reuse rights have not been established for commercial publication. Replace with owned/licensed images via vehicle admin before a commercial launch. The app is not affiliated with Tesla. Image sources: https://www.tesla.com/models and https://www.tesla.com/tesla-gallery .
 - Before an operational public launch: verify the real Firebase/Vercel configuration, exercise Auth flows in the deployed domain, run Firestore emulator rules tests and concurrency tests against your project, review retention/backup/monitoring, add a deployment-specific CSP, and review third-party imagery. Local tests cannot establish that a remote Firebase project is configured correctly.
 
@@ -94,19 +94,19 @@ Unknown routes and unknown record IDs render the Next.js not-found boundary. Una
 
 New Firebase registrations are initialized by `lib/registration.ts` in the same Firestore transaction as their profile. Identity, role (`user`), status (`active`), and currency (`USD`) live in `users/{uid}`; zero financial fields and canonical integer-cent cash/reservations live in `portfolios/{uid}`. Registration creates no financial activity and never resets existing accounts. Explicit development seed accounts remain illustrative fixtures.
 
-`/admin/wallet-methods` uses server-verified administrator actions. Enabled records appear on `/dashboard/deposit`. Wallet deposits snapshot the configured address/network/name and supplied reference so later address edits do not rewrite historical requests. New requests use `pending`, then `approved` or `rejected`; existing title-case records remain reviewable. Only approval creates a deposit transaction and credits simulated cash. Repeated and concurrent review is protected by the Firestore transaction and pending-state check.
+`/admin/wallet-methods` uses server-verified administrator actions. Enabled records appear on `/dashboard/deposit`. Wallet deposits snapshot the configured address/network/name and supplied reference so later address edits do not rewrite historical requests. New requests use `pending`, then `approved` or `rejected`; existing title-case records remain reviewable. Only approval creates a deposit transaction and credits virtual cash. Repeated and concurrent review is protected by the Firestore transaction and pending-state check.
 
 Uploads use a private Vercel Blob store through `@vercel/blob`. In Vercel, open the project's Storage tab, create a Blob store with Private access, and connect it to the project; Vercel then provides `BLOB_READ_WRITE_TOKEN` (or its OIDC equivalent) automatically. Firebase Storage is no longer required for uploads. Browser writes remain denied.
 
 Images are limited to 3 MB and PNG/JPEG/WEBP signatures. `uploads` stores metadata; wallet/deposit records store `/api/uploads/{id}` URLs. These URLs fetch private Vercel Blob objects through session-protected routes, so proof screenshots are not publicly shared. QR files are administrator-uploaded and visible to signed-in users. The local development fallback stores upload files under ignored `.local-data/uploads`; production requires the connected Blob store.
 
-Checks: `npm test` includes registration, zero balances, role restrictions, address editing, proof ownership, deposit states, and duplicate-credit prevention. `TEST_ORIGIN=http://127.0.0.1:3004 node scripts/wallet-smoke.mjs` tests upload/download and concurrent approval against a local development server on port 3004. It uses development demo logins and must not be run against production. Existing `scripts/smoke.mjs` checks the full route set and financial round trips. Live Firebase signup/Storage verification requires a configured Admin service account and enabled bucket.
+Checks: `npm test` includes registration, zero balances, role restrictions, address editing, proof ownership, deposit states, and duplicate-credit prevention. `TEST_ORIGIN=http://127.0.0.1:3004 node scripts/wallet-smoke.mjs` tests upload/download and concurrent approval against a local development server on port 3004. It uses development practice logins and must not be run against production. Existing `scripts/smoke.mjs` checks the full route set and financial round trips. Live Firebase signup/Storage verification requires a configured Admin service account and enabled bucket.
 
 ## EazyTools private template administration
 
 The Premium Templates **Generate / Open Admin** action validates the signed EazyTools licence, creates an HTTP-only owner session, derives the site workspace on the server, and opens `/admin`. No workspace ID or role supplied by the browser is used for authorization.
 
-Each published `/site/{siteId}` response stores the site association in an HTTP-only cookie. Users who register from that website are created inside `premiumTemplateSites/{siteId}`. Its users, portfolios, simulated transactions, requests, wallet methods, uploads, idempotency records and audit records live in subcollections below that site. Firestore rules deny direct browser access to the complete tenant tree; the verified Next.js server is the only writer.
+Each published `/site/{siteId}` response stores the site association in an HTTP-only cookie. Users who register from that website are created inside `premiumTemplateSites/{siteId}`. Its users, portfolios, illustrative transactions, requests, wallet methods, uploads, idempotency records and audit records live in subcollections below that site. Firestore rules deny direct browser access to the complete tenant tree; the verified Next.js server is the only writer.
 
 To create an owner administrator:
 

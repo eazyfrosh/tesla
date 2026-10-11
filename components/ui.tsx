@@ -80,7 +80,7 @@ export function StatCard({
       </div>
       <strong>{value}</strong>
       <div className="small">
-        <span className="positive">{change ?? 'Simulated USD'}</span>
+        <span className="positive">{change ?? 'Account USD'}</span>
         <span className="muted"> · account</span>
       </div>
     </article>
@@ -341,7 +341,7 @@ export function InvestmentPlanCard({
           <ArrowRight size={16} />
         </Link>
       )}
-      <p className="micro muted">Simulated allocation. No guaranteed returns.</p>
+      <p className="micro muted">Illustrative allocation. No guaranteed returns.</p>
     </article>
   );
 }
@@ -465,7 +465,7 @@ export function TransactionTable({
         {!filtered.length && (
           <EmptyState
             title="No transactions yet."
-            description="Your simulated activity will appear here."
+            description="Your illustrative activity will appear here."
           />
         )}
       </div>
