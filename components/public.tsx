@@ -66,7 +66,7 @@ export function PublicFooter() {
                 'A new perspective on markets. An electric vision of tomorrow.'}
             </p>
             {brand?.supportPhone && <p className="muted">Phone: {brand.supportPhone}</p>}
-            <span className="demo-pill">PRACTICE. ALWAYS.</span>
+            <span className="demo-pill">VIRTUAL. ALWAYS.</span>
           </div>
           {[
             [
@@ -118,8 +118,8 @@ export function PublicFooter() {
           ))}
         </div>
         <div className="risk-copy">
-          <b>PRACTICE ONLY · NOT REAL FUNDS.</b> Volterra is a platform for learning and education.
-          Quotes, chart history, account values, testimonials, and vehicle listings are practice. No
+          <b>VIRTUAL ONLY · NOT REAL FUNDS.</b> Volterra is a platform for learning and education.
+          Quotes, chart history, account values, testimonials, and vehicle listings are virtual. No
           real trading, payments, investment returns, or vehicle sales occur. Nothing here is
           financial advice. Volterra is not affiliated with Tesla or any listed brand.
         </div>
@@ -253,7 +253,7 @@ export function Landing({
             </div>
             <div>
               <strong>100%</strong>
-              <span>Practice. No real funds.</span>
+              <span>Virtual. No real funds.</span>
             </div>
           </div>
         </section>
@@ -280,7 +280,7 @@ export function Landing({
               </h2>
             </div>
             <p className="muted">
-              From your first practice trade to your next electric obsession. Get the whole picture
+              From your first virtual trade to your next electric obsession. Get the whole picture
               in one place.
             </p>
           </div>
@@ -326,7 +326,7 @@ export function Landing({
             <div className="wallet-preview card">
               <div className="row">
                 <Logo />
-                <span className="demo-pill">PRACTICE WALLET</span>
+                <span className="demo-pill">VIRTUAL WALLET</span>
               </div>
               <p className="muted">Your starting balance</p>
               <strong>
@@ -466,7 +466,7 @@ export function Landing({
                 [
                   '03',
                   'Put ideas in motion',
-                  'Practice a trade, allocate virtual funds, or reserve an EV.',
+                  'Virtual a trade, allocate virtual funds, or reserve an EV.',
                 ],
               ].map(([n, t, d]) => (
                 <div className="step" key={n}>

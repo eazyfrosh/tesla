@@ -1,6 +1,6 @@
 # VOLTERRA
 
-Original full-stack EV and market practice built with Next.js 16.3.4 App Router, React 19, TypeScript, Tailwind CSS 4, Firebase Authentication, Firestore, Firebase Admin, Recharts, and Lucide. Deployable to Vercel using the Node.js runtime. There is no Express server.
+Original full-stack EV and market virtual built with Next.js 16.3.4 App Router, React 19, TypeScript, Tailwind CSS 4, Firebase Authentication, Firestore, Firebase Admin, Recharts, and Lucide. Deployable to Vercel using the Node.js runtime. There is no Express server.
 
 **Every balance, quote, chart, funding request, trade, allocation, and vehicle order is fictional. No real funds, payments, investment returns, or vehicle deliveries are supported.**
 
@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. Without Firebase credentials, development mode exposes **Practice user** and **Practice admin** buttons on the login page. The server persists this isolated sandbox in `.local-data/database.json`. It serializes writes and signs HTTP-only sessions. This fallback is forbidden when `NODE_ENV=production` or `VERCEL` is set. It is a development convenience, not a production database or authentication system.
+Open http://localhost:3000. Without Firebase credentials, development mode exposes **Virtual user** and **Virtual admin** buttons on the login page. The server persists this isolated sandbox in `.local-data/database.json`. It serializes writes and signs HTTP-only sessions. This fallback is forbidden when `NODE_ENV=production` or `VERCEL` is set. It is a development convenience, not a production database or authentication system.
 
 Firebase sign-up, sign-in, and password-reset forms require the Firebase configuration below. The local sandbox never pretends those external services are configured.
 
@@ -52,7 +52,7 @@ The application builds without secrets. Protected production features fail close
 - `lib/store.ts`: Firestore transaction adapter and local serialized file adapter. Reads are completed before buffered Firestore writes commit.
 - `lib/auth.ts`: server session verification, revocation checks, fresh profile and role checks.
 - `lib/validation.ts`: Zod input allowlists. Unknown profile properties, balances, and roles cannot be smuggled into writes.
-- `lib/market-service.ts`: server-only provider boundary. Default quotes are configurable mock data. To add Twelve Data/Finnhub/Alpha Vantage, implement `MarketDataProvider`, normalize symbols, keep credentials server-side, and decide how that feed changes the explicit practice label. Merely setting an API key does not enable live data.
+- `lib/market-service.ts`: server-only provider boundary. Default quotes are configurable mock data. To add Twelve Data/Finnhub/Alpha Vantage, implement `MarketDataProvider`, normalize symbols, keep credentials server-side, and decide how that feed changes the explicit virtual label. Merely setting an API key does not enable live data.
 - `scripts/seed.ts`: idempotent development seed for a configured Firebase project.
 - `tests/engine.test.ts`: money, roles, duplicate approval, limit orders, withdrawal reservations, investment lifecycle, vehicle availability, and validation tests.
 - `scripts/smoke.mjs`: HTTP route and workflow integration checks against a running **local sandbox**: `node scripts/smoke.mjs`. It creates labeled illustrative activity and restores cash/holdings through roundtrip operations. It does not delete audit records.
@@ -100,7 +100,7 @@ Uploads use a private Vercel Blob store through `@vercel/blob`. In Vercel, open 
 
 Images are limited to 3 MB and PNG/JPEG/WEBP signatures. `uploads` stores metadata; wallet/deposit records store `/api/uploads/{id}` URLs. These URLs fetch private Vercel Blob objects through session-protected routes, so proof screenshots are not publicly shared. QR files are administrator-uploaded and visible to signed-in users. The local development fallback stores upload files under ignored `.local-data/uploads`; production requires the connected Blob store.
 
-Checks: `npm test` includes registration, zero balances, role restrictions, address editing, proof ownership, deposit states, and duplicate-credit prevention. `TEST_ORIGIN=http://127.0.0.1:3004 node scripts/wallet-smoke.mjs` tests upload/download and concurrent approval against a local development server on port 3004. It uses development practice logins and must not be run against production. Existing `scripts/smoke.mjs` checks the full route set and financial round trips. Live Firebase signup/Storage verification requires a configured Admin service account and enabled bucket.
+Checks: `npm test` includes registration, zero balances, role restrictions, address editing, proof ownership, deposit states, and duplicate-credit prevention. `TEST_ORIGIN=http://127.0.0.1:3004 node scripts/wallet-smoke.mjs` tests upload/download and concurrent approval against a local development server on port 3004. It uses development virtual logins and must not be run against production. Existing `scripts/smoke.mjs` checks the full route set and financial round trips. Live Firebase signup/Storage verification requires a configured Admin service account and enabled bucket.
 
 ## EazyTools private template administration
 

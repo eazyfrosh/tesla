@@ -102,7 +102,7 @@ export function WalletMethodsAdmin({
         </button>
       </div>
       <p className="muted">
-        Configure addresses and QR images for the practice deposit workflow. No real payments are
+        Configure addresses and QR images for the virtual deposit workflow. No real payments are
         processed.
       </p>
       {!data.walletMethods.length && (
@@ -316,9 +316,9 @@ export function WalletDeposit({
       }}
     >
       <span className="demo-pill">NOT REAL FUNDS</span>
-      <h2>Submit a practice deposit.</h2>
+      <h2>Submit a virtual deposit.</h2>
       <p className="muted">
-        Addresses and QR codes are displayed for practice. Do not send real funds. Approval credits
+        Addresses and QR codes are displayed for virtual. Do not send real funds. Approval credits
         account USD only.
       </p>
       <label>
@@ -365,7 +365,7 @@ export function WalletDeposit({
           <img
             className="wallet-qr"
             src={method.qrImage}
-            alt={method.symbol + ' ' + method.network + ' QR code — practice only'}
+            alt={method.symbol + ' ' + method.network + ' QR code — virtual only'}
           />
         )}
         <p className="preserve-lines muted">{method.instructions}</p>
@@ -388,7 +388,7 @@ export function WalletDeposit({
       </label>
       <ImageUpload purpose="proof" value={proof} onChange={setProof} onBusy={setUploading} />
       <button className="button" disabled={busy || uploading}>
-        {busy ? 'Submitting…' : 'Submit practice deposit request'}
+        {busy ? 'Submitting…' : 'Submit virtual deposit request'}
       </button>
     </form>
   );

@@ -246,7 +246,7 @@ export function AdminContent({
     return (
       <>
         {viewDeposit && (
-          <Modal title="Practice deposit request" onClose={() => setViewDeposit(null)}>
+          <Modal title="Virtual deposit request" onClose={() => setViewDeposit(null)}>
             <p>
               User: {data.users?.find((u) => u.uid === viewDeposit.uid)?.email ?? viewDeposit.uid}
             </p>
@@ -292,13 +292,13 @@ export function AdminContent({
                     action: 'reverseTransaction',
                     id: reverseTarget.id,
                     reason,
-                    confirmation: 'REVERSE PRACTICE TRANSACTION',
+                    confirmation: 'REVERSE VIRTUAL TRANSACTION',
                   })
                 )
                   setReverseTarget(null);
               }}
             >
-              <p className="demo-banner">PRACTICE ONLY</p>
+              <p className="demo-banner">VIRTUAL ONLY</p>
               <p>
                 The original <b>{reverseTarget.reference}</b> record will remain immutable. A new
                 opposite ledger entry will be created.
@@ -318,7 +318,7 @@ export function AdminContent({
             <h3>
               {section === 'transactions'
                 ? 'All illustrative activity'
-                : 'Review practice ' + section.replace('-', ' ')}
+                : 'Review virtual ' + section.replace('-', ' ')}
             </h3>
             {section === 'transactions' && (
               <button className="button" onClick={() => setCreateTransaction(true)}>
@@ -370,7 +370,7 @@ export function AdminContent({
                   </td>
                   <td>{money(r.amountCents / 100)}</td>
                   <td>
-                    <span className="demo-pill">PRACTICE</span>
+                    <span className="demo-pill">VIRTUAL</span>
                     <StatusBadge status={r.status} />
                   </td>
                   <td>{date(r.createdAt)}</td>
@@ -1034,7 +1034,7 @@ function SimulatedTransactionModal({
             );
           }}
         >
-          <p className="demo-banner">PRACTICE ONLY — NO REAL MONEY</p>
+          <p className="demo-banner">VIRTUAL ONLY — NO REAL MONEY</p>
           <label>
             Website user
             <select name="userId" required>
@@ -1091,7 +1091,7 @@ function SimulatedTransactionModal({
         </form>
       ) : (
         <div className="form">
-          <p className="demo-banner">CONFIRM PRACTICE TRANSACTION</p>
+          <p className="demo-banner">CONFIRM VIRTUAL TRANSACTION</p>
           <p>
             User: <b>{users.find((user) => user.uid === draft.userId)?.email}</b>
           </p>
@@ -1125,7 +1125,7 @@ function SimulatedTransactionModal({
                   ...(draft.transactionDate
                     ? { transactionDate: new Date(draft.transactionDate).toISOString() }
                     : {}),
-                  confirmation: 'CREATE PRACTICE TRANSACTION',
+                  confirmation: 'CREATE VIRTUAL TRANSACTION',
                 });
                 if (ok) onClose();
               }}
@@ -1173,7 +1173,7 @@ function DemoBalanceModal({
             setDraft(values);
           }}
         >
-          <p className="demo-banner">PRACTICE BALANCE</p>
+          <p className="demo-banner">VIRTUAL BALANCE</p>
           <p>
             <b>{user.fullName}</b> · current balance {money(currentCents / 100)}
           </p>
@@ -1216,7 +1216,7 @@ function DemoBalanceModal({
         </form>
       ) : (
         <div className="form">
-          <p className="demo-banner">CONFIRM PRACTICE ADJUSTMENT</p>
+          <p className="demo-banner">CONFIRM VIRTUAL ADJUSTMENT</p>
           <p>
             Previous balance: <b>{money(currentCents / 100)}</b>
           </p>
@@ -1247,7 +1247,7 @@ function DemoBalanceModal({
                   ...(draft.transactionDate
                     ? { transactionDate: new Date(draft.transactionDate).toISOString() }
                     : {}),
-                  confirmation: 'PRACTICE BALANCE MANAGEMENT',
+                  confirmation: 'VIRTUAL BALANCE MANAGEMENT',
                 });
                 if (ok) onClose();
               }}

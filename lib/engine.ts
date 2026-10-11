@@ -115,7 +115,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       'Trade',
       amount,
       a.orderType === 'Limit' ? 'Pending' : 'Completed',
-      `${a.side} ${a.quantity} ${a.symbol} · practice`,
+      `${a.side} ${a.quantity} ${a.symbol} · virtual`,
       {
         symbol: a.symbol,
         quantity: a.quantity,
@@ -135,7 +135,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       });
     }
     saveP();
-    notice(user.uid, 'Practice order ' + r.status.toLowerCase(), r.details);
+    notice(user.uid, 'Virtual order ' + r.status.toLowerCase(), r.details);
   } else if (a.action === 'deposit' || a.action === 'withdraw') {
     const s = await u.get<PlatformSettings>('platformSettings', 'main');
     let wallet: WalletMethod | undefined;
@@ -159,7 +159,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       a.action === 'deposit' ? 'Deposit' : 'Withdrawal',
       amount,
       'Pending',
-      'Practice ' + a.method + ' request',
+      'Virtual ' + a.method + ' request',
       {
         method: wallet ? wallet.assetName + ' (' + wallet.symbol + ')' : a.method,
         ...(wallet && a.action === 'deposit'
@@ -197,7 +197,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     notice(
       user.uid,
       'Investment created',
-      'Practice principal allocated. No returns are guaranteed or accrued.',
+      'Virtual principal allocated. No returns are guaranteed or accrued.',
     );
   } else if (a.action === 'order') {
     const v = await u.get<Vehicle>('vehicles', a.vehicleId);
@@ -321,7 +321,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
     notice(
       r.uid,
       r.type + ' ' + status.toLowerCase(),
-      'Your practice ' + r.type.toLowerCase() + ' status has changed.',
+      'Your virtual ' + r.type.toLowerCase() + ' status has changed.',
     );
   } else if (a.action === 'profile') {
     u.set('users', user.uid, { ...latest, ...a.profile, updatedAt: now });
@@ -394,7 +394,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       before: { accountBalanceCents: previousBalanceCents },
       after: { accountBalanceCents: nextBalance, transactionId: id },
     });
-    notice(a.userId, 'Practice balance updated', a.description);
+    notice(a.userId, 'Virtual balance updated', a.description);
   } else if (a.action === 'adminTransaction') {
     ensure(a.userId !== user.uid, 'Choose a website user account');
     const targetUser = await u.get<UserProfile>('users', a.userId);
@@ -581,7 +581,7 @@ export async function execute(u: Unit, user: UserProfile, a: Action, key: string
       updatedAt: now,
     });
   }
-  const result = { ok: true, id, message: 'Practice ' + a.action + ' saved' };
+  const result = { ok: true, id, message: 'Virtual ' + a.action + ' saved' };
   u.set('idempotency', user.uid + '_' + key, { ...base, uid: user.uid, result });
   if (adminActions.includes(a.action))
     u.set('auditLogs', id, {

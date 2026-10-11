@@ -151,7 +151,7 @@ export function AuthForm({
           </h2>
           <p className="muted">
             {mode === 'login'
-              ? 'Sign in to your practice workspace.'
+              ? 'Sign in to your virtual workspace.'
               : mode === 'register'
                 ? 'Create your account. Start with $0 in virtual funds.'
                 : 'We’ll help you reset your password.'}
@@ -200,7 +200,7 @@ export function AuthForm({
                     <Link href="/terms" target="_blank">
                       terms
                     </Link>{' '}
-                    and understand this is a practice.
+                    and understand this is a virtual.
                   </label>
                 </>
               )

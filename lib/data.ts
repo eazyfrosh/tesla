@@ -36,9 +36,9 @@ export const plans: Plan[] = ['Starter', 'Growth', 'Premium', 'Elite'].map((name
   duration: [7, 30, 60, 90][i],
   description: [
     'Start with a small illustrative allocation and learn the fundamentals.',
-    'Explore a broader allocation with a longer practice horizon.',
-    'Practice a concentrated strategy and understand volatility.',
-    'Model an advanced allocation across a longer practice cycle.',
+    'Explore a broader allocation with a longer virtual horizon.',
+    'Virtual a concentrated strategy and understand volatility.',
+    'Model an advanced allocation across a longer virtual cycle.',
   ][i],
   benefits: ['Illustrative allocation', 'Transparent lifecycle', 'No guaranteed returns'],
   risk: ['Moderate', 'Moderate', 'High', 'High'][i],
@@ -89,7 +89,7 @@ export function demoUser(id = 'demo-user', role: 'user' | 'admin' = 'user'): Use
     id,
     uid: id,
     email: role === 'admin' ? 'admin@volterra.example' : 'alex@volterra.example',
-    fullName: role === 'admin' ? 'Practice Administrator' : 'Alex Morgan',
+    fullName: role === 'admin' ? 'Virtual Administrator' : 'Alex Morgan',
     username: role === 'admin' ? 'administrator' : 'alexm',
     phone: '',
     country: 'United States',
@@ -144,7 +144,7 @@ export const settings: PlatformSettings = {
   methods: ['Bank Transfer', 'Crypto', 'Card Placeholder'],
   name: 'VOLTERRA',
   supportEmail: 'support@volterra.example',
-  announcement: 'Every balance, trade, and order on Volterra is practice. No real funds.',
+  announcement: 'Every balance, trade, and order on Volterra is virtual. No real funds.',
   logoUrl: '',
   supportPhone: '',
   emailContent: 'Questions about the platform? Our support team is ready to help.',
@@ -161,7 +161,7 @@ export const publicPages: Record<
 > = {
   about: {
     title: 'A clearer way to explore what’s next.',
-    intro: 'Volterra brings market practice and electric mobility into one considered experience.',
+    intro: 'Volterra brings market virtual and electric mobility into one considered experience.',
     sections: [
       [
         'Our purpose',
@@ -169,13 +169,13 @@ export const publicPages: Record<
       ],
       [
         'Independently imagined',
-        'Volterra is an original practice platform. We are not affiliated with Tesla or any listed manufacturer, exchange, or financial institution.',
+        'Volterra is an original virtual platform. We are not affiliated with Tesla or any listed manufacturer, exchange, or financial institution.',
       ],
     ],
   },
   'why-us': {
     title: 'Confidence starts with clarity.',
-    intro: 'A practice space built around transparent information and deliberate decisions.',
+    intro: 'A virtual space built around transparent information and deliberate decisions.',
     sections: [
       [
         'One connected workspace',
@@ -183,19 +183,19 @@ export const publicPages: Record<
       ],
       [
         'Visible by design',
-        'Every account and activity record is practice. There are no guaranteed returns or real payment confirmations.',
+        'Every account and activity record is virtual. There are no guaranteed returns or real payment confirmations.',
       ],
     ],
   },
   services: {
     title: 'Your next move, connected.',
-    intro: 'Explore four complementary ways to practice.',
+    intro: 'Explore four complementary ways to virtual.',
     sections: [
       [
-        'Market practice',
-        'Place practice market and limit orders across a sample multi-asset universe.',
+        'Market virtual',
+        'Place virtual market and limit orders across a sample multi-asset universe.',
       ],
-      ['Portfolio practice', 'Review holdings, allocation, and cost basis.'],
+      ['Portfolio virtual', 'Review holdings, allocation, and cost basis.'],
       ['Virtual wallet', 'Submit funding and withdrawal requests for administrator review.'],
       [
         'Electric vehicle discovery',
@@ -208,26 +208,26 @@ export const publicPages: Record<
     intro: 'Study the mechanics before taking a position.',
     sections: [
       [
-        'A practice market',
-        'All quotes are practice by default. Charts do not represent real historical performance.',
+        'A virtual market',
+        'All quotes are virtual by default. Charts do not represent real historical performance.',
       ],
       [
         'Orders that teach',
-        'Market orders execute against the practice quote. Limit orders reserve cash or holdings and remain pending until reviewed for an eligible fill.',
+        'Market orders execute against the virtual quote. Limit orders reserve cash or holdings and remain pending until reviewed for an eligible fill.',
       ],
     ],
   },
   terms: {
-    title: 'Practice terms of use',
-    intro: 'This service is a practice software experience, not a financial service.',
+    title: 'Virtual terms of use',
+    intro: 'This service is a virtual software experience, not a financial service.',
     sections: [
       [
         'No financial relationship',
-        'Using Volterra does not open a brokerage, investment, custody, or bank account. Practice units have no monetary value.',
+        'Using Volterra does not open a brokerage, investment, custody, or bank account. Virtual units have no monetary value.',
       ],
       [
         'No real orders',
-        'Trades, funding requests, investments, and vehicle reservations are practice and create no right to funds, returns, or delivery.',
+        'Trades, funding requests, investments, and vehicle reservations are virtual and create no right to funds, returns, or delivery.',
       ],
       [
         'Acceptable use',
@@ -235,13 +235,13 @@ export const publicPages: Record<
       ],
       [
         'Availability',
-        'Practice records may be reset. This sample policy must be reviewed and adapted before any public operational launch.',
+        'Virtual records may be reset. This sample policy must be reviewed and adapted before any public operational launch.',
       ],
     ],
   },
   privacy: {
     title: 'Privacy, with intention.',
-    intro: 'Only provide the information you need to use this practice workspace.',
+    intro: 'Only provide the information you need to use this virtual workspace.',
     sections: [
       [
         'Data collected',
@@ -263,11 +263,11 @@ export const publicPages: Record<
   },
   'risk-warning': {
     title: 'Understand the risk. Always.',
-    intro: 'Volterra is a practice. Nothing here is investment advice.',
+    intro: 'Volterra is a virtual. Nothing here is investment advice.',
     sections: [
       [
         'Sample data',
-        'Quotes, charts, examples, testimonials, and inventory are samples. Practice results do not predict real performance.',
+        'Quotes, charts, examples, testimonials, and inventory are samples. Virtual results do not predict real performance.',
       ],
       [
         'Real investing carries risk',
@@ -275,25 +275,25 @@ export const publicPages: Record<
       ],
       [
         'No guarantees',
-        'Plans describe practice duration and risk, never promised yields. Volterra accepts no deposits of real money.',
+        'Plans describe virtual duration and risk, never promised yields. Volterra accepts no deposits of real money.',
       ],
     ],
   },
   'safety-of-funds': {
     title: 'No real funds. No ambiguity.',
-    intro: 'There are no real funds held by this practice platform.',
+    intro: 'There are no real funds held by this virtual platform.',
     sections: [
       [
         'Virtual wallet',
-        'Balances are practice units controlled by server-side application logic. They cannot be redeemed.',
+        'Balances are virtual units controlled by server-side application logic. They cannot be redeemed.',
       ],
       [
-        'Practice payment methods',
-        'Payment options are practice workflows. Never transfer cryptocurrency or send a real payment to use this app.',
+        'Virtual payment methods',
+        'Payment options are virtual workflows. Never transfer cryptocurrency or send a real payment to use this app.',
       ],
       [
         'Protected records',
-        'Server-verified sessions, role checks, atomic balance changes, and restricted database rules protect practice account integrity.',
+        'Server-verified sessions, role checks, atomic balance changes, and restricted database rules protect virtual account integrity.',
       ],
     ],
   },
@@ -303,7 +303,7 @@ export const publicPages: Record<
     sections: [
       [
         'Execution',
-        'Market orders use the current server-side practice quote. No exchange is contacted. Limit orders stay pending until an administrator processes an eligible fill.',
+        'Market orders use the current server-side virtual quote. No exchange is contacted. Limit orders stay pending until an administrator processes an eligible fill.',
       ],
       [
         'Precision',
@@ -311,11 +311,11 @@ export const publicPages: Record<
       ],
       [
         'Settlement',
-        'Practice market trades settle immediately. Withdrawals reserve available cash until approved or rejected. Investment allocations lock principal until completed or cancelled.',
+        'Virtual market trades settle immediately. Withdrawals reserve available cash until approved or rejected. Investment allocations lock principal until completed or cancelled.',
       ],
       [
         'Fees and performance',
-        'The practice workspace charges no fees, models no slippage, and does not accrue investment returns. Sample chart history is not a statement of account.',
+        'The virtual workspace charges no fees, models no slippage, and does not accrue investment returns. Sample chart history is not a statement of account.',
       ],
     ],
   },
@@ -323,16 +323,16 @@ export const publicPages: Record<
 export const faqs = [
   [
     'Is this real investing?',
-    'No. Volterra is a practice experience. All balances, trades, funding requests, and reservations are practice.',
+    'No. Volterra is a virtual experience. All balances, trades, funding requests, and reservations are virtual.',
   ],
   [
     'Do I need to deposit money?',
-    'Never send money. Your account starts with virtual funds, and additional practice funding can be requested inside the wallet.',
+    'Never send money. Your account starts with virtual funds, and additional virtual funding can be requested inside the wallet.',
   ],
-  ['Are market prices live?', 'No. By default, every quote and chart is practice.'],
+  ['Are market prices live?', 'No. By default, every quote and chart is virtual.'],
   [
     'Can I buy a vehicle here?',
-    'You can create a illustrative reservation and follow its practice timeline. No real vehicle purchase is made.',
+    'You can create a illustrative reservation and follow its virtual timeline. No real vehicle purchase is made.',
   ],
   [
     'Do investment plans guarantee a return?',

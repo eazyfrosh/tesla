@@ -60,7 +60,7 @@ test('money uses integer cents and rejects sub-cent and overflow amounts', () =>
   assert.throws(() => cents(0.001));
   assert.throws(() => cents(Infinity));
 });
-test('market buy and sell conserve practice cash, holdings and basis', async () => {
+test('market buy and sell conserve virtual cash, holdings and basis', async () => {
   const h = harness();
   await h.run({ action: 'trade', symbol: 'TSLA', side: 'Buy', quantity: 4, orderType: 'Market' });
   assert.equal(h.portfolio().cashCents, 900600);
@@ -106,7 +106,7 @@ test('withdrawal reservation prevents spending; rejection releases funds', async
     action: 'withdraw',
     amount: 9900,
     method: 'Crypto',
-    destination: 'Fictional practice destination',
+    destination: 'Fictional virtual destination',
   });
   assert.equal(h.portfolio().reservedCents, 990000);
   await assert.rejects(
@@ -332,7 +332,7 @@ const walletInput = {
   network: 'TRC20',
   walletAddress: 'TX-manually-pasted-demo-address',
   qrImage: '',
-  instructions: 'Practice workflow only',
+  instructions: 'Virtual workflow only',
   status: 'enabled',
   displayOrder: 2,
 };
@@ -426,7 +426,7 @@ test('deposit rejection never credits funds or creates a financial transaction',
   assert.equal(h.records().length, 0);
   assert.equal((await h.u.get<Activity>('deposits', request.id))!.status, 'rejected');
 });
-test('admin practice balance adjustment updates balance and immutable ledger exactly once', async () => {
+test('admin virtual balance adjustment updates balance and immutable ledger exactly once', async () => {
   const h = harness();
   const action = actionSchema.parse({
     action: 'adminBalanceAdjust',
@@ -435,8 +435,8 @@ test('admin practice balance adjustment updates balance and immutable ledger exa
     amount: 250,
     currency: 'USD',
     reason: 'Customer support correction',
-    description: 'Practice account credit',
-    confirmation: 'PRACTICE BALANCE MANAGEMENT',
+    description: 'Virtual account credit',
+    confirmation: 'VIRTUAL BALANCE MANAGEMENT',
   });
   await h.run(action, true, 'balance-adjustment-one');
   await h.run(action, true, 'balance-adjustment-one');
@@ -447,7 +447,7 @@ test('admin practice balance adjustment updates balance and immutable ledger exa
   assert.equal(entry.actorId, 'root');
   assert.ok([...h.rows.keys()].some((key) => key.startsWith('auditLogs/balance_')));
 });
-test('admin practice debit cannot make a balance negative', async () => {
+test('admin virtual debit cannot make a balance negative', async () => {
   const h = harness();
   await assert.rejects(
     h.run(
@@ -459,7 +459,7 @@ test('admin practice debit cannot make a balance negative', async () => {
         currency: 'USD',
         reason: 'Correction',
         description: 'Attempted over-debit',
-        confirmation: 'PRACTICE BALANCE MANAGEMENT',
+        confirmation: 'VIRTUAL BALANCE MANAGEMENT',
       }),
       true,
     ),
@@ -467,7 +467,7 @@ test('admin practice debit cannot make a balance negative', async () => {
   );
   assert.equal(h.portfolio().cashCents, 1000000);
 });
-test('admin practice transaction is idempotent and reversal is a new immutable entry', async () => {
+test('admin virtual transaction is idempotent and reversal is a new immutable entry', async () => {
   const h = harness();
   const create = actionSchema.parse({
     action: 'adminTransaction',
@@ -475,9 +475,9 @@ test('admin practice transaction is idempotent and reversal is a new immutable e
     direction: 'credit',
     amount: 75,
     currency: 'USD',
-    description: 'Practice account activity',
+    description: 'Virtual account activity',
     status: 'Completed',
-    confirmation: 'CREATE PRACTICE TRANSACTION',
+    confirmation: 'CREATE VIRTUAL TRANSACTION',
   });
   const created = await h.run(create, true, 'manual-transaction-one');
   await h.run(create, true, 'manual-transaction-one');
@@ -487,7 +487,7 @@ test('admin practice transaction is idempotent and reversal is a new immutable e
       action: 'reverseTransaction',
       id: created.id,
       reason: 'Correcting administrator entry',
-      confirmation: 'REVERSE PRACTICE TRANSACTION',
+      confirmation: 'REVERSE VIRTUAL TRANSACTION',
     }),
     true,
     'reversal-one',
@@ -502,7 +502,7 @@ test('admin practice transaction is idempotent and reversal is a new immutable e
         action: 'reverseTransaction',
         id: created.id,
         reason: 'Duplicate attempt',
-        confirmation: 'REVERSE PRACTICE TRANSACTION',
+        confirmation: 'REVERSE VIRTUAL TRANSACTION',
       }),
       true,
       'reversal-two',

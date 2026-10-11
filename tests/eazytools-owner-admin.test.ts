@@ -35,7 +35,7 @@ test('premium template data is stored in a server-only tenant path', () => {
   assert.match(rules, /premiumTemplateSites\/\{siteId\}[\s\S]*allow read, write: if false/);
 });
 
-test('practice balance adjustment is atomic, idempotent and audited', () => {
+test('virtual balance adjustment is atomic, idempotent and audited', () => {
   const engine = readFileSync(new URL('../lib/engine.ts', import.meta.url), 'utf8');
   assert.match(engine, /adminBalanceAdjust/);
   assert.match(engine, /previousBalanceCents/);

@@ -35,7 +35,7 @@ function initial(): Database {
       id: 'welcome',
       uid: 'demo-user',
       title: 'Your next chapter starts here',
-      message: 'Welcome to your practice workspace. No real funds are used.',
+      message: 'Welcome to your virtual workspace. No real funds are used.',
       read: false,
     } as { id: string },
   ]);

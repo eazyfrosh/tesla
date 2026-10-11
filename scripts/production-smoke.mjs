@@ -7,7 +7,7 @@ response = await fetch(origin + '/login');
 const html = await response.text();
 assert.equal(response.status, 200);
 assert.ok(!html.includes('LOCAL DEVELOPMENT SANDBOX'));
-assert.ok(!html.includes('Practice admin'));
+assert.ok(!html.includes('Virtual admin'));
 response = await fetch(origin + '/api/session', {
   method: 'POST',
   headers: { Origin: origin, 'Content-Type': 'application/json' },
@@ -22,5 +22,5 @@ const body = await response.text();
 assert.ok(response.status === 307 || body.includes('NEXT_REDIRECT'));
 assert.ok(!body.includes('class="workspace"'));
 console.log(
-  'PASS: production serves public pages, hides sandbox login, rejects practice admin authentication, and protects private data.',
+  'PASS: production serves public pages, hides sandbox login, rejects virtual admin authentication, and protects private data.',
 );
