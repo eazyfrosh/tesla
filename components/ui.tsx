@@ -208,11 +208,29 @@ export function AllocationChart({ data }: { data: { name: string; value: number 
   );
 }
 export function MarketCard({ market: m }: { market: Market }) {
+  const logoNames: Record<string, string> = {
+    TSLA: 'Tesla',
+    NVDA: 'NVIDIA',
+    AMZN: 'Amazon',
+    AAPL: 'Apple',
+  };
+  const logoName = logoNames[m.symbol];
   return (
     <Link className="card market-card" href={'/dashboard/markets/' + m.symbol}>
       <div className="row">
         <span className="asset-icon" style={{ color: m.color, background: m.color + '17' }}>
-          {m.symbol === 'BTC-USD' ? '₿' : m.symbol.slice(0, 1)}
+          {logoName ? (
+            <img
+              src={`/images/market-logos/${m.symbol}.svg`}
+              alt={`${logoName} logo`}
+              width={22}
+              height={22}
+            />
+          ) : m.symbol === 'BTC-USD' ? (
+            '₿'
+          ) : (
+            m.symbol.slice(0, 1)
+          )}
         </span>
         <span className={m.change >= 0 ? 'positive' : 'negative'}>
           {m.change >= 0 ? '+' : ''}
