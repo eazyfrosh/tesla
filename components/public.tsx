@@ -478,19 +478,46 @@ export function Landing({
             </div>
           </div>
         </section>
-        <section className="section container faq-section">
-          <div>
-            <span className="eyebrow red">A LITTLE MORE CLARITY</span>
-            <h2>
-              Good questions.
-              <br />
-              Straight answers.
-            </h2>
-            <Link href="/contact" className="text-link">
-              Talk to us <ArrowUpRight size={16} />
-            </Link>
+        <section className="section container">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow red">DESIGNED FOR MOMENTUM</span>
+              <h2>
+                A clearer way
+                <br />
+                to move forward.
+              </h2>
+            </div>
+            <p className="muted">
+              One focused workspace for exploring markets, understanding your options, and finding
+              your next electric direction.
+            </p>
           </div>
-          <FAQ />
+          <div className="grid three">
+            {[
+              [
+                '01',
+                'See the full picture',
+                'Bring markets, plans, and electric vehicles into one view.',
+              ],
+              [
+                '02',
+                'Move with intention',
+                'Compare possibilities with clear information and thoughtful tools.',
+              ],
+              [
+                '03',
+                'Keep your momentum',
+                'Track every step from your first idea to your next move.',
+              ],
+            ].map(([number, title, description]) => (
+              <article className="card" key={number}>
+                <span className="eyebrow red">{number}</span>
+                <h3>{title}</h3>
+                <p className="muted">{description}</p>
+              </article>
+            ))}
+          </div>
         </section>
         <section className="container final-cta">
           <span className="eyebrow">THE NEXT MOVE IS YOURS</span>
