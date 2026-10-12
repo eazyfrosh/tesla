@@ -35,12 +35,14 @@ export const date = (value: string) =>
 export function Logo() {
   const brand = useBrand();
   return (
-    <Link href="/" className="logo" aria-label={`${brand?.name || 'Volterra'} home`}>
-      {brand?.logoUrl ? (
-        <img className="brand-logo" src={brand.logoUrl} alt="" width={46} height={60} />
-      ) : (
-        <span>{brand?.name || 'VOLTERRA'}</span>
-      )}
+    <Link href="/" className="logo" aria-label={`${brand?.name || 'Tesla'} home`}>
+      <img
+        className="brand-logo"
+        src={brand?.logoUrl || '/images/tesla-site-logo.png'}
+        alt={brand?.name || 'Tesla'}
+        width={78}
+        height={60}
+      />
     </Link>
   );
 }

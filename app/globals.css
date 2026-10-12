@@ -3498,7 +3498,7 @@ th,
 }
 
 .logo .brand-logo {
-  width: 46px;
+  width: 78px;
   height: 60px;
   object-fit: contain;
   filter: brightness(0) invert(1);
@@ -3506,8 +3506,8 @@ th,
 }
 @media (max-width: 760px) {
   .logo .brand-logo {
-    width: 36px;
-    height: 47px;
+    width: 60px;
+    height: 46px;
   }
 }
 
