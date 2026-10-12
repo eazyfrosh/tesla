@@ -56,6 +56,18 @@ export function BrandProvider({
     return () => window.removeEventListener('message', receivePreview);
   }, []);
 
+  useEffect(() => {
+    let favicon = document.querySelector<HTMLLinkElement>('#volterra-brand-favicon');
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.id = 'volterra-brand-favicon';
+      favicon.rel = 'icon';
+      document.head.appendChild(favicon);
+    }
+    favicon.href = brand.logoUrl || '/icon.svg';
+    document.title = `${brand.name || 'Volterra'} — Think ahead. Move electric.`;
+  }, [brand.logoUrl, brand.name]);
+
   return <BrandContext.Provider value={brand}>{children}</BrandContext.Provider>;
 }
 export function useBrand() {
