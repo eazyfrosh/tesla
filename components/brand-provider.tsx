@@ -64,7 +64,7 @@ export function BrandProvider({
       favicon.rel = 'icon';
       document.head.appendChild(favicon);
     }
-    favicon.href = brand.logoUrl || '/icon.svg';
+    favicon.href = brand.logoUrl || '/favicon-32.png?v=20261012';
     document.title = `${brand.name || 'Volterra'} — Think ahead. Move electric.`;
   }, [brand.logoUrl, brand.name]);
 
